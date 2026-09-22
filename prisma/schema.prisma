@@ -57,6 +57,8 @@ model User {
   name      String
   email     String? @unique
   phone     String? @unique
+  password  String?
   role      String  @default("customer")
   createdAt String
 }
+
