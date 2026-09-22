@@ -33,12 +33,45 @@ const getCartSnapshot = (): string => {
 
 const getCartServerSnapshot = (): string => "[]";
 
+// External store subscriber for user session
+const sessionSubscribe = (callback: () => void) => {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener("storage", callback);
+  window.addEventListener("session-updated", callback);
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("session-updated", callback);
+  };
+};
+
+const getSessionSnapshot = (): string => {
+  if (typeof window === "undefined") return "";
+  return localStorage.getItem("user_session") || "";
+};
+
+const getSessionServerSnapshot = () => "";
+
 export default function Navbar() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [productsList, setProductsList] = useState<Product[]>(products);
+
+  // User session state
+  const sessionRaw = useSyncExternalStore(
+    sessionSubscribe,
+    getSessionSnapshot,
+    getSessionServerSnapshot
+  );
+
+  const currentUser = useMemo(() => {
+    try {
+      return sessionRaw ? JSON.parse(sessionRaw) : null;
+    } catch {
+      return null;
+    }
+  }, [sessionRaw]);
 
   // Checkout Modal States
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -56,6 +89,31 @@ export default function Navbar() {
   const [orderError, setOrderError] = useState("");
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
+
+  // Auto pre-fill checkout fields if user is logged in
+  useEffect(() => {
+    if (isCheckoutOpen && currentUser) {
+      if (!shippingName && currentUser.name) setShippingName(currentUser.name);
+      if (!shippingEmail && currentUser.email) setShippingEmail(currentUser.email);
+      if (!shippingPhone && currentUser.phone) setShippingPhone(currentUser.phone);
+
+      try {
+        const storedAddr = localStorage.getItem(`user_addresses_${currentUser.id || currentUser.email}`);
+        if (storedAddr) {
+          const list = JSON.parse(storedAddr);
+          if (Array.isArray(list) && list.length > 0) {
+            const def = list.find((a: any) => a.isDefault) || list[0];
+            if (def) {
+              if (!shippingAddress && def.street) setShippingAddress(def.street);
+              if (!shippingCity && def.city) setShippingCity(def.city);
+              if (def.state) setShippingState(def.state);
+              if (!shippingPincode && def.pincode) setShippingPincode(def.pincode);
+            }
+          }
+        }
+      } catch {}
+    }
+  }, [isCheckoutOpen, currentUser, shippingName, shippingEmail, shippingPhone, shippingAddress, shippingCity, shippingPincode]);
 
   // Sync products when search is opened
   useEffect(() => {
@@ -140,7 +198,8 @@ export default function Navbar() {
     setIsPlacingOrder(true);
 
     try {
-      const fullAddress = `${shippingAddress.trim()}, ${shippingCity.trim() || "Delhi"}, ${shippingState} - ${shippingPincode.trim()}`;
+      const paymentTag = `[Payment: ${paymentMethod === "cod" ? "Cash on Delivery (COD)" : `UPI Paid${utrNumber.trim() ? ` - UTR: ${utrNumber.trim()}` : ""}`}]`;
+      const fullAddress = `${shippingAddress.trim()}, ${shippingCity.trim() || "Delhi"}, ${shippingState} - ${shippingPincode.trim()} ${paymentTag}`;
       const payload = {
         customerName: shippingName.trim(),
         email: shippingEmail.trim() || "customer@example.com",
@@ -171,6 +230,19 @@ export default function Navbar() {
       setPlacedOrder(data.order);
       setCheckoutStep("success");
       saveCart([]);
+
+      // Automatically link placed order to current session & localStorage
+      try {
+        const orderId = data.order?.id;
+        if (orderId) {
+          const stored: string[] = JSON.parse(localStorage.getItem("my_order_ids") || "[]");
+          if (!stored.includes(orderId)) {
+            stored.unshift(orderId);
+            localStorage.setItem("my_order_ids", JSON.stringify(stored));
+          }
+          window.dispatchEvent(new Event("orders-updated"));
+        }
+      } catch {}
     } catch (err: unknown) {
       setOrderError(err instanceof Error ? err.message : "Error placing order");
     } finally {
@@ -205,71 +277,73 @@ export default function Navbar() {
 
       {/* Main Sticky Header */}
       <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
           
-          {/* Mobile Hamburger Button */}
-          <div className="flex items-center lg:hidden">
+          {/* Left Column: Hamburger (mobile) or Navigation (desktop) */}
+          <div className="flex items-center justify-start">
+            {/* Mobile Hamburger Button */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-black hover:text-orange-600 focus:outline-none"
+              className="p-2 -ml-2 text-black hover:text-orange-600 focus:outline-none lg:hidden"
               aria-label="Open navigation menu"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
+
+            {/* Desktop Left Navigation with collision-free responsive labels */}
+            <nav className="hidden lg:flex items-center gap-x-3 xl:gap-x-5">
+              <Link
+                href="/shop"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+              >
+                Shop All
+              </Link>
+              <Link
+                href="/collections"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+              >
+                Collections
+              </Link>
+              <Link
+                href="/shop?category=Tops"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+              >
+                Tops
+              </Link>
+              <Link
+                href="/shop?category=Bottoms"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+              >
+                Bottoms
+              </Link>
+              <Link
+                href="/shop-by-color"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+              >
+                <span className="hidden xl:inline">Shop by Color</span>
+                <span className="xl:hidden">Colors</span>
+              </Link>
+            </nav>
           </div>
 
-          {/* Left: Desktop Navigation with safe spacing */}
-          <nav className="hidden lg:flex items-center gap-x-3.5 xl:gap-x-6">
-            <Link
-              href="/shop"
-              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
-            >
-              Shop All
-            </Link>
-            <Link
-              href="/collections"
-              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
-            >
-              Collections
-            </Link>
-            <Link
-              href="/shop?category=Tops"
-              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
-            >
-              Tops
-            </Link>
-            <Link
-              href="/shop?category=Bottoms"
-              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
-            >
-              Bottoms
-            </Link>
-            <Link
-              href="/shop-by-color"
-              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
-            >
-              Shop by Color
-            </Link>
-          </nav>
-
-          {/* Center: Iconic DRIVEN Logo with safe padding */}
-          <div className="flex items-center justify-center px-4 xl:px-8">
+          {/* Center Column: Iconic DRIVEN Logo mathematically centered */}
+          <div className="flex items-center justify-center text-center">
             <Link
               href="/"
-              className="text-xl sm:text-2xl font-black tracking-[0.22em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
+              className="text-xl sm:text-2xl font-black tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
             >
               DRIVEN
             </Link>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-x-3.5 sm:gap-x-5">
+          {/* Right Column: Actions */}
+          <div className="flex items-center justify-end gap-x-3 sm:gap-x-4 xl:gap-x-5">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5"
+              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
               aria-label="Search catalogue"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -280,21 +354,31 @@ export default function Navbar() {
 
             <Link
               href="/stores"
-              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase md:block"
+              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase md:block whitespace-nowrap"
             >
               Stores
             </Link>
 
             <Link
               href="/account"
-              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase sm:block"
+              className="text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
+              title={currentUser ? `Signed in as ${currentUser.name}` : "Member Portal"}
             >
-              Account
+              {currentUser ? (
+                <>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200 flex-shrink-0" />
+                  <span className="max-w-[70px] sm:max-w-[100px] xl:max-w-[130px] truncate">
+                    {currentUser.name.split(" ")[0]}
+                  </span>
+                </>
+              ) : (
+                <span className="hidden sm:inline">Account</span>
+              )}
             </Link>
 
             <button
               onClick={() => setIsCartOpen(true)}
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5"
+              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -376,7 +460,7 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
                 >
-                  Account / Order Tracking
+                  {currentUser ? `Hi, ${currentUser.name} (Dashboard)` : "Account / Member Sign In"}
                 </Link>
               </nav>
             </div>

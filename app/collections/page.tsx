@@ -32,9 +32,10 @@ export default async function CollectionsPage() {
           ).length;
 
           return (
-            <div
+            <Link
               key={col.slug}
-              className="border border-gray-100 flex flex-col justify-between p-8 bg-zinc-50 hover:bg-zinc-100/60 transition-all duration-300 group"
+              href={`/collections/${col.slug}`}
+              className="border border-gray-100 flex flex-col justify-between p-8 bg-zinc-50 hover:bg-zinc-100/80 transition-all duration-300 group cursor-pointer block"
             >
               {/* Concept Image Preview */}
               <div className="relative aspect-[16/9] w-full mb-6 overflow-hidden bg-gray-200">
@@ -44,7 +45,7 @@ export default async function CollectionsPage() {
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-black/20" />
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
                 <div className="absolute bottom-3 left-3 bg-black text-white px-2.5 py-1 text-[8px] font-bold tracking-widest uppercase">
                   {col.tag}
                 </div>
@@ -61,7 +62,7 @@ export default async function CollectionsPage() {
                   </span>
                 </div>
 
-                <h2 className="text-2xl font-black tracking-widest text-black uppercase">
+                <h2 className="text-2xl font-black tracking-widest text-black uppercase group-hover:text-orange-600 transition-colors">
                   {col.name}
                 </h2>
 
@@ -72,14 +73,11 @@ export default async function CollectionsPage() {
 
               {/* Action */}
               <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
-                <Link
-                  href={`/collections/${col.slug}`}
-                  className="bg-black text-white hover:bg-orange-600 px-6 py-3 text-xs font-bold tracking-widest uppercase text-center transition-colors inline-block"
-                >
+                <span className="bg-black group-hover:bg-orange-600 text-white px-6 py-3 text-xs font-bold tracking-widest uppercase text-center transition-colors inline-block">
                   View Collection Drops &rarr;
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>

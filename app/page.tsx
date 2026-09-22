@@ -89,9 +89,10 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {collections.map((col, index) => (
-              <div
+              <Link
                 key={col.slug}
-                className="relative group h-96 bg-black overflow-hidden flex flex-col justify-end p-6 border border-zinc-900"
+                href={`/collections/${col.slug}`}
+                className="relative group h-96 bg-black overflow-hidden flex flex-col justify-end p-6 border border-zinc-900 cursor-pointer block"
               >
                 {/* Background Image */}
                 <Image
@@ -108,20 +109,19 @@ export default async function Home() {
                   <span className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase block">
                     Concept 0{index + 1} • {col.tag}
                   </span>
-                  <h3 className="text-lg font-black tracking-wider text-white uppercase">
+                  <h3 className="text-lg font-black tracking-wider text-white uppercase group-hover:text-orange-400 transition-colors">
                     {col.name}
                   </h3>
                   <p className="text-[10px] text-gray-300 line-clamp-2 uppercase">
                     {col.description}
                   </p>
-                  <Link
-                    href={`/collections/${col.slug}`}
-                    className="inline-block text-[10px] font-bold tracking-widest text-white hover:text-orange-400 uppercase pt-2 transition-colors"
+                  <span
+                    className="inline-block text-[10px] font-bold tracking-widest text-white group-hover:text-orange-400 uppercase pt-2 transition-colors"
                   >
                     Discover Drops &rarr;
-                  </Link>
+                  </span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

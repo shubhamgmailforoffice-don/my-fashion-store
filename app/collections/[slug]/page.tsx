@@ -1,5 +1,5 @@
 import { collections } from "@/lib/data";
-import { getDB } from "@/lib/store";
+import { getAsyncProducts } from "@/lib/store";
 import { notFound } from "next/navigation";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
@@ -19,9 +19,9 @@ export default async function CollectionDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const db = getDB();
-  const matchingProducts = db.products.filter(
-    (p) => p.collectionSlug.toLowerCase() === collection.slug.toLowerCase()
+  const products = await getAsyncProducts();
+  const matchingProducts = products.filter(
+    (p) => (p.collectionSlug || "").toLowerCase() === collection.slug.toLowerCase()
   );
 
   return (

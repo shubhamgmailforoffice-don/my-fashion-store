@@ -20,33 +20,39 @@ export default function AdminLayout({
               Control Center
             </span>
             <h1 className="text-lg font-black tracking-widest uppercase text-white mt-1">
-              FASHION ADMIN
+              DRIVEN OPERATIONS
             </h1>
           </div>
 
           <nav className="space-y-2">
             <Link
-              href="/admin"
-              className={`flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded transition-colors ${
-                pathname === "/admin"
-                  ? "bg-white text-black font-black"
-                  : "text-neutral-400 hover:text-white hover:bg-neutral-800"
-              }`}
+              href="/admin?tab=orders"
+              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              <span>Dashboard & Products</span>
+              <span>Orders & Dispatch</span>
             </Link>
 
             <Link
-              href="/admin#orders"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded text-neutral-400 hover:text-white hover:bg-neutral-800 transition-colors"
+              href="/admin?tab=products"
+              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
               </svg>
-              <span>Customer Orders</span>
+              <span>Products & Photos</span>
+            </Link>
+
+            <Link
+              href="/admin?tab=users"
+              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded text-neutral-300 hover:text-white hover:bg-neutral-800 transition-colors"
+            >
+              <svg className="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>Registered Users</span>
             </Link>
 
             <Link

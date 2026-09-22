@@ -10,11 +10,33 @@ const sessionSubscribe = (callback: () => void) => {
   if (typeof window === "undefined") return () => {};
   window.addEventListener("storage", callback);
   window.addEventListener("session-updated", callback);
+  window.addEventListener("orders-updated", callback);
   return () => {
     window.removeEventListener("storage", callback);
     window.removeEventListener("session-updated", callback);
+    window.removeEventListener("orders-updated", callback);
   };
 };
+
+export interface SavedAddress {
+  id: string;
+  name: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  pincode: string;
+  type: "Home" | "Work" | "Other";
+  isDefault: boolean;
+}
+
+const INDIAN_STATES = [
+  "Andhra Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh",
+  "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
+  "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra",
+  "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh",
+  "Uttarakhand", "West Bengal"
+];
 
 const getSessionSnapshot = (): string => {
   if (typeof window === "undefined") return "";
@@ -44,7 +66,7 @@ export default function AccountPage() {
   // Form Fields
   const [fullName, setFullName] = useState("");
   const [identifier, setIdentifier] = useState(""); // Email or Mobile
-  const [password, setPassword] = useState(""); // Compulsory
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
 
@@ -59,48 +81,231 @@ export default function AccountPage() {
   const [activeTab, setActiveTab] = useState<"orders" | "addresses" | "perks">("orders");
   const [userOrders, setUserOrders] = useState<Order[]>([]);
 
+  // Saved Addresses State
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
+  const [addressForm, setAddressForm] = useState<Omit<SavedAddress, "id">>({
+    name: "",
+    phone: "",
+    street: "",
+    city: "New Delhi",
+    state: "Delhi",
+    pincode: "",
+    type: "Home",
+    isDefault: false,
+  });
+
+  // Manual Order Link input
+  const [linkOrderIdInput, setLinkOrderIdInput] = useState("");
+  const [linkOrderMsg, setLinkOrderMsg] = useState<{ text: string; success: boolean } | null>(null);
+
   // Guest Order Tracking Drawer / Modal
   const [showGuestTrack, setShowGuestTrack] = useState(false);
   const [guestOrderId, setGuestOrderId] = useState("");
   const [guestTrackResult, setGuestTrackResult] = useState<string | null>(null);
 
-  // Fetch orders
-  useEffect(() => {
-    let isMounted = true;
+  // Fetch orders from API
+  const fetchOrders = () => {
     fetch("/api/orders", { cache: "no-store" })
       .then((res) => res.json())
       .then((allOrders: Order[]) => {
-        if (isMounted && Array.isArray(allOrders)) {
+        if (Array.isArray(allOrders)) {
           setUserOrders(allOrders);
         }
       })
       .catch(() => {});
+  };
 
-    return () => {
-      isMounted = false;
-    };
+  useEffect(() => {
+    fetchOrders();
+    const handleOrderUpdate = () => fetchOrders();
+    window.addEventListener("orders-updated", handleOrderUpdate);
+    return () => window.removeEventListener("orders-updated", handleOrderUpdate);
   }, []);
 
-  // Filter orders strictly for the logged-in user (unless admin)
+  // Filter orders strictly for the logged-in user with comprehensive match logic
   const myOrders = useMemo(() => {
     if (!currentUser) return [];
     if (currentUser.role === "admin") return userOrders;
+
+    const storedIds: string[] = (() => {
+      try {
+        return JSON.parse(localStorage.getItem("my_order_ids") || "[]");
+      } catch {
+        return [];
+      }
+    })();
+
+    const userPhoneClean = (currentUser.phone || "").replace(/\D/g, "");
+    const userEmailClean = (currentUser.email || "").toLowerCase().trim();
+    const userNameClean = (currentUser.name || "").toLowerCase().trim();
+
     return userOrders.filter((o) => {
-      const userPhone = currentUser.phone ? currentUser.phone.replace(/\D/g, "") : "";
-      const orderPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
-      const phoneMatch = Boolean(
-        userPhone &&
-          orderPhone &&
-          (orderPhone.endsWith(userPhone) || userPhone.endsWith(orderPhone))
-      );
-      const emailMatch = Boolean(
-        currentUser.email &&
-          o.email &&
-          currentUser.email.toLowerCase() === o.email.toLowerCase()
-      );
-      return phoneMatch || emailMatch;
+      // 1. Direct match with order IDs placed on this device
+      if (storedIds.includes(o.id)) return true;
+
+      // 2. Exact email match
+      if (userEmailClean && o.email && userEmailClean === o.email.toLowerCase().trim()) return true;
+
+      // 3. Phone number match
+      const orderPhoneClean = (o.phone || "").replace(/\D/g, "");
+      if (userPhoneClean && orderPhoneClean && (orderPhoneClean.endsWith(userPhoneClean) || userPhoneClean.endsWith(orderPhoneClean))) return true;
+
+      // 4. Customer Name match
+      if (userNameClean && o.customerName && userNameClean === o.customerName.toLowerCase().trim()) return true;
+
+      return false;
     });
-  }, [userOrders, currentUser]);
+  }, [userOrders, currentUser, sessionRaw]);
+
+  // Address book synchronization
+  const getAddressKey = () => (currentUser ? `user_addresses_${currentUser.id || currentUser.email}` : "user_addresses_guest");
+
+  useEffect(() => {
+    if (!currentUser) return;
+    try {
+      const stored = localStorage.getItem(getAddressKey());
+      if (stored) {
+        setSavedAddresses(JSON.parse(stored));
+      } else if (myOrders.length > 0 && myOrders[0].address) {
+        // Pre-seed an initial default address from their latest placed order
+        const o = myOrders[0];
+        const cleanAddr = o.address.replace(/\[Payment:.*?\]/i, "").trim();
+        const initial: SavedAddress = {
+          id: `addr_${Date.now()}`,
+          name: o.customerName || currentUser.name,
+          phone: o.phone || currentUser.phone || "",
+          street: cleanAddr,
+          city: "Delhi",
+          state: "Delhi",
+          pincode: cleanAddr.match(/\d{6}/)?.[0] || "110001",
+          type: "Home",
+          isDefault: true,
+        };
+        setSavedAddresses([initial]);
+        localStorage.setItem(getAddressKey(), JSON.stringify([initial]));
+      }
+    } catch {}
+  }, [currentUser, myOrders]);
+
+  const saveAddressesToStorage = (updated: SavedAddress[]) => {
+    setSavedAddresses(updated);
+    try {
+      localStorage.setItem(getAddressKey(), JSON.stringify(updated));
+    } catch {}
+  };
+
+  const handleOpenAddAddress = () => {
+    setEditingAddressId(null);
+    setAddressForm({
+      name: currentUser?.name || "",
+      phone: currentUser?.phone || "",
+      street: "",
+      city: "New Delhi",
+      state: "Delhi",
+      pincode: "",
+      type: "Home",
+      isDefault: savedAddresses.length === 0,
+    });
+    setIsAddressModalOpen(true);
+  };
+
+  const handleOpenEditAddress = (addr: SavedAddress) => {
+    setEditingAddressId(addr.id);
+    setAddressForm({
+      name: addr.name,
+      phone: addr.phone,
+      street: addr.street,
+      city: addr.city,
+      state: addr.state,
+      pincode: addr.pincode,
+      type: addr.type,
+      isDefault: addr.isDefault,
+    });
+    setIsAddressModalOpen(true);
+  };
+
+  const handleSaveAddress = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!addressForm.name || !addressForm.phone || !addressForm.street || !addressForm.pincode) {
+      alert("Please fill in all required address fields.");
+      return;
+    }
+
+    let updated: SavedAddress[];
+    if (editingAddressId) {
+      updated = savedAddresses.map((a) => {
+        if (a.id === editingAddressId) {
+          return { ...addressForm, id: a.id };
+        }
+        return addressForm.isDefault ? { ...a, isDefault: false } : a;
+      });
+    } else {
+      const newAddr: SavedAddress = {
+        ...addressForm,
+        id: `addr_${Date.now()}`,
+        isDefault: addressForm.isDefault || savedAddresses.length === 0,
+      };
+      updated = addressForm.isDefault
+        ? savedAddresses.map((a) => ({ ...a, isDefault: false })).concat(newAddr)
+        : [...savedAddresses, newAddr];
+    }
+
+    saveAddressesToStorage(updated);
+    setIsAddressModalOpen(false);
+  };
+
+  const handleDeleteAddress = (id: string) => {
+    if (!confirm("Are you sure you want to remove this saved address?")) return;
+    const remaining = savedAddresses.filter((a) => a.id !== id);
+    if (remaining.length > 0 && !remaining.some((a) => a.isDefault)) {
+      remaining[0].isDefault = true;
+    }
+    saveAddressesToStorage(remaining);
+  };
+
+  const handleSetDefaultAddress = (id: string) => {
+    const updated = savedAddresses.map((a) => ({
+      ...a,
+      isDefault: a.id === id,
+    }));
+    saveAddressesToStorage(updated);
+  };
+
+  // Helper to link order ID manually
+  const handleLinkOrder = (e: React.FormEvent) => {
+    e.preventDefault();
+    setLinkOrderMsg(null);
+    if (!linkOrderIdInput.trim()) return;
+
+    const cleanInput = linkOrderIdInput.trim().toUpperCase().replace(/^#/, "");
+    const matchingOrder = userOrders.find((o) => o.id.toUpperCase().includes(cleanInput));
+
+    if (!matchingOrder) {
+      setLinkOrderMsg({
+        text: `Order #${cleanInput} was not found. Please verify the ID.`,
+        success: false,
+      });
+      return;
+    }
+
+    try {
+      const stored: string[] = JSON.parse(localStorage.getItem("my_order_ids") || "[]");
+      if (!stored.includes(matchingOrder.id)) {
+        stored.unshift(matchingOrder.id);
+        localStorage.setItem("my_order_ids", JSON.stringify(stored));
+      }
+      setLinkOrderMsg({
+        text: `Order #${matchingOrder.id} successfully linked to your account!`,
+        success: true,
+      });
+      setLinkOrderIdInput("");
+      window.dispatchEvent(new Event("orders-updated"));
+    } catch {
+      setLinkOrderMsg({ text: "Failed to link order.", success: false });
+    }
+  };
 
   const saveSession = (user: User) => {
     localStorage.setItem("user_session", JSON.stringify(user));
@@ -211,7 +416,7 @@ export default function AccountPage() {
 
   return (
     <div className="bg-white min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-lg mx-auto">
+      <div className={`${currentUser ? "max-w-4xl" : "max-w-lg"} mx-auto`}>
         
         {/* Editorial Top Brand Identifier */}
         <div className="text-center mb-8 sm:mb-10">
@@ -232,7 +437,7 @@ export default function AccountPage() {
 
         {/* LOGGED IN MEMBER DASHBOARD */}
         {currentUser ? (
-          <div className="space-y-6">
+          <div className="space-y-8">
             {/* VIP Status Banner */}
             <div className="bg-neutral-950 text-white p-6 sm:p-8 relative overflow-hidden border border-neutral-800 shadow-xl">
               <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 text-neutral-900/60 font-black text-7xl select-none pointer-events-none">
@@ -271,13 +476,31 @@ export default function AccountPage() {
                   </button>
                 </div>
               </div>
+
+              {/* Quick Member Stats Bar */}
+              <div className="relative z-10 grid grid-cols-3 gap-4 pt-6 mt-6 border-t border-neutral-800/80">
+                <div>
+                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Total Orders</p>
+                  <p className="text-xl font-black text-white mt-0.5">{myOrders.length}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Delivered</p>
+                  <p className="text-xl font-black text-emerald-400 mt-0.5">
+                    {myOrders.filter((o) => o.status === "Delivered").length}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Saved Addresses</p>
+                  <p className="text-xl font-black text-orange-400 mt-0.5">{savedAddresses.length}</p>
+                </div>
+              </div>
             </div>
 
             {/* Dashboard Tabs */}
-            <div className="flex border-b border-neutral-200">
+            <div className="flex border-b border-neutral-200 gap-x-2">
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`py-3 px-4 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
                   activeTab === "orders"
                     ? "border-black text-black"
                     : "border-transparent text-neutral-400 hover:text-black"
@@ -287,31 +510,70 @@ export default function AccountPage() {
               </button>
               <button
                 onClick={() => setActiveTab("addresses")}
-                className={`py-3 px-4 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
                   activeTab === "addresses"
                     ? "border-black text-black"
                     : "border-transparent text-neutral-400 hover:text-black"
                 }`}
               >
-                Shipping Details
+                Saved Addresses ({savedAddresses.length})
               </button>
               <button
                 onClick={() => setActiveTab("perks")}
-                className={`py-3 px-4 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
                   activeTab === "perks"
                     ? "border-black text-black"
                     : "border-transparent text-neutral-400 hover:text-black"
                 }`}
               >
-                VIP Perks
+                VIP Privileges
               </button>
             </div>
 
-            {/* Tab 1: Orders */}
+            {/* TAB 1: ORDERS */}
             {activeTab === "orders" && (
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* 1-Click Order Link Helper */}
+                <div className="bg-neutral-50 border border-neutral-200 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-black uppercase tracking-wider text-black">
+                      Placed an order as guest or earlier?
+                    </p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-wider">
+                      Enter your Order ID below to link it permanently to your account.
+                    </p>
+                  </div>
+                  <form onSubmit={handleLinkOrder} className="flex gap-2 w-full sm:w-auto">
+                    <input
+                      type="text"
+                      placeholder="e.g. FS-1627"
+                      value={linkOrderIdInput}
+                      onChange={(e) => setLinkOrderIdInput(e.target.value)}
+                      className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-36"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-black hover:bg-orange-600 text-white px-4 py-2 text-xs font-black tracking-widest uppercase whitespace-nowrap transition-colors"
+                    >
+                      Link Order
+                    </button>
+                  </form>
+                </div>
+
+                {linkOrderMsg && (
+                  <div
+                    className={`p-3 text-xs font-bold uppercase border-l-4 ${
+                      linkOrderMsg.success
+                        ? "bg-emerald-50 text-emerald-800 border-emerald-600"
+                        : "bg-red-50 text-red-700 border-red-600"
+                    }`}
+                  >
+                    {linkOrderMsg.text}
+                  </div>
+                )}
+
                 {myOrders.length === 0 ? (
-                  <div className="border border-dashed border-neutral-200 py-12 text-center p-6">
+                  <div className="border border-dashed border-neutral-200 py-16 text-center p-6 bg-neutral-50/50">
                     <p className="text-xs font-bold tracking-widest text-neutral-400 uppercase mb-4">
                       No order records found for this account.
                     </p>
@@ -323,171 +585,444 @@ export default function AccountPage() {
                     </Link>
                   </div>
                 ) : (
-                  myOrders.map((order) => (
+                  <div className="space-y-4">
+                    {myOrders.map((order) => {
+                      const isCOD = order.address.includes("COD");
+                      const isUPI = order.address.includes("UPI");
+                      const cleanDisplayAddress = order.address.replace(/\[Payment:.*?\]/i, "").trim();
 
-                    <div
-                      key={order.id}
-                      className="border border-neutral-200 bg-white p-5 sm:p-6 space-y-4 hover:border-black transition-colors"
-                    >
-                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-100 pb-3">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-black tracking-wider uppercase text-black">
-                              Order #{order.id}
-                            </span>
-                            <span className="text-[10px] text-neutral-400 font-bold uppercase">
-                              • {order.date}
+                      return (
+                        <div
+                          key={order.id}
+                          className="border border-neutral-200 bg-white p-5 sm:p-6 space-y-4 hover:border-black transition-colors"
+                        >
+                          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-100 pb-3">
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-black tracking-wider uppercase text-black font-mono">
+                                  Order #{order.id}
+                                </span>
+                                <span className="text-[10px] text-neutral-400 font-bold uppercase">
+                                  • {order.date}
+                                </span>
+                                <span
+                                  className={`text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-xs ${
+                                    isCOD
+                                      ? "bg-neutral-100 text-neutral-800 border border-neutral-300"
+                                      : isUPI
+                                      ? "bg-orange-50 text-orange-700 border border-orange-200"
+                                      : "bg-neutral-100 text-neutral-800"
+                                  }`}
+                                >
+                                  {isCOD ? "Cash on Delivery" : isUPI ? "UPI Paid" : "Prepaid"}
+                                </span>
+                              </div>
+                              <p className="text-xs text-neutral-700 font-bold uppercase mt-1">
+                                Total: RS. {order.total.toLocaleString()}
+                              </p>
+                            </div>
+
+                            <span
+                              className={`text-[9px] font-black tracking-widest uppercase px-3 py-1 border self-start sm:self-auto ${
+                                order.status === "Delivered"
+                                  ? "bg-emerald-50 text-emerald-800 border-emerald-200"
+                                  : order.status === "Shipped"
+                                  ? "bg-sky-50 text-sky-800 border-sky-200"
+                                  : "bg-amber-50 text-amber-800 border-amber-200"
+                              }`}
+                            >
+                              {order.status}
                             </span>
                           </div>
-                          <p className="text-xs text-neutral-600 font-bold uppercase mt-1">
-                            Total: RS. {order.total.toLocaleString()}
+
+                          {/* Items List */}
+                          <div className="space-y-2">
+                            {order.items.map((item, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center justify-between text-xs py-1 border-b border-neutral-50 last:border-0"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="relative w-10 h-12 bg-neutral-100 flex-shrink-0">
+                                    <Image
+                                      src={item.image || "/images/products/oversized-tshirt.jpg"}
+                                      alt={item.name}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-black uppercase tracking-wide">
+                                      {item.name}
+                                    </p>
+                                    <p className="text-[10px] text-neutral-400 uppercase font-medium">
+                                      Size: {item.size} • Qty: {item.quantity} {item.color ? `• Color: ${item.color}` : ""}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className="font-bold text-black text-right">
+                                  RS. {(item.price * item.quantity).toLocaleString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Live Tracking Stepper */}
+                          <div className="pt-3 border-t border-neutral-100">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                                Fulfillment Tracker
+                              </span>
+                              <span className="text-[9px] font-black uppercase tracking-widest text-orange-600">
+                                Express Air Courier
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-4 gap-1.5 pt-1">
+                              {["Confirmed", "Processing", "Shipped", "Delivered"].map(
+                                (stepName, sIdx) => {
+                                  const steps = ["Pending", "Processing", "Shipped", "Delivered"];
+                                  const currentIdx = steps.indexOf(order.status);
+                                  const isCompleted = currentIdx >= sIdx;
+                                  const isCurrent = currentIdx === sIdx;
+
+                                  return (
+                                    <div key={stepName} className="space-y-1 text-center">
+                                      <div
+                                        className={`h-1.5 w-full transition-all ${
+                                          isCompleted
+                                            ? "bg-black"
+                                            : isCurrent
+                                            ? "bg-orange-500 animate-pulse"
+                                            : "bg-neutral-200"
+                                        }`}
+                                      />
+                                      <span
+                                        className={`text-[8px] font-black tracking-wider uppercase block ${
+                                          isCompleted ? "text-black" : "text-neutral-400"
+                                        }`}
+                                      >
+                                        {stepName}
+                                      </span>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                            <p className="text-[10px] text-neutral-600 font-medium uppercase tracking-wider mt-3">
+                              <span className="font-bold text-black">Delivery To:</span> {cleanDisplayAddress}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 2: SAVED ADDRESSES (FULL CRUD) */}
+            {activeTab === "addresses" && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-neutral-100 pb-4">
+                  <div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-black">
+                      Saved Delivery Addresses
+                    </h3>
+                    <p className="text-xs text-neutral-400 uppercase tracking-wider mt-0.5">
+                      Manage multiple shipping destinations for instant 1-click checkout.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleOpenAddAddress}
+                    className="bg-black hover:bg-orange-600 text-white px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors flex items-center gap-1.5"
+                  >
+                    <span>+ Add New Address</span>
+                  </button>
+                </div>
+
+                {savedAddresses.length === 0 ? (
+                  <div className="border border-dashed border-neutral-200 p-8 text-center bg-neutral-50/50 space-y-3">
+                    <p className="text-xs font-bold text-neutral-500 uppercase tracking-wider">
+                      No saved addresses found.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleOpenAddAddress}
+                      className="bg-black hover:bg-orange-600 text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-colors"
+                    >
+                      + Add Primary Address
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {savedAddresses.map((addr) => (
+                      <div
+                        key={addr.id}
+                        className={`border p-5 relative flex flex-col justify-between transition-colors ${
+                          addr.isDefault
+                            ? "border-black bg-white shadow-xs"
+                            : "border-neutral-200 bg-white hover:border-neutral-400"
+                        }`}
+                      >
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-[9px] font-black tracking-widest uppercase px-2 py-0.5 bg-neutral-100 text-neutral-800">
+                              {addr.type}
+                            </span>
+                            {addr.isDefault && (
+                              <span className="text-[9px] font-black tracking-widest uppercase text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5">
+                                Default Address
+                              </span>
+                            )}
+                          </div>
+
+                          <h4 className="text-sm font-black uppercase text-black">
+                            {addr.name}
+                          </h4>
+                          <p className="text-xs text-neutral-500 font-bold uppercase mt-0.5">
+                            +91 {addr.phone}
+                          </p>
+                          <p className="text-xs text-neutral-700 uppercase mt-2 leading-relaxed">
+                            {addr.street}
+                          </p>
+                          <p className="text-xs text-neutral-700 uppercase font-bold mt-1">
+                            {addr.city}, {addr.state} - {addr.pincode}
                           </p>
                         </div>
 
-                        <span
-                          className={`text-[9px] font-black tracking-widest uppercase px-3 py-1 border ${
-                            order.status === "Delivered"
-                              ? "bg-emerald-50 text-emerald-800 border-emerald-200"
-                              : order.status === "Shipped"
-                              ? "bg-sky-50 text-sky-800 border-sky-200"
-                              : "bg-amber-50 text-amber-800 border-amber-200"
-                          }`}
-                        >
-                          {order.status}
-                        </span>
-                      </div>
-
-                      {/* Items */}
-                      <div className="space-y-2">
-                        {order.items.map((item, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between text-xs py-1 border-b border-neutral-50 last:border-0"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="relative w-9 h-11 bg-neutral-100 flex-shrink-0">
-                                <Image
-                                  src={item.image || "/images/products/oversized-tshirt.jpg"}
-                                  alt={item.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <div>
-                                <p className="font-bold text-black uppercase tracking-wide">
-                                  {item.name}
-                                </p>
-                                <p className="text-[10px] text-neutral-400 uppercase font-medium">
-                                  Size: {item.size} • Qty: {item.quantity}
-                                </p>
-                              </div>
-                            </div>
-                            <span className="font-bold text-black text-right">
-                              RS. {(item.price * item.quantity).toLocaleString()}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Live Tracking Stepper */}
-                      <div className="pt-3 border-t border-neutral-100">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400">
-                            Fulfillment Progress
-                          </span>
-                          <span className="text-[9px] font-black uppercase tracking-widest text-orange-600">
-                            Express Air Courier
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-4 gap-1.5 pt-1">
-                          {["Confirmed", "Processing", "Shipped", "Delivered"].map(
-                            (stepName, sIdx) => {
-                              const steps = ["Pending", "Processing", "Shipped", "Delivered"];
-                              const currentIdx = steps.indexOf(order.status);
-                              const isCompleted = currentIdx >= sIdx;
-                              const isCurrent = currentIdx === sIdx;
-
-                              return (
-                                <div key={stepName} className="space-y-1 text-center">
-                                  <div
-                                    className={`h-1.5 w-full transition-all ${
-                                      isCompleted
-                                        ? "bg-black"
-                                        : isCurrent
-                                        ? "bg-orange-500 animate-pulse"
-                                        : "bg-neutral-200"
-                                    }`}
-                                  />
-                                  <span
-                                    className={`text-[8px] font-black tracking-wider uppercase block ${
-                                      isCompleted ? "text-black" : "text-neutral-400"
-                                    }`}
-                                  >
-                                    {stepName}
-                                  </span>
-                                </div>
-                              );
-                            }
+                        <div className="pt-4 mt-4 border-t border-neutral-100 flex items-center justify-between text-xs font-bold uppercase tracking-wider">
+                          {!addr.isDefault ? (
+                            <button
+                              type="button"
+                              onClick={() => handleSetDefaultAddress(addr.id)}
+                              className="text-[10px] text-neutral-500 hover:text-black underline"
+                            >
+                              Set as Default
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-neutral-400">Primary</span>
                           )}
+
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEditAddress(addr)}
+                              className="text-[10px] text-black hover:text-orange-600 font-black"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAddress(addr.id)}
+                              className="text-[10px] text-red-600 hover:text-red-800 font-black"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
-                        <p className="text-[9px] text-neutral-500 font-medium uppercase tracking-wider mt-3">
-                          Destination: {order.address}
-                        </p>
                       </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {/* Tab 2: Addresses */}
-            {activeTab === "addresses" && (
-              <div className="border border-neutral-200 p-6 bg-white space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-widest text-black border-b border-neutral-100 pb-2">
-                  Primary Delivery Address
-                </h3>
-                {myOrders.length > 0 ? (
-                  <div className="text-xs text-neutral-700 uppercase space-y-1 font-medium leading-relaxed">
-                    <p className="font-black text-black">{currentUser.name}</p>
-                    <p className="text-neutral-800">{myOrders[0].address}</p>
-                    <p className="pt-2 text-neutral-500 font-bold">
-                      Contact: {currentUser.phone ? `+91 ${currentUser.phone}` : currentUser.email}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="py-6 text-center space-y-2">
-                    <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider">
-                      No delivery address saved yet.
-                    </p>
-                    <p className="text-[10px] text-neutral-400 uppercase tracking-wider">
-                      Your delivery address will be saved here automatically when you place your first order.
-                    </p>
+                    ))}
                   </div>
                 )}
               </div>
             )}
 
-            {/* Tab 3: Perks */}
+            {/* TAB 3: PERKS & PRIVILEGES */}
             {activeTab === "perks" && (
-              <div className="border border-neutral-200 p-6 bg-white space-y-4">
-                <h3 className="text-xs font-black uppercase tracking-widest text-black border-b border-neutral-100 pb-2">
-                  DRIVEN Club Privileges
+              <div className="border border-neutral-200 p-6 bg-white space-y-6">
+                <h3 className="text-xs font-black uppercase tracking-widest text-black border-b border-neutral-100 pb-3">
+                  DRIVEN Member Privileges
                 </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                  <div className="border border-neutral-100 p-4 bg-neutral-50">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="border border-neutral-100 p-5 bg-neutral-50">
                     <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Perk 01</p>
                     <h4 className="text-xs font-black text-black uppercase mt-1">Priority Drop Access</h4>
                     <p className="text-[10px] text-neutral-500 uppercase mt-1">
-                      Order high-octane capsules 30 minutes before public releases.
+                      Order limited streetwear capsules 30 minutes before public releases.
                     </p>
                   </div>
-                  <div className="border border-neutral-100 p-4 bg-neutral-50">
+                  <div className="border border-neutral-100 p-5 bg-neutral-50">
                     <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Perk 02</p>
-                    <h4 className="text-xs font-black text-black uppercase mt-1">Complimentary Shipping</h4>
+                    <h4 className="text-xs font-black text-black uppercase mt-1">Complimentary Air Shipping</h4>
                     <p className="text-[10px] text-neutral-500 uppercase mt-1">
                       Free express air courier on all domestic orders across India.
                     </p>
                   </div>
+                  <div className="border border-neutral-100 p-5 bg-neutral-50">
+                    <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Perk 03</p>
+                    <h4 className="text-xs font-black text-black uppercase mt-1">Direct Concierge</h4>
+                    <p className="text-[10px] text-neutral-500 uppercase mt-1">
+                      Dedicated priority support via WhatsApp for fit guidance and exchanges.
+                    </p>
+                  </div>
+                  <div className="border border-neutral-100 p-5 bg-neutral-50">
+                    <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Perk 04</p>
+                    <h4 className="text-xs font-black text-black uppercase mt-1">Flagship Invites</h4>
+                    <p className="text-[10px] text-neutral-500 uppercase mt-1">
+                      Exclusive private invites to launch parties at Delhi & Mumbai flagship stores.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ADD / EDIT ADDRESS MODAL */}
+            {isAddressModalOpen && (
+              <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs">
+                <div className="bg-white border border-neutral-300 w-full max-w-lg p-6 sm:p-8 space-y-5 shadow-2xl">
+                  <div className="flex justify-between items-center border-b border-neutral-100 pb-3">
+                    <h3 className="text-sm font-black tracking-wider uppercase text-black">
+                      {editingAddressId ? "Edit Delivery Address" : "Add New Delivery Address"}
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setIsAddressModalOpen(false)}
+                      className="text-neutral-400 hover:text-black text-xl font-bold p-1"
+                    >
+                      &times;
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSaveAddress} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          Full Name *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={addressForm.name}
+                          onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
+                          className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold uppercase focus:outline-none focus:border-black"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          10-Digit Mobile Number *
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          maxLength={10}
+                          placeholder="9876543210"
+                          value={addressForm.phone}
+                          onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, "") })}
+                          className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                        Flat, House no., Building, Street *
+                      </label>
+                      <textarea
+                        required
+                        rows={2}
+                        placeholder="e.g. Flat 302, Palm Heights, Main Street"
+                        value={addressForm.street}
+                        onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
+                        className="w-full border border-neutral-300 px-3 py-2.5 text-xs uppercase focus:outline-none focus:border-black"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          City *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={addressForm.city}
+                          onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                          className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold uppercase focus:outline-none focus:border-black"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          State *
+                        </label>
+                        <select
+                          value={addressForm.state}
+                          onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
+                          className="w-full border border-neutral-300 px-2 py-2.5 text-xs font-bold bg-white focus:outline-none focus:border-black"
+                        >
+                          {INDIAN_STATES.map((st) => (
+                            <option key={st} value={st}>
+                              {st}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          PIN Code *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={6}
+                          placeholder="110001"
+                          value={addressForm.pincode}
+                          onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, "") })}
+                          className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Address Type */}
+                    <div className="pt-2">
+                      <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1.5">
+                        Address Type
+                      </label>
+                      <div className="flex gap-4">
+                        {(["Home", "Work", "Other"] as const).map((t) => (
+                          <label key={t} className="flex items-center gap-1.5 text-xs font-bold uppercase cursor-pointer">
+                            <input
+                              type="radio"
+                              name="addressType"
+                              checked={addressForm.type === t}
+                              onChange={() => setAddressForm({ ...addressForm, type: t })}
+                              className="accent-black"
+                            />
+                            <span>{t}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Default Checkbox */}
+                    <div className="pt-2">
+                      <label className="flex items-center gap-2 text-xs font-bold uppercase cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={addressForm.isDefault}
+                          onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
+                          className="w-4 h-4 accent-black"
+                        />
+                        <span>Make this my default shipping address</span>
+                      </label>
+                    </div>
+
+                    <div className="pt-4 flex gap-3 border-t border-neutral-100">
+                      <button
+                        type="button"
+                        onClick={() => setIsAddressModalOpen(false)}
+                        className="w-1/3 border border-neutral-300 text-neutral-700 hover:bg-neutral-100 py-3 text-xs font-black uppercase tracking-wider transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="w-2/3 bg-black hover:bg-orange-600 text-white py-3 text-xs font-black uppercase tracking-wider transition-colors"
+                      >
+                        {editingAddressId ? "Update Address" : "Save Address"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             )}

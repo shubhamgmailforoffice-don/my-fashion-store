@@ -1,30 +1,70 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { Product } from "@/lib/data";
 import { Order } from "@/lib/store";
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
 
-export default function AdminDashboardPage() {
+const CATEGORIES = [
+  { id: "Tops", name: "Tops & Hoodies", subCategories: ["T-Shirts", "Hoodies", "Sweatshirts", "Polos"] },
+  { id: "Bottoms", name: "Bottoms & Pants", subCategories: ["Cargo Pants", "Joggers", "Trackpants", "Shorts", "Denim"] },
+  { id: "Accessories", name: "Accessories", subCategories: ["Caps", "Bags", "Socks", "Wallets"] },
+  { id: "Special", name: "Special / Limited", subCategories: ["Mystery Box", "Archive Edition", "Speedway Drop"] },
+];
+
+const COLLECTIONS = [
+  { slug: "essentials", name: "Core Essentials" },
+  { slug: "nocturnal", name: "Nocturnal Archive" },
+  { slug: "tactical", name: "Tactical Techwear" },
+  { slug: "speedway", name: "Speedway Racing" },
+];
+
+interface RegisteredUser {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  role: string;
+  createdAt: string;
+}
+
+function AdminContent() {
+  const searchParams = useSearchParams();
+  const initialTab = searchParams.get("tab") as "orders" | "products" | "users" | null;
+  const [activeTab, setActiveTab] = useState<"orders" | "products" | "users">(initialTab || "orders");
+
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
+  const [usersList, setUsersList] = useState<RegisteredUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Edit / Image Changer Modal State
+  // Search & Filter States
+  const [orderSearchQuery, setOrderSearchQuery] = useState("");
+  const [orderStatusFilter, setOrderStatusFilter] = useState<string>("All");
+
+  const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [productCategoryFilter, setProductCategoryFilter] = useState<string>("All");
+
+  const [userSearchQuery, setUserSearchQuery] = useState("");
+
+  // Edit / Add Product Modal State
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  // Add Product Modal State
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  // New Product Form State
   const [newProductForm, setNewProductForm] = useState<Partial<Product>>({
     name: "",
     price: 3999,
-    category: "Tops",
-    subCategory: "T-Shirts",
+    originalPrice: 4999,
+    category: "Tops" as any,
+    subCategory: "T-Shirts" as any,
+    collectionSlug: "essentials",
     colors: ["Black"],
     sizes: ["S", "M", "L", "XL", "XXL"],
     inStock: true,
@@ -32,49 +72,57 @@ export default function AdminDashboardPage() {
     description: "",
   });
 
+  // Sync tab with URL parameter if it changes
   useEffect(() => {
-    let isMounted = true;
+    const tabParam = searchParams.get("tab") as "orders" | "products" | "users" | null;
+    if (tabParam && (tabParam === "orders" || tabParam === "products" || tabParam === "users")) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
-    Promise.all([
-      fetch("/api/products", { cache: "no-store" }),
-      fetch("/api/orders", { cache: "no-store" }),
-    ])
-      .then(async ([resProd, resOrders]) => {
-        if (!isMounted) return;
-        if (resProd.ok) {
-          const prodData = await resProd.json();
-          setProductsList(prodData);
-        }
-        if (resOrders.ok) {
-          const ordersData = await resOrders.json();
-          setOrdersList(ordersData);
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("Failed to load admin data:", err);
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  // Load all operational data
   const refreshData = async () => {
     try {
-      const [resProd, resOrders] = await Promise.all([
+      const [resProd, resOrders, resUsers] = await Promise.all([
         fetch("/api/products", { cache: "no-store" }),
         fetch("/api/orders", { cache: "no-store" }),
+        fetch("/api/users", { cache: "no-store" }),
       ]);
+
       if (resProd.ok) setProductsList(await resProd.json());
       if (resOrders.ok) setOrdersList(await resOrders.json());
-    } catch {
-      // ignore
+      if (resUsers.ok) setUsersList(await resUsers.json());
+      setIsLoading(false);
+    } catch (err) {
+      console.error("Failed to load admin data:", err);
+      setIsLoading(false);
     }
   };
 
-  // Quick 1-click toggle product stock
+  useEffect(() => {
+    refreshData();
+  }, []);
+
+  // Update order status
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: orderId, status: newStatus }),
+      });
+      if (res.ok) {
+        setOrdersList((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, status: newStatus as any } : o))
+        );
+        window.dispatchEvent(new Event("orders-updated"));
+      }
+    } catch (err) {
+      console.error("Failed to update status:", err);
+    }
+  };
+
+  // 1-Click Toggle Product Stock
   const handleToggleStock = async (id: string, currentInStock: boolean) => {
     try {
       const res = await fetch("/api/products", {
@@ -83,14 +131,16 @@ export default function AdminDashboardPage() {
         body: JSON.stringify({ id, inStock: !currentInStock }),
       });
       if (res.ok) {
-        refreshData();
+        setProductsList((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, inStock: !currentInStock } : p))
+        );
       }
     } catch (err) {
       console.error("Failed to toggle stock:", err);
     }
   };
 
-  // Handle uploading an image directly from computer
+  // Image Upload handler (supports direct PC upload)
   const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     target: "edit" | "new"
@@ -115,7 +165,6 @@ export default function AdminDashboardPage() {
         throw new Error(data.error || "Failed to upload image");
       }
 
-      // Update image URL in state
       if (target === "edit" && editingProduct) {
         setEditingProduct({
           ...editingProduct,
@@ -134,7 +183,7 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Save product changes to backend
+  // Save product changes
   const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -151,7 +200,7 @@ export default function AdminDashboardPage() {
         setTimeout(() => {
           setSaveSuccess(false);
           setEditingProduct(null);
-        }, 1200);
+        }, 1000);
         refreshData();
       }
     } catch (err) {
@@ -180,7 +229,7 @@ export default function AdminDashboardPage() {
 
   // Delete product
   const handleDeleteProduct = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+    if (!confirm(`Are you sure you want to permanently delete "${name}"?`)) return;
 
     try {
       const res = await fetch(`/api/products?id=${id}`, {
@@ -194,46 +243,87 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Update order status
-  const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
-    try {
-      const res = await fetch("/api/orders", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: orderId, status: newStatus }),
-      });
-      if (res.ok) {
-        refreshData();
-      }
-    } catch (err) {
-      console.error("Failed to update status:", err);
-    }
-  };
+  // Filtered Orders
+  const filteredOrders = useMemo(() => {
+    return ordersList.filter((o) => {
+      const matchesStatus = orderStatusFilter === "All" || o.status.toLowerCase() === orderStatusFilter.toLowerCase();
+      const q = orderSearchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        o.id.toLowerCase().includes(q) ||
+        o.customerName.toLowerCase().includes(q) ||
+        (o.phone && o.phone.toLowerCase().includes(q)) ||
+        (o.email && o.email.toLowerCase().includes(q)) ||
+        o.address.toLowerCase().includes(q);
 
-  // Metrics
-  const totalRevenue = ordersList.reduce((acc, o) => acc + o.total, 0);
+      return matchesStatus && matchesSearch;
+    });
+  }, [ordersList, orderStatusFilter, orderSearchQuery]);
+
+  // Filtered Products
+  const filteredProducts = useMemo(() => {
+    return productsList.filter((p) => {
+      const matchesCategory = productCategoryFilter === "All" || p.category.toLowerCase() === productCategoryFilter.toLowerCase();
+      const q = productSearchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.subCategory && p.subCategory.toLowerCase().includes(q)) ||
+        p.collectionSlug.toLowerCase().includes(q);
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [productsList, productCategoryFilter, productSearchQuery]);
+
+  // Filtered Users
+  const filteredUsers = useMemo(() => {
+    return usersList.filter((u) => {
+      const q = userSearchQuery.toLowerCase().trim();
+      return (
+        !q ||
+        u.name.toLowerCase().includes(q) ||
+        (u.email && u.email.toLowerCase().includes(q)) ||
+        (u.phone && u.phone.toLowerCase().includes(q))
+      );
+    });
+  }, [usersList, userSearchQuery]);
+
+  // Overview metrics
+  const totalRevenue = useMemo(() => ordersList.reduce((acc, o) => acc + o.total, 0), [ordersList]);
 
   return (
-    <div className="space-y-12 max-w-6xl mx-auto pb-16">
+    <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
         <div>
           <span className="text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
-            Live Store Operations
+            Control Center • Real-time Operations
           </span>
           <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest text-white mt-1">
-            Store Management Console
+            DRIVEN Administration
           </h1>
         </div>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="bg-white text-black hover:bg-orange-500 hover:text-white px-5 py-3 text-xs font-black tracking-widest uppercase transition-all flex items-center justify-center gap-2 self-start sm:self-auto"
-        >
-          <span>+ Add New Product</span>
-        </button>
+
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => refreshData()}
+            className="border border-neutral-700 hover:border-white text-neutral-300 hover:text-white px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors"
+          >
+            ↻ Refresh
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab("products");
+              setIsAddModalOpen(true);
+            }}
+            className="bg-white text-black hover:bg-orange-500 hover:text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5"
+          >
+            <span>+ Add Product</span>
+          </button>
+        </div>
       </div>
 
-      {/* Overview Metric Cards */}
+      {/* Top High-level Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-[#141414] border border-neutral-800 p-5">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Total Revenue</p>
@@ -244,138 +334,413 @@ export default function AdminDashboardPage() {
           <p className="text-xl sm:text-2xl font-black text-white mt-1">{ordersList.length}</p>
         </div>
         <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Active Products</p>
-          <p className="text-xl sm:text-2xl font-black text-white mt-1">{productsList.length}</p>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Live Catalog</p>
+          <p className="text-xl sm:text-2xl font-black text-white mt-1">{productsList.length} Items</p>
         </div>
         <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Database Status</p>
-          <p className="text-xs sm:text-sm font-bold text-green-400 mt-2 uppercase">Online & Saved</p>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Registered Users</p>
+          <p className="text-xl sm:text-2xl font-black text-orange-400 mt-1">{usersList.length} Members</p>
         </div>
       </div>
 
-      {/* Products & Image Manager Section */}
-      <section className="space-y-6">
-        <div className="flex justify-between items-baseline border-b border-neutral-800 pb-3">
-          <div>
-            <h2 className="text-lg font-black uppercase tracking-widest text-white">
-              Catalog & Inventory Manager
-            </h2>
-            <p className="text-xs text-neutral-400">
-              Manage stock status, size availability, product photography, and prices.
-            </p>
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-            {productsList.length} Items Loaded
+      {/* THREE DEDICATED TABS */}
+      <div className="flex border-b border-neutral-800 gap-x-2">
+        <button
+          onClick={() => setActiveTab("orders")}
+          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
+            activeTab === "orders"
+              ? "border-orange-500 text-white bg-neutral-900/50"
+              : "border-transparent text-neutral-400 hover:text-white"
+          }`}
+        >
+          <span>1. Orders & Dispatch</span>
+          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-orange-400">
+            {ordersList.length}
           </span>
-        </div>
+        </button>
+        <button
+          onClick={() => setActiveTab("products")}
+          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
+            activeTab === "products"
+              ? "border-orange-500 text-white bg-neutral-900/50"
+              : "border-transparent text-neutral-400 hover:text-white"
+          }`}
+        >
+          <span>2. Products & Photos</span>
+          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-neutral-300">
+            {productsList.length}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab("users")}
+          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
+            activeTab === "users"
+              ? "border-orange-500 text-white bg-neutral-900/50"
+              : "border-transparent text-neutral-400 hover:text-white"
+          }`}
+        >
+          <span>3. Registered Users</span>
+          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-neutral-300">
+            {usersList.length}
+          </span>
+        </button>
+      </div>
 
-        {isLoading ? (
-          <div className="text-center py-12 text-neutral-500 text-xs font-bold uppercase tracking-widest">
-            Loading products from database...
+      {/* ========================================================================= */}
+      {/* TAB 1: ORDERS & DISPATCH (ALL INFO: CUSTOMER, PHONE, ADDRESS, COD/UPI) */}
+      {/* ========================================================================= */}
+      {activeTab === "orders" && (
+        <section className="space-y-6">
+          {/* Controls Bar: Search & Status Filters */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#141414] p-4 border border-neutral-800">
+            <div className="w-full md:w-96">
+              <input
+                type="text"
+                placeholder="Search by Order ID, Customer Name, Phone, City..."
+                value={orderSearchQuery}
+                onChange={(e) => setOrderSearchQuery(e.target.value)}
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+              {["All", "Pending", "Processing", "Shipped", "Delivered", "Cancelled"].map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setOrderStatusFilter(st)}
+                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                    orderStatusFilter === st
+                      ? "bg-white text-black font-black"
+                      : "bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  {st}
+                </button>
+              ))}
+            </div>
           </div>
-        ) : (
+
+          {isLoading ? (
+            <div className="py-16 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest">
+              Loading live customer orders...
+            </div>
+          ) : filteredOrders.length === 0 ? (
+            <div className="py-16 text-center border border-dashed border-neutral-800 bg-[#121212] p-6 space-y-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                No orders match your filter criteria.
+              </p>
+              {orderSearchQuery && (
+                <button
+                  onClick={() => {
+                    setOrderSearchQuery("");
+                    setOrderStatusFilter("All");
+                  }}
+                  className="text-orange-400 text-xs uppercase font-bold underline"
+                >
+                  Clear search filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredOrders.map((order) => {
+                const isCOD = order.address.includes("COD");
+                const isUPI = order.address.includes("UPI");
+                const cleanDisplayAddress = order.address.replace(/\[Payment:.*?\]/i, "").trim();
+                const phoneClean = order.phone ? order.phone.replace(/\D/g, "") : "";
+
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-[#121212] border border-neutral-800 p-6 space-y-5 hover:border-neutral-700 transition-colors"
+                  >
+                    {/* Header Row */}
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-neutral-800 pb-4">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="text-base font-black font-mono tracking-wider text-orange-400">
+                          #{order.id}
+                        </span>
+                        <span className="text-xs text-neutral-400 font-bold uppercase">
+                          Date: {order.date}
+                        </span>
+                        {/* Payment Method Badge */}
+                        <span
+                          className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 ${
+                            isCOD
+                              ? "bg-neutral-800 text-neutral-200 border border-neutral-700"
+                              : isUPI
+                              ? "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                              : "bg-neutral-800 text-neutral-300"
+                          }`}
+                        >
+                          {isCOD ? "💵 Cash on Delivery (COD)" : isUPI ? "📱 UPI QR Paid" : "Prepaid"}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
+                        <span className="text-sm font-black text-white">
+                          Total: RS. {order.total.toLocaleString()}
+                        </span>
+                        {/* Status Updater */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-[9px] uppercase font-bold text-neutral-400">Status:</span>
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                            className="bg-black border border-neutral-600 text-xs font-bold uppercase text-white px-3 py-1.5 outline-none cursor-pointer focus:border-orange-500"
+                          >
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer & Address Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#161616] p-4 border border-neutral-800/80 text-xs">
+                      {/* Customer Info */}
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
+                          Customer Information
+                        </span>
+                        <p className="font-bold text-white text-sm uppercase">{order.customerName}</p>
+                        <p className="text-neutral-300 font-mono">
+                          {order.phone ? `+91 ${order.phone}` : "No phone provided"}
+                        </p>
+                        <p className="text-neutral-400 text-[11px] truncate">{order.email || "No email"}</p>
+                        
+                        {phoneClean && (
+                          <div className="pt-2 flex items-center gap-3">
+                            <a
+                              href={`https://wa.me/91${phoneClean}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-[10px] font-bold uppercase text-emerald-400 hover:underline flex items-center gap-1"
+                            >
+                              <span>💬 WhatsApp</span>
+                            </a>
+                            <a
+                              href={`tel:+91${phoneClean}`}
+                              className="text-[10px] font-bold uppercase text-neutral-400 hover:text-white flex items-center gap-1"
+                            >
+                              <span>📞 Call</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Delivery Address */}
+                      <div className="space-y-1 md:col-span-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
+                          Full Shipping & Delivery Address
+                        </span>
+                        <p className="text-neutral-200 uppercase font-medium leading-relaxed">
+                          {cleanDisplayAddress}
+                        </p>
+                        {order.address.includes("UTR:") && (
+                          <p className="text-orange-400 font-mono text-[11px] pt-1">
+                            Payment Ref: {order.address.match(/UTR:.*?(?=\]|$)/)?.[0]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Ordered Items Table */}
+                    <div className="space-y-2">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block">
+                        Ordered Items ({order.items.length})
+                      </span>
+                      <div className="divide-y divide-neutral-800 border border-neutral-800 bg-[#141414]">
+                        {order.items.map((item, idx) => (
+                          <div key={idx} className="p-3 flex items-center justify-between text-xs">
+                            <div className="flex items-center gap-3">
+                              <div className="relative w-10 h-12 bg-neutral-900 border border-neutral-800 flex-shrink-0">
+                                <Image
+                                  src={item.image || "/images/products/oversized-tshirt.jpg"}
+                                  alt={item.name}
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div>
+                                <p className="font-bold text-white uppercase">{item.name}</p>
+                                <p className="text-[10px] text-neutral-400 uppercase">
+                                  Size: <span className="text-white font-bold">{item.size}</span> • Quantity:{" "}
+                                  <span className="text-white font-bold">{item.quantity}</span>{" "}
+                                  {item.color ? `• Color: ${item.color}` : ""}
+                                </p>
+                              </div>
+                            </div>
+                            <span className="font-bold text-white">
+                              RS. {(item.price * item.quantity).toLocaleString()}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 2: PRODUCTS & PHOTOS (CATEGORY SELECTOR, PHOTO UPLOAD, STOCK/SIZES) */}
+      {/* ========================================================================= */}
+      {activeTab === "products" && (
+        <section className="space-y-6">
+          {/* Controls Bar: Category Filters & Search */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#141414] p-4 border border-neutral-800">
+            <div className="w-full md:w-80">
+              <input
+                type="text"
+                placeholder="Search products by title, sub-category..."
+                value={productSearchQuery}
+                onChange={(e) => setProductSearchQuery(e.target.value)}
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
+              <button
+                type="button"
+                onClick={() => setProductCategoryFilter("All")}
+                className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                  productCategoryFilter === "All"
+                    ? "bg-white text-black font-black"
+                    : "bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                }`}
+              >
+                All Categories
+              </button>
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => setProductCategoryFilter(cat.id)}
+                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                    productCategoryFilter === cat.id
+                      ? "bg-white text-black font-black"
+                      : "bg-[#1c1c1c] text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Products Table */}
           <div className="bg-[#121212] border border-neutral-800 overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="border-b border-neutral-800 bg-neutral-900/60 text-neutral-400 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="py-3 px-4">Image</th>
-                  <th className="py-3 px-4">Product Name</th>
+                  <th className="py-3 px-4">Photo</th>
+                  <th className="py-3 px-4">Product Name & Category</th>
                   <th className="py-3 px-4">Price</th>
                   <th className="py-3 px-4">Stock Status</th>
-                  <th className="py-3 px-4">Available Sizes</th>
+                  <th className="py-3 px-4">Sizes Available</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-800">
-                {productsList.map((product) => {
+                {filteredProducts.map((product) => {
                   const isInStock = product.inStock !== false;
                   const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
 
                   return (
                     <tr key={product.id} className="hover:bg-neutral-800/40 transition-colors">
-                      {/* Image preview with quick change indicator */}
+                      {/* Photo Thumbnail */}
                       <td className="py-3 px-4">
                         <div
-                          className="relative w-14 h-18 bg-neutral-900 border border-neutral-700 overflow-hidden flex-shrink-0 group cursor-pointer"
                           onClick={() => setEditingProduct({ ...product })}
+                          className="relative w-12 h-16 bg-neutral-900 border border-neutral-700 overflow-hidden cursor-pointer group"
+                          title="Click to change photo"
                         >
                           <Image
                             src={product.images[0] || "/images/products/oversized-tshirt.jpg"}
                             alt={product.name}
                             fill
-                            className="object-cover"
+                            className="object-cover group-hover:scale-105 transition-transform"
                           />
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                            <span className="text-[8px] font-bold text-white uppercase text-center">Change</span>
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[8px] font-bold text-white uppercase">
+                            Change
                           </div>
                         </div>
                       </td>
 
-                      {/* Product Name & Description */}
+                      {/* Product Name & Category */}
                       <td className="py-3 px-4">
-                        <p className="font-bold text-white uppercase tracking-wider">{product.name}</p>
-                        <span className="text-[9px] bg-neutral-800 text-neutral-300 px-2 py-0.5 uppercase tracking-widest mt-1 inline-block">
-                          {product.category}
-                        </span>
-                      </td>
-
-                      {/* Price */}
-                      <td className="py-3 px-4 font-bold text-white tracking-wider whitespace-nowrap">
-                        RS. {product.price.toLocaleString()}
-                      </td>
-
-                      {/* Stock Status & Quick 1-Click Toggle */}
-                      <td className="py-3 px-4 whitespace-nowrap">
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`px-2 py-0.5 text-[9px] font-black uppercase tracking-widest rounded-xs ${
-                              isInStock
-                                ? "bg-green-950/80 text-green-400 border border-green-800"
-                                : "bg-red-950/80 text-red-400 border border-red-800"
-                            }`}
-                          >
-                            {isInStock ? "In Stock" : "Out of Stock"}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleToggleStock(product.id, isInStock)}
-                            className="text-[9px] text-neutral-400 hover:text-white underline uppercase tracking-wider"
-                          >
-                            Toggle
-                          </button>
+                        <p className="font-black text-white uppercase text-xs">{product.name}</p>
+                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-400 uppercase">
+                          <span className="text-orange-400 font-bold">{product.category}</span>
+                          <span>•</span>
+                          <span>{product.subCategory || "Streetwear"}</span>
+                          <span>•</span>
+                          <span className="text-neutral-500">{product.collectionSlug}</span>
                         </div>
                       </td>
 
-                      {/* Available Sizes */}
+                      {/* Price */}
+                      <td className="py-3 px-4 font-bold text-white">
+                        RS. {product.price.toLocaleString()}
+                        {product.originalPrice && (
+                          <span className="text-neutral-500 line-through ml-1 text-[10px]">
+                            RS. {product.originalPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </td>
+
+                      {/* Stock Status 1-Click Toggle */}
                       <td className="py-3 px-4">
-                        <div className="flex flex-wrap gap-1 max-w-[150px]">
-                          {ALL_SIZES.map((sz) => {
-                            const isAvailable = prodSizes.includes(sz);
-                            return (
-                              <span
-                                key={sz}
-                                className={`text-[8px] font-bold px-1.5 py-0.5 rounded-xs uppercase ${
-                                  isAvailable
-                                    ? "bg-neutral-800 text-white"
-                                    : "bg-neutral-900 text-neutral-600 line-through"
-                                }`}
-                              >
-                                {sz}
-                              </span>
-                            );
-                          })}
+                        <button
+                          type="button"
+                          onClick={() => handleToggleStock(product.id, isInStock)}
+                          className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors ${
+                            isInStock
+                              ? "bg-emerald-950/60 border-emerald-600 text-emerald-400 hover:bg-red-950/40 hover:border-red-600 hover:text-red-400"
+                              : "bg-red-950/60 border-red-600 text-red-400 hover:bg-emerald-950/40 hover:border-emerald-600 hover:text-emerald-400"
+                          }`}
+                        >
+                          {isInStock ? "In Stock (Active)" : "Sold Out"}
+                        </button>
+                      </td>
+
+                      {/* Sizes */}
+                      <td className="py-3 px-4">
+                        <div className="flex flex-wrap gap-1 max-w-[140px]">
+                          {ALL_SIZES.map((sz) => (
+                            <span
+                              key={sz}
+                              className={`text-[8px] font-bold px-1.5 py-0.5 uppercase ${
+                                prodSizes.includes(sz)
+                                  ? "bg-neutral-800 text-white"
+                                  : "bg-neutral-900 text-neutral-600 line-through"
+                              }`}
+                            >
+                              {sz}
+                            </span>
+                          ))}
                         </div>
                       </td>
 
                       {/* Actions */}
                       <td className="py-3 px-4 text-right space-x-2 whitespace-nowrap">
                         <button
+                          type="button"
                           onClick={() => setEditingProduct({ ...product })}
-                          className="bg-white text-black hover:bg-orange-500 hover:text-white px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
+                          className="bg-white text-black hover:bg-orange-500 hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors"
                         >
-                          Edit / Stock
+                          Edit & Photos
                         </button>
                         <button
+                          type="button"
                           onClick={() => handleDeleteProduct(product.id, product.name)}
                           className="bg-neutral-800 text-red-400 hover:bg-red-900/60 px-2.5 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors"
                         >
@@ -388,92 +753,132 @@ export default function AdminDashboardPage() {
               </tbody>
             </table>
           </div>
-        )}
-      </section>
+        </section>
+      )}
 
-      {/* Customer Orders Section */}
-      <section id="orders" className="space-y-6 pt-6">
-        <div className="flex justify-between items-baseline border-b border-neutral-800 pb-3">
-          <div>
-            <h2 className="text-lg font-black uppercase tracking-widest text-white">
-              Customer Orders & Dispatch
-            </h2>
-            <p className="text-xs text-neutral-400">
-              Track customer orders and update real-time fulfillment status.
-            </p>
+      {/* ========================================================================= */}
+      {/* TAB 3: REGISTERED USERS (WHO CREATED ACCOUNTS) */}
+      {/* ========================================================================= */}
+      {activeTab === "users" && (
+        <section className="space-y-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[#141414] p-4 border border-neutral-800">
+            <div>
+              <h3 className="text-sm font-black uppercase tracking-widest text-white">
+                Registered Customer Accounts
+              </h3>
+              <p className="text-xs text-neutral-400 uppercase mt-0.5">
+                Full list of users who signed up or registered on the store.
+              </p>
+            </div>
+
+            <div className="w-full sm:w-80">
+              <input
+                type="text"
+                placeholder="Search by Name, Email, or Mobile Number..."
+                value={userSearchQuery}
+                onChange={(e) => setUserSearchQuery(e.target.value)}
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+              />
+            </div>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
-            {ordersList.length} Total Orders
-          </span>
-        </div>
 
-        <div className="bg-[#121212] border border-neutral-800 overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
-            <thead>
-              <tr className="border-b border-neutral-800 bg-neutral-900/60 text-neutral-400 font-bold uppercase text-[10px] tracking-wider">
-                <th className="py-3 px-4">Order ID</th>
-                <th className="py-3 px-4">Customer</th>
-                <th className="py-3 px-4">Contact & City</th>
-                <th className="py-3 px-4">Items</th>
-                <th className="py-3 px-4">Total</th>
-                <th className="py-3 px-4">Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-800">
-              {ordersList.map((order) => (
-                <tr key={order.id} className="hover:bg-neutral-800/30">
-                  <td className="py-3 px-4 font-mono font-bold text-orange-400">
-                    {order.id}
-                    <p className="text-[9px] text-neutral-500 font-sans">{order.date}</p>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white uppercase">{order.customerName}</td>
-                  <td className="py-3 px-4 text-[10px] text-neutral-400">
-                    <p>{order.phone}</p>
-                    <p className="line-clamp-1">{order.address}</p>
-                  </td>
-                  <td className="py-3 px-4">
-                    <ul className="text-[10px] text-neutral-300 space-y-0.5 uppercase">
-                      {order.items.map((item, idx) => (
-                        <li key={idx}>
-                          {item.quantity}x {item.name} ({item.size})
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                  <td className="py-3 px-4 font-bold text-white">
-                    RS. {order.total.toLocaleString()}
-                  </td>
-                  <td className="py-3 px-4">
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                      className="bg-neutral-900 border border-neutral-700 text-[10px] font-bold uppercase tracking-wider text-white px-2 py-1 outline-none cursor-pointer focus:border-orange-500"
-                    >
-                      <option value="Pending">Pending</option>
-                      <option value="Processing">Processing</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+          {filteredUsers.length === 0 ? (
+            <div className="py-16 text-center border border-dashed border-neutral-800 bg-[#121212] p-6 space-y-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-neutral-400">
+                No registered accounts match your search.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-[#121212] border border-neutral-800 overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-neutral-800 bg-neutral-900/60 text-neutral-400 font-bold uppercase text-[10px] tracking-wider">
+                    <th className="py-3.5 px-4">Member Name</th>
+                    <th className="py-3.5 px-4">Email Address</th>
+                    <th className="py-3.5 px-4">Mobile Number</th>
+                    <th className="py-3.5 px-4">Role</th>
+                    <th className="py-3.5 px-4">Orders Placed</th>
+                    <th className="py-3.5 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-800">
+                  {filteredUsers.map((user) => {
+                    const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
+                    const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
 
-      {/* Edit Product & Stock Modal */}
+                    const userOrderCount = ordersList.filter((o) => {
+                      if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
+                      const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
+                      if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
+                      if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
+                      return false;
+                    }).length;
+
+                    return (
+                      <tr key={user.id} className="hover:bg-neutral-800/40 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-neutral-800 border border-neutral-700 flex items-center justify-center font-black text-white text-xs">
+                              {user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <span className="font-bold text-white uppercase">{user.name}</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-neutral-300">
+                          {user.email || <span className="text-neutral-500 italic">None</span>}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-neutral-300">
+                          {user.phone ? `+91 ${user.phone}` : <span className="text-neutral-500 italic">None</span>}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-xs ${
+                              user.role === "admin"
+                                ? "bg-orange-500 text-black font-black"
+                                : "bg-neutral-800 text-neutral-300"
+                            }`}
+                          >
+                            {user.role}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className="font-black text-white">{userOrderCount} Orders</span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTab("orders");
+                              setOrderSearchQuery(user.name);
+                            }}
+                            className="text-[10px] text-orange-400 hover:text-orange-300 font-bold uppercase tracking-wider underline"
+                          >
+                            View Customer Orders &rarr;
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: EDIT PRODUCT & CHANGE PHOTO */}
+      {/* ========================================================================= */}
       {editingProduct && (
         <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
           <div className="bg-[#161616] border border-neutral-700 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
-                  Product & Stock Editor
+                  Product & Photo Editor
                 </span>
-                <h3 className="text-lg font-black tracking-widest uppercase">
-                  Edit Details, Stock & Sizes
+                <h3 className="text-lg font-black tracking-widest uppercase mt-0.5">
+                  Edit Details & Photography
                 </h3>
               </div>
               <button
@@ -485,7 +890,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <form onSubmit={handleSaveProduct} className="space-y-6">
-              {/* Image Upload Area */}
+              {/* Image Uploader Area */}
               <div className="border border-dashed border-neutral-700 p-4 bg-[#111] flex flex-col sm:flex-row items-center gap-6">
                 <div className="relative w-28 h-36 bg-neutral-900 border border-neutral-700 flex-shrink-0 overflow-hidden">
                   <Image
@@ -498,336 +903,127 @@ export default function AdminDashboardPage() {
 
                 <div className="space-y-3 flex-1 text-center sm:text-left">
                   <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-300">
-                    Upload New Image from Computer
+                    Replace Product Photo (Upload from your Computer)
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, "edit")}
-                    className="block w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-white file:text-black hover:file:bg-orange-500 file:cursor-pointer"
+                    disabled={uploadingImage}
+                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-orange-500 hover:file:text-white file:cursor-pointer"
                   />
-                  {uploadingImage && (
-                    <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider">
-                      Uploading image to public/images/products/...
-                    </p>
-                  )}
-                  {uploadError && (
-                    <p className="text-[10px] text-red-400 font-bold uppercase tracking-wider">
-                      {uploadError}
-                    </p>
-                  )}
-                  <p className="text-[9px] text-neutral-500">
-                    Current path: {editingProduct.images[0]}
-                  </p>
-                </div>
-              </div>
-
-              {/* Stock Status Selector */}
-              <div className="border border-neutral-800 bg-[#121212] p-4 space-y-2">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-300">
-                  Stock Availability Status
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setEditingProduct({ ...editingProduct, inStock: true })}
-                    className={`py-3 text-xs font-black uppercase tracking-wider border transition-colors flex items-center justify-center gap-2 ${
-                      editingProduct.inStock !== false
-                        ? "bg-green-600 border-green-500 text-white font-black"
-                        : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    <span>✓ In Stock (Purchasable)</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingProduct({ ...editingProduct, inStock: false })}
-                    className={`py-3 text-xs font-black uppercase tracking-wider border transition-colors flex items-center justify-center gap-2 ${
-                      editingProduct.inStock === false
-                        ? "bg-red-600 border-red-500 text-white font-black"
-                        : "bg-neutral-900 border-neutral-800 text-neutral-400 hover:text-white"
-                    }`}
-                  >
-                    <span>✕ Out of Stock (Sold Out)</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Available Sizes Multi-Select */}
-              <div className="border border-neutral-800 bg-[#121212] p-4 space-y-3">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-neutral-300">
-                      Available Sizes for Customers
-                    </label>
-                    <p className="text-[9px] text-neutral-400 uppercase">
-                      Select which sizes customers can buy. Unchecked sizes will appear crossed out.
-                    </p>
-                  </div>
-                  <div className="flex gap-2 text-[9px] font-bold uppercase">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setEditingProduct({ ...editingProduct, sizes: [...ALL_SIZES] })
+                  {uploadingImage && <p className="text-xs text-orange-400 font-bold">Uploading image...</p>}
+                  {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+                  
+                  <div className="pt-1">
+                    <span className="text-[9px] text-neutral-500 uppercase block mb-1">Or paste Image URL:</span>
+                    <input
+                      type="text"
+                      value={editingProduct.images[0] || ""}
+                      onChange={(e) =>
+                        setEditingProduct({
+                          ...editingProduct,
+                          images: [e.target.value, ...(editingProduct.images.slice(1) || [])],
+                        })
                       }
-                      className="text-orange-400 hover:underline"
-                    >
-                      Select All
-                    </button>
-                    <span>•</span>
-                    <button
-                      type="button"
-                      onClick={() => setEditingProduct({ ...editingProduct, sizes: [] })}
-                      className="text-neutral-500 hover:underline"
-                    >
-                      Clear All
-                    </button>
+                      placeholder="https://..."
+                      className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-1.5 text-xs text-white"
+                    />
                   </div>
-                </div>
-
-                <div className="grid grid-cols-5 gap-2">
-                  {ALL_SIZES.map((sz) => {
-                    const currentSizes = editingProduct.sizes || ALL_SIZES;
-                    const isChecked = currentSizes.includes(sz);
-
-                    return (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => {
-                          const newSizes = isChecked
-                            ? currentSizes.filter((s) => s !== sz)
-                            : [...currentSizes, sz];
-                          setEditingProduct({ ...editingProduct, sizes: newSizes });
-                        }}
-                        className={`py-3 text-xs font-black uppercase border transition-all ${
-                          isChecked
-                            ? "bg-white text-black border-white shadow-sm"
-                            : "bg-neutral-900 text-neutral-500 border-neutral-800 hover:border-neutral-700 line-through"
-                        }`}
-                      >
-                        {sz} {isChecked ? "✓" : ""}
-                      </button>
-                    );
-                  })}
                 </div>
               </div>
 
               {/* Product Info Fields */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                    Product Title
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Product Title *
                   </label>
                   <input
                     type="text"
                     required
                     value={editingProduct.name}
-                    onChange={(e) =>
-                      setEditingProduct({ ...editingProduct, name: e.target.value })
-                    }
-                    className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase focus:border-white outline-none"
+                    onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                    Price (₹)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={editingProduct.price}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        price: Number(e.target.value),
-                      })
-                    }
-                    className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase focus:border-white outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                    Category
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Category *
                   </label>
                   <select
                     value={editingProduct.category}
                     onChange={(e) =>
                       setEditingProduct({
                         ...editingProduct,
-                        category: e.target.value as "Tops" | "Bottoms" | "Special",
+                        category: e.target.value as any,
                       })
                     }
-                    className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase focus:border-white outline-none cursor-pointer"
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
                   >
-                    <option value="Tops">Tops</option>
-                    <option value="Bottoms">Bottoms</option>
-                    <option value="Special">Special / Drops</option>
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                    Available Colors (comma-separated)
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Price (RS.) *
                   </label>
                   <input
-                    type="text"
-                    value={editingProduct.colors.join(", ")}
-                    onChange={(e) =>
-                      setEditingProduct({
-                        ...editingProduct,
-                        colors: e.target.value.split(",").map((c) => c.trim()),
-                      })
-                    }
-                    className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase focus:border-white outline-none"
+                    type="number"
+                    required
+                    value={editingProduct.price}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold text-white"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Product Description
-                </label>
-                <textarea
-                  rows={3}
-                  value={editingProduct.description || ""}
-                  onChange={(e) =>
-                    setEditingProduct({
-                      ...editingProduct,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase focus:border-white outline-none"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-neutral-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingProduct(null)}
-                  className="px-5 py-2.5 border border-neutral-700 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:text-white"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-white text-black hover:bg-orange-500 hover:text-white px-6 py-2.5 text-xs font-black uppercase tracking-wider transition-colors"
-                >
-                  {saveSuccess ? "✓ Saved to Database!" : "Save Changes"}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Add New Product Modal */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
-          <div className="bg-[#161616] border border-neutral-700 w-full max-w-lg p-6 sm:p-8 space-y-6 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
-              <h3 className="text-base font-black tracking-widest uppercase">
-                Add New Streetwear Product
-              </h3>
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="text-neutral-400 hover:text-white text-xl font-bold"
-              >
-                &times;
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateProduct} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Product Name
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="E.G. OVERSIZED BOX LOGO TEE"
-                  value={newProductForm.name}
-                  onChange={(e) =>
-                    setNewProductForm({ ...newProductForm, name: e.target.value })
-                  }
-                  className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase outline-none focus:border-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Price (₹)
-                </label>
-                <input
-                  type="number"
-                  required
-                  value={newProductForm.price}
-                  onChange={(e) =>
-                    setNewProductForm({
-                      ...newProductForm,
-                      price: Number(e.target.value),
-                    })
-                  }
-                  className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase outline-none focus:border-white"
-                />
-              </div>
-
-              {/* Stock Status in Add Form */}
-              <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
-                  Stock Status
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setNewProductForm({ ...newProductForm, inStock: true })}
-                    className={`py-2 text-[10px] font-bold uppercase border ${
-                      newProductForm.inStock !== false
-                        ? "bg-green-600 border-green-500 text-white font-black"
-                        : "bg-neutral-900 border-neutral-800 text-neutral-400"
-                    }`}
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Collection *
+                  </label>
+                  <select
+                    value={editingProduct.collectionSlug}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, collectionSlug: e.target.value })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
                   >
-                    In Stock
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNewProductForm({ ...newProductForm, inStock: false })}
-                    className={`py-2 text-[10px] font-bold uppercase border ${
-                      newProductForm.inStock === false
-                        ? "bg-red-600 border-red-500 text-white font-black"
-                        : "bg-neutral-900 border-neutral-800 text-neutral-400"
-                    }`}
-                  >
-                    Out of Stock
-                  </button>
+                    {COLLECTIONS.map((col) => (
+                      <option key={col.slug} value={col.slug}>
+                        {col.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
-              {/* Sizes in Add Form */}
-              <div className="space-y-1">
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400">
+              {/* Sizes Available */}
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-2">
                   Available Sizes
                 </label>
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="flex gap-2">
                   {ALL_SIZES.map((sz) => {
-                    const currentSizes = newProductForm.sizes || ALL_SIZES;
-                    const isChecked = currentSizes.includes(sz);
+                    const activeSizes = editingProduct.sizes || ALL_SIZES;
+                    const isSelected = activeSizes.includes(sz);
                     return (
                       <button
                         key={sz}
                         type="button"
                         onClick={() => {
-                          const updated = isChecked
-                            ? currentSizes.filter((s) => s !== sz)
-                            : [...currentSizes, sz];
-                          setNewProductForm({ ...newProductForm, sizes: updated });
+                          const nextSizes = isSelected
+                            ? activeSizes.filter((s) => s !== sz)
+                            : [...activeSizes, sz];
+                          setEditingProduct({ ...editingProduct, sizes: nextSizes });
                         }}
-                        className={`py-1.5 text-[10px] font-bold uppercase border ${
-                          isChecked
-                            ? "bg-white text-black border-white"
-                            : "bg-neutral-900 text-neutral-500 border-neutral-800 line-through"
+                        className={`w-10 h-10 border text-xs font-bold uppercase transition-all ${
+                          isSelected
+                            ? "border-orange-500 bg-orange-500 text-black font-black"
+                            : "border-neutral-700 bg-neutral-900 text-neutral-500"
                         }`}
                       >
                         {sz}
@@ -837,73 +1033,217 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
+              {/* In-Stock Toggle */}
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Upload Product Image
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editingProduct.inStock !== false}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, inStock: e.target.checked })}
+                    className="w-4 h-4 accent-orange-500"
+                  />
+                  <span className="text-xs font-bold uppercase text-white">Item In Stock (Available for Purchase)</span>
                 </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageUpload(e, "new")}
-                  className="block w-full text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:bg-white file:text-black hover:file:bg-orange-500 file:cursor-pointer"
-                />
-                {uploadingImage && (
-                  <p className="text-[10px] text-orange-400 font-bold uppercase tracking-wider mt-1">
-                    Uploading image...
-                  </p>
-                )}
               </div>
 
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Category
-                </label>
-                <select
-                  value={newProductForm.category}
-                  onChange={(e) =>
-                    setNewProductForm({
-                      ...newProductForm,
-                      category: e.target.value as "Tops" | "Bottoms" | "Special",
-                    })
-                  }
-                  className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase outline-none focus:border-white cursor-pointer"
-                >
-                  <option value="Tops">Tops</option>
-                  <option value="Bottoms">Bottoms</option>
-                  <option value="Special">Special / Drops</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-1">
-                  Description
-                </label>
-                <textarea
-                  rows={2}
-                  value={newProductForm.description}
-                  onChange={(e) =>
-                    setNewProductForm({
-                      ...newProductForm,
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full bg-[#111] border border-neutral-700 px-3 py-2 text-xs text-white uppercase outline-none focus:border-white"
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-neutral-800">
+              <div className="flex gap-3 pt-4 border-t border-neutral-800">
                 <button
                   type="button"
-                  onClick={() => setIsAddModalOpen(false)}
-                  className="px-4 py-2 border border-neutral-700 text-xs font-bold uppercase tracking-wider text-neutral-400"
+                  onClick={() => setEditingProduct(null)}
+                  className="w-1/3 border border-neutral-700 hover:bg-neutral-800 text-neutral-300 py-3 text-xs font-bold uppercase"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-white text-black hover:bg-orange-500 hover:text-white px-5 py-2 text-xs font-black uppercase tracking-wider transition-colors"
+                  className="w-2/3 bg-orange-500 hover:bg-orange-600 text-black py-3 text-xs font-black uppercase"
                 >
-                  Create Product
+                  {saveSuccess ? "Saved Successfully ✓" : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: ADD NEW PRODUCT */}
+      {/* ========================================================================= */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs">
+          <div className="bg-[#161616] border border-neutral-700 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
+              <div>
+                <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
+                  Catalog Operations
+                </span>
+                <h3 className="text-lg font-black tracking-widest uppercase mt-0.5">
+                  Add New Drop Product
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsAddModalOpen(false)}
+                className="text-neutral-400 hover:text-white text-xl font-bold"
+              >
+                &times;
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateProduct} className="space-y-6">
+              {/* Image Upload Area */}
+              <div className="border border-dashed border-neutral-700 p-4 bg-[#111] flex flex-col sm:flex-row items-center gap-6">
+                <div className="relative w-28 h-36 bg-neutral-900 border border-neutral-700 flex-shrink-0 overflow-hidden">
+                  <Image
+                    src={newProductForm.images?.[0] || "/images/products/oversized-tshirt.jpg"}
+                    alt="Product Preview"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="space-y-3 flex-1 text-center sm:text-left">
+                  <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-300">
+                    Upload Product Photo from Computer
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleImageUpload(e, "new")}
+                    disabled={uploadingImage}
+                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-orange-500 hover:file:text-white file:cursor-pointer"
+                  />
+                  {uploadingImage && <p className="text-xs text-orange-400 font-bold">Uploading photo...</p>}
+                  {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+                </div>
+              </div>
+
+              {/* Product Info Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Product Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. TACTICAL V2 CARGO PANTS"
+                    value={newProductForm.name}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, name: e.target.value })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    value={newProductForm.category}
+                    onChange={(e) => {
+                      const selCat = e.target.value as any;
+                      const matched = CATEGORIES.find((c) => c.id === selCat);
+                      setNewProductForm({
+                        ...newProductForm,
+                        category: selCat,
+                        subCategory: (matched?.subCategories[0] || "T-Shirts") as any,
+                      });
+                    }}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
+                  >
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Sub-Category *
+                  </label>
+                  <select
+                    value={newProductForm.subCategory}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, subCategory: e.target.value as any })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
+                  >
+                    {CATEGORIES.find((c) => c.id === newProductForm.category)?.subCategories.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Collection *
+                  </label>
+                  <select
+                    value={newProductForm.collectionSlug}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, collectionSlug: e.target.value })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold uppercase text-white"
+                  >
+                    {COLLECTIONS.map((col) => (
+                      <option key={col.slug} value={col.slug}>
+                        {col.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Price (RS.) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={newProductForm.price}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, price: Number(e.target.value) })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                    Original Strike-through Price (RS.)
+                  </label>
+                  <input
+                    type="number"
+                    value={newProductForm.originalPrice || ""}
+                    onChange={(e) => setNewProductForm({ ...newProductForm, originalPrice: Number(e.target.value) })}
+                    className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs font-bold text-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                  Description
+                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Heavyweight custom-milled French Terry..."
+                  value={newProductForm.description || ""}
+                  onChange={(e) => setNewProductForm({ ...newProductForm, description: e.target.value })}
+                  className="w-full bg-[#1e1e1e] border border-neutral-700 px-3 py-2 text-xs text-white"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4 border-t border-neutral-800">
+                <button
+                  type="button"
+                  onClick={() => setIsAddModalOpen(false)}
+                  className="w-1/3 border border-neutral-700 hover:bg-neutral-800 text-neutral-300 py-3 text-xs font-bold uppercase"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="w-2/3 bg-orange-500 hover:bg-orange-600 text-black py-3 text-xs font-black uppercase"
+                >
+                  Publish New Product &rarr;
                 </button>
               </div>
             </form>
@@ -911,5 +1251,13 @@ export default function AdminDashboardPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-neutral-400 text-xs font-bold uppercase">Loading Admin Console...</div>}>
+      <AdminContent />
+    </Suspense>
   );
 }
