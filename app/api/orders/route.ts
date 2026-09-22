@@ -60,8 +60,12 @@ export async function POST(request: Request) {
       }
     }
 
-    db.orders.unshift(newOrder);
-    saveDB(db);
+    try {
+      db.orders.unshift(newOrder);
+      saveDB(db);
+    } catch {
+      // Ignore local file error on read-only environments
+    }
 
     return NextResponse.json({ success: true, order: newOrder });
   } catch (error) {

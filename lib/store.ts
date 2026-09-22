@@ -221,38 +221,33 @@ const initialUsers: User[] = [
 ];
 
 export function getDB(): DBData {
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
-  }
-
-  if (!fs.existsSync(dbFilePath)) {
-    const initialData: DBData = {
-      products: initialProducts,
-      orders: initialOrders,
-      users: initialUsers,
-    };
-    fs.writeFileSync(dbFilePath, JSON.stringify(initialData, null, 2), "utf-8");
-    return initialData;
-  }
-
   try {
-    const raw = fs.readFileSync(dbFilePath, "utf-8");
-    return JSON.parse(raw);
+    if (fs.existsSync(dbFilePath)) {
+      const raw = fs.readFileSync(dbFilePath, "utf-8");
+      return JSON.parse(raw);
+    }
   } catch {
-    return {
-      products: initialProducts,
-      orders: initialOrders,
-      users: initialUsers,
-    };
+    // Safe fallback if file cannot be read
   }
+
+  return {
+    products: initialProducts,
+    orders: initialOrders,
+    users: initialUsers,
+  };
 }
 
 export function saveDB(data: DBData): void {
-  if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir, { recursive: true });
+  try {
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(dbFilePath, JSON.stringify(data, null, 2), "utf-8");
+  } catch {
+    // Silently ignore on read-only serverless filesystems like Vercel
   }
-  fs.writeFileSync(dbFilePath, JSON.stringify(data, null, 2), "utf-8");
 }
+
 
 export async function getAsyncProducts(): Promise<Product[]> {
   if (process.env.DATABASE_URL) {

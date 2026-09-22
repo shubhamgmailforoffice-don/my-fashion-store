@@ -81,6 +81,27 @@ export default function AccountPage() {
     };
   }, []);
 
+  // Filter orders strictly for the logged-in user (unless admin)
+  const myOrders = useMemo(() => {
+    if (!currentUser) return [];
+    if (currentUser.role === "admin") return userOrders;
+    return userOrders.filter((o) => {
+      const userPhone = currentUser.phone ? currentUser.phone.replace(/\D/g, "") : "";
+      const orderPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
+      const phoneMatch = Boolean(
+        userPhone &&
+          orderPhone &&
+          (orderPhone.endsWith(userPhone) || userPhone.endsWith(orderPhone))
+      );
+      const emailMatch = Boolean(
+        currentUser.email &&
+          o.email &&
+          currentUser.email.toLowerCase() === o.email.toLowerCase()
+      );
+      return phoneMatch || emailMatch;
+    });
+  }, [userOrders, currentUser]);
+
   const saveSession = (user: User) => {
     localStorage.setItem("user_session", JSON.stringify(user));
     window.dispatchEvent(new Event("session-updated"));
@@ -262,7 +283,7 @@ export default function AccountPage() {
                     : "border-transparent text-neutral-400 hover:text-black"
                 }`}
               >
-                Orders ({userOrders.length})
+                Orders ({myOrders.length})
               </button>
               <button
                 onClick={() => setActiveTab("addresses")}
@@ -289,7 +310,7 @@ export default function AccountPage() {
             {/* Tab 1: Orders */}
             {activeTab === "orders" && (
               <div className="space-y-4">
-                {userOrders.length === 0 ? (
+                {myOrders.length === 0 ? (
                   <div className="border border-dashed border-neutral-200 py-12 text-center p-6">
                     <p className="text-xs font-bold tracking-widest text-neutral-400 uppercase mb-4">
                       No order records found for this account.
@@ -302,7 +323,8 @@ export default function AccountPage() {
                     </Link>
                   </div>
                 ) : (
-                  userOrders.map((order) => (
+                  myOrders.map((order) => (
+
                     <div
                       key={order.id}
                       className="border border-neutral-200 bg-white p-5 sm:p-6 space-y-4 hover:border-black transition-colors"
@@ -424,14 +446,24 @@ export default function AccountPage() {
                 <h3 className="text-xs font-black uppercase tracking-widest text-black border-b border-neutral-100 pb-2">
                   Primary Delivery Address
                 </h3>
-                <div className="text-xs text-neutral-700 uppercase space-y-1 font-medium leading-relaxed">
-                  <p className="font-black text-black">{currentUser.name}</p>
-                  <p>B-42 Vasant Vihar, Behind Promenade Hub</p>
-                  <p>New Delhi, Delhi - 110057, India</p>
-                  <p className="pt-2 text-neutral-500 font-bold">
-                    Contact: {currentUser.phone ? `+91 ${currentUser.phone}` : currentUser.email}
-                  </p>
-                </div>
+                {myOrders.length > 0 ? (
+                  <div className="text-xs text-neutral-700 uppercase space-y-1 font-medium leading-relaxed">
+                    <p className="font-black text-black">{currentUser.name}</p>
+                    <p className="text-neutral-800">{myOrders[0].address}</p>
+                    <p className="pt-2 text-neutral-500 font-bold">
+                      Contact: {currentUser.phone ? `+91 ${currentUser.phone}` : currentUser.email}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="py-6 text-center space-y-2">
+                    <p className="text-xs font-bold text-neutral-600 uppercase tracking-wider">
+                      No delivery address saved yet.
+                    </p>
+                    <p className="text-[10px] text-neutral-400 uppercase tracking-wider">
+                      Your delivery address will be saved here automatically when you place your first order.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
