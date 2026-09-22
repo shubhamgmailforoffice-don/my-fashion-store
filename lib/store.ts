@@ -251,3 +251,105 @@ export function saveDB(data: DBData): void {
   }
   fs.writeFileSync(dbFilePath, JSON.stringify(data, null, 2), "utf-8");
 }
+
+export async function getAsyncProducts(): Promise<Product[]> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const { prisma } = await import("@/lib/prisma");
+      const records = await prisma.product.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+      if (records && records.length > 0) {
+        return records.map((p) => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          originalPrice: p.originalPrice ?? undefined,
+          images: p.images,
+          category: p.category as Product["category"],
+          subCategory: p.subCategory as Product["subCategory"],
+          colors: p.colors,
+          sizes: p.sizes,
+          inStock: p.inStock,
+          isNew: p.isNew,
+          isSale: p.isSale,
+          isBlindBox: p.isBlindBox,
+          collectionSlug: p.collectionSlug,
+          description: p.description ?? undefined,
+        }));
+      }
+    } catch {
+      // Fallback to local db.json
+    }
+  }
+  return getDB().products;
+}
+
+export async function getAsyncProductById(id: string): Promise<Product | undefined> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const { prisma } = await import("@/lib/prisma");
+      const p = await prisma.product.findUnique({ where: { id } });
+      if (p) {
+        return {
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          originalPrice: p.originalPrice ?? undefined,
+          images: p.images,
+          category: p.category as Product["category"],
+          subCategory: p.subCategory as Product["subCategory"],
+          colors: p.colors,
+          sizes: p.sizes,
+          inStock: p.inStock,
+          isNew: p.isNew,
+          isSale: p.isSale,
+          isBlindBox: p.isBlindBox,
+          collectionSlug: p.collectionSlug,
+          description: p.description ?? undefined,
+        };
+      }
+    } catch {
+      // Fallback to local db.json
+    }
+  }
+  const db = getDB();
+  return db.products.find((p) => p.id === id);
+}
+
+export async function getAsyncOrders(): Promise<Order[]> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const { prisma } = await import("@/lib/prisma");
+      const records = await prisma.order.findMany({
+        include: { items: true },
+        orderBy: { createdAt: "desc" },
+      });
+      if (records && records.length > 0) {
+        return records.map((o) => ({
+          id: o.id,
+          customerName: o.customerName,
+          email: o.email || "",
+          phone: o.phone || "",
+          address: o.address,
+          total: o.total,
+          status: o.status as Order["status"],
+          date: o.date,
+          items: o.items.map((i) => ({
+            id: i.id,
+            name: i.name,
+            price: i.price,
+            image: i.image,
+            size: i.size,
+            color: i.color,
+            quantity: i.quantity,
+          })),
+        }));
+      }
+    } catch {
+      // Fallback to local db.json
+    }
+  }
+  return getDB().orders;
+}
+

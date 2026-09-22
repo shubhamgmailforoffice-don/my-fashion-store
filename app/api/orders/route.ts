@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
-import { getDB, saveDB, Order } from "@/lib/store";
+import { getDB, saveDB, getAsyncOrders, Order } from "@/lib/store";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 export async function GET() {
-  const db = getDB();
-  return NextResponse.json(db.orders);
+  const orders = await getAsyncOrders();
+  return NextResponse.json(orders, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    },
+  });
 }
 
 export async function POST(request: Request) {
@@ -22,6 +29,36 @@ export async function POST(request: Request) {
       status: "Pending",
       date: new Date().toISOString().split("T")[0],
     };
+
+    if (process.env.DATABASE_URL) {
+      try {
+        const { prisma } = await import("@/lib/prisma");
+        await prisma.order.create({
+          data: {
+            id: newOrder.id,
+            customerName: newOrder.customerName,
+            email: newOrder.email || null,
+            phone: newOrder.phone || null,
+            address: newOrder.address,
+            total: Math.round(newOrder.total),
+            status: newOrder.status,
+            date: newOrder.date,
+            items: {
+              create: newOrder.items.map((item) => ({
+                name: item.name,
+                price: Math.round(item.price),
+                image: item.image,
+                size: item.size,
+                color: item.color,
+                quantity: Number(item.quantity) || 1,
+              })),
+            },
+          },
+        });
+      } catch (err) {
+        console.error("Prisma order create error:", err);
+      }
+    }
 
     db.orders.unshift(newOrder);
     saveDB(db);
@@ -47,6 +84,18 @@ export async function PUT(request: Request) {
       );
     }
 
+    if (process.env.DATABASE_URL) {
+      try {
+        const { prisma } = await import("@/lib/prisma");
+        await prisma.order.update({
+          where: { id },
+          data: { status },
+        });
+      } catch (err) {
+        console.error("Prisma order update error:", err);
+      }
+    }
+
     const db = getDB();
     const orderIndex = db.orders.findIndex((o) => o.id === id);
 
@@ -68,3 +117,4 @@ export async function PUT(request: Request) {
     );
   }
 }
+

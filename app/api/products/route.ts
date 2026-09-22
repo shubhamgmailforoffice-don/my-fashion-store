@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { getDB, saveDB } from "@/lib/store";
+import { getDB, saveDB, getAsyncProducts } from "@/lib/store";
 import { Product } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET() {
-  const db = getDB();
-  return NextResponse.json(db.products, {
+  const products = await getAsyncProducts();
+  return NextResponse.json(products, {
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
     },
@@ -45,6 +45,33 @@ export async function POST(request: Request) {
         "Premium heavyweight streetwear garment designed with dropped shoulders and boxy silhouette.",
     };
 
+    if (process.env.DATABASE_URL) {
+      try {
+        const { prisma } = await import("@/lib/prisma");
+        await prisma.product.create({
+          data: {
+            id: newProduct.id,
+            name: newProduct.name,
+            price: Math.round(newProduct.price),
+            originalPrice: newProduct.originalPrice ? Math.round(newProduct.originalPrice) : null,
+            images: newProduct.images,
+            category: newProduct.category,
+            subCategory: newProduct.subCategory || null,
+            colors: newProduct.colors,
+            sizes: newProduct.sizes || ["S", "M", "L", "XL", "XXL"],
+            inStock: newProduct.inStock ?? true,
+            isNew: newProduct.isNew ?? true,
+            isSale: newProduct.isSale ?? false,
+            isBlindBox: newProduct.isBlindBox ?? false,
+            collectionSlug: newProduct.collectionSlug || "essentials",
+            description: newProduct.description || null,
+          },
+        });
+      } catch (err) {
+        console.error("Prisma product create error:", err);
+      }
+    }
+
     db.products.unshift(newProduct);
     saveDB(db);
 
@@ -77,7 +104,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    db.products[index] = {
+    const updatedProduct: Product = {
       ...db.products[index],
       ...body,
       inStock: body.inStock !== undefined ? body.inStock : db.products[index].inStock ?? true,
@@ -88,6 +115,34 @@ export async function PUT(request: Request) {
         : db.products[index].originalPrice,
     };
 
+    if (process.env.DATABASE_URL) {
+      try {
+        const { prisma } = await import("@/lib/prisma");
+        await prisma.product.update({
+          where: { id: body.id },
+          data: {
+            name: updatedProduct.name,
+            price: Math.round(updatedProduct.price),
+            originalPrice: updatedProduct.originalPrice ? Math.round(updatedProduct.originalPrice) : null,
+            images: updatedProduct.images,
+            category: updatedProduct.category,
+            subCategory: updatedProduct.subCategory || null,
+            colors: updatedProduct.colors,
+            sizes: updatedProduct.sizes || ["S", "M", "L", "XL", "XXL"],
+            inStock: updatedProduct.inStock ?? true,
+            isNew: updatedProduct.isNew ?? true,
+            isSale: updatedProduct.isSale ?? false,
+            isBlindBox: updatedProduct.isBlindBox ?? false,
+            collectionSlug: updatedProduct.collectionSlug || "essentials",
+            description: updatedProduct.description || null,
+          },
+        });
+      } catch (err) {
+        console.error("Prisma product update error:", err);
+      }
+    }
+
+    db.products[index] = updatedProduct;
     saveDB(db);
     return NextResponse.json({ success: true, product: db.products[index] });
   } catch (error) {
@@ -110,6 +165,17 @@ export async function DELETE(request: Request) {
       );
     }
 
+    if (process.env.DATABASE_URL) {
+      try {
+        const { prisma } = await import("@/lib/prisma");
+        await prisma.product.delete({
+          where: { id },
+        });
+      } catch (err) {
+        console.error("Prisma product delete error:", err);
+      }
+    }
+
     const db = getDB();
     db.products = db.products.filter((p) => p.id !== id);
     saveDB(db);
@@ -122,3 +188,4 @@ export async function DELETE(request: Request) {
     );
   }
 }
+

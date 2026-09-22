@@ -1,13 +1,13 @@
 import { collections } from "@/lib/data";
-import { getDB } from "@/lib/store";
+import { getAsyncProducts } from "@/lib/store";
 import Link from "next/link";
 import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function CollectionsPage() {
-  const db = getDB();
+export default async function CollectionsPage() {
+  const products = await getAsyncProducts();
 
   return (
     <div className="bg-white min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -27,7 +27,7 @@ export default function CollectionsPage() {
       {/* Grid of Concept Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {collections.map((col) => {
-          const matchingCount = db.products.filter(
+          const matchingCount = products.filter(
             (p) => p.collectionSlug?.toLowerCase() === col.slug.toLowerCase()
           ).length;
 

@@ -1,4 +1,4 @@
-import { getDB } from "@/lib/store";
+import { getAsyncProductById, getAsyncProducts } from "@/lib/store";
 import { notFound } from "next/navigation";
 import ProductDetailsClient from "./ProductDetailsClient";
 
@@ -11,18 +11,20 @@ interface PageProps {
 
 export default async function ProductPage({ params }: PageProps) {
   const { id } = await params;
-  const db = getDB();
-  const product = db.products.find((p) => p.id === id);
+  const product = await getAsyncProductById(id);
 
   if (!product) {
     notFound();
   }
 
+  const allProducts = await getAsyncProducts();
+
   return (
     <ProductDetailsClient
       key={product.id}
       product={product}
-      allProducts={db.products}
+      allProducts={allProducts}
     />
   );
 }
+

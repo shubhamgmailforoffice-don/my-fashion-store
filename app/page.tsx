@@ -1,5 +1,5 @@
 import { collections, stores } from "@/lib/data";
-import { getDB } from "@/lib/store";
+import { getAsyncProducts } from "@/lib/store";
 import ProductGrid from "@/components/ProductGrid";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,9 +7,9 @@ import Image from "next/image";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export default function Home() {
-  const db = getDB();
-  const featuredProducts = db.products.slice(0, 8);
+export default async function Home() {
+  const products = await getAsyncProducts();
+  const featuredProducts = products.slice(0, 8);
 
   return (
     <main className="min-h-screen bg-white">
