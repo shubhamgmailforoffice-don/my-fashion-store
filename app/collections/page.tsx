@@ -14,7 +14,7 @@ export default function CollectionsPage() {
       {/* Header */}
       <div className="border-b border-gray-100 pb-8 mb-14 text-center">
         <p className="text-[10px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-3">
-          BLUORNG DESIGN ARCHIVES
+          DRIVEN DESIGN ARCHIVES
         </p>
         <h1 className="text-4xl md:text-5xl font-black tracking-widest text-black uppercase">
           Collections

@@ -187,13 +187,13 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* Center: Iconic Bluorng Logo */}
+          {/* Center: Iconic DRIVEN Logo */}
           <div className="flex lg:absolute lg:left-1/2 lg:-translate-x-1/2">
             <Link
               href="/"
               className="text-2xl font-black tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02]"
             >
-              BLUORNG
+              DRIVEN
             </Link>
           </div>
 
@@ -248,7 +248,7 @@ export default function Navbar() {
           <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-2xl z-50 flex flex-col justify-between p-6">
             <div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                <span className="text-xl font-black tracking-[0.2em] uppercase">BLUORNG</span>
+                <span className="text-xl font-black tracking-[0.2em] uppercase">DRIVEN</span>
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-1 text-gray-500 hover:text-black"
@@ -318,7 +318,7 @@ export default function Navbar() {
                 India’s Premier Streetwear Brand
               </p>
               <p className="text-[9px] font-bold tracking-widest text-black uppercase">
-                BLUORNG DESIGN ARCHIVES
+                DRIVEN DESIGN ARCHIVES
               </p>
             </div>
           </div>
@@ -453,7 +453,7 @@ export default function Navbar() {
                     Shopping Bag ({cartCount})
                   </h2>
                   <span className="text-[9px] font-bold tracking-widest text-orange-500 uppercase">
-                    BLUORNG OFFICIAL STORE
+                    DRIVEN OFFICIAL STORE
                   </span>
                 </div>
                 <button
@@ -583,7 +583,7 @@ export default function Navbar() {
 
                   <div className="space-y-2 pt-2">
                     <button
-                      onClick={() => alert("Connecting to Bluorng Secure Checkout...")}
+                      onClick={() => alert("Connecting to DRIVEN Secure Checkout...")}
                       className="w-full bg-black text-white hover:bg-orange-600 py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2"
                     >
                       <span>Proceed to Checkout</span>
@@ -604,7 +604,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* Mobile Bottom Navigation Bar (Matching official Bluorng mobile app experience) */}
+      {/* Mobile Bottom Navigation Bar (Matching official DRIVEN mobile app experience) */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 py-2 px-6 flex items-center justify-around">
         <Link
           href="/shop"

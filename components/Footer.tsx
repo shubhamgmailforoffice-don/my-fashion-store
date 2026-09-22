@@ -24,10 +24,10 @@ export default function Footer() {
           {/* Brand Info (2 columns on md) */}
           <div className="md:col-span-2 space-y-4">
             <h2 className="text-base font-black tracking-[0.25em] uppercase">
-              BLUORNG
+              DRIVEN
             </h2>
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase max-w-sm">
-              Bluorng (pronounced “Blue~Orange”) is India’s premier luxury streetwear brand, founded in 2020. Focused on custom-milled heavyweight French Terry fabrics, bold graphics, and collectible drops.
+              DRIVEN is India’s premier luxury streetwear house, founded in 2026. Focused on custom-milled heavyweight French Terry fabrics, automotive-inspired high-octane graphics, and collectible limited drops.
             </p>
             <div className="pt-2 text-[10px] font-bold tracking-widest text-orange-500 uppercase">
               <span>DESIGNED IN INDIA • WORN WORLDWIDE</span>
@@ -127,7 +127,7 @@ export default function Footer() {
         {/* Bottom copyright row */}
         <div className="mt-14 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            © 2026 BLUORNG. ALL RIGHTS RESERVED.
+            © 2026 DRIVEN. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-6 text-[10px] font-bold text-gray-400 tracking-widest uppercase">
             <span>Privacy Policy</span>

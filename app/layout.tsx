@@ -15,9 +15,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Bluorng (pronounced “Blue~Orange”) – BLUORNG",
+  title: "DRIVEN | High-Octane Luxury Streetwear",
   description:
-    "BLUORNG, a premium luxury streetwear brand in India. Shop the latest unisex oversized t-shirts, heavyweight hoodies, cargos, and limited collection drops.",
+    "DRIVEN, an original high-end luxury streetwear brand in India. Engineered with custom-milled heavyweight French Terry, bold typography, and boxy unisex silhouettes.",
 };
 
 export default function RootLayout({
