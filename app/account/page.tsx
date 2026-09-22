@@ -30,13 +30,7 @@ export interface SavedAddress {
   isDefault: boolean;
 }
 
-const INDIAN_STATES = [
-  "Andhra Pradesh", "Assam", "Bihar", "Chandigarh", "Chhattisgarh",
-  "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
-  "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra",
-  "Punjab", "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh",
-  "Uttarakhand", "West Bengal"
-];
+import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
 
 const getSessionSnapshot = (): string => {
   if (typeof window === "undefined") return "";
@@ -124,70 +118,72 @@ export default function AccountPage() {
     return () => window.removeEventListener("orders-updated", handleOrderUpdate);
   }, []);
 
-  // Filter orders strictly for the logged-in user with comprehensive match logic
+  // Filter orders strictly for the logged-in user
   const myOrders = useMemo(() => {
     if (!currentUser) return [];
     if (currentUser.role === "admin") return userOrders;
 
-    const storedIds: string[] = (() => {
+    const userPhoneClean = (currentUser.phone || "").replace(/\D/g, "");
+    const userEmailClean = (currentUser.email || "").toLowerCase().trim();
+
+    // Specific order IDs linked directly to this account
+    const accountOrderIds: string[] = (() => {
       try {
-        return JSON.parse(localStorage.getItem("my_order_ids") || "[]");
+        const list: string[] = [];
+        if (userEmailClean) {
+          const stored = localStorage.getItem(`account_order_ids_${userEmailClean}`);
+          if (stored) list.push(...JSON.parse(stored));
+        }
+        if (userPhoneClean) {
+          const stored = localStorage.getItem(`account_order_ids_${userPhoneClean}`);
+          if (stored) list.push(...JSON.parse(stored));
+        }
+        return list;
       } catch {
         return [];
       }
     })();
 
-    const userPhoneClean = (currentUser.phone || "").replace(/\D/g, "");
-    const userEmailClean = (currentUser.email || "").toLowerCase().trim();
-    const userNameClean = (currentUser.name || "").toLowerCase().trim();
-
     return userOrders.filter((o) => {
-      // 1. Direct match with order IDs placed on this device
-      if (storedIds.includes(o.id)) return true;
+      // 1. Explicitly linked to this user's account
+      if (accountOrderIds.includes(o.id)) return true;
 
       // 2. Exact email match
       if (userEmailClean && o.email && userEmailClean === o.email.toLowerCase().trim()) return true;
 
-      // 3. Phone number match
+      // 3. Exact 10-digit mobile number match
       const orderPhoneClean = (o.phone || "").replace(/\D/g, "");
-      if (userPhoneClean && orderPhoneClean && (orderPhoneClean.endsWith(userPhoneClean) || userPhoneClean.endsWith(orderPhoneClean))) return true;
-
-      // 4. Customer Name match
-      if (userNameClean && o.customerName && userNameClean === o.customerName.toLowerCase().trim()) return true;
+      if (userPhoneClean && orderPhoneClean) {
+        if (orderPhoneClean === userPhoneClean || orderPhoneClean.endsWith(userPhoneClean) || userPhoneClean.endsWith(orderPhoneClean)) {
+          return true;
+        }
+      }
 
       return false;
     });
-  }, [userOrders, currentUser, sessionRaw]);
+  }, [userOrders, currentUser]);
 
-  // Address book synchronization
-  const getAddressKey = () => (currentUser ? `user_addresses_${currentUser.id || currentUser.email}` : "user_addresses_guest");
+  // Address book synchronization (Strictly per-user, zero default leaks)
+  const getAddressKey = () => (currentUser ? `user_addresses_${currentUser.id || currentUser.email || currentUser.phone}` : "user_addresses_guest");
 
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser) {
+      setSavedAddresses([]);
+      return;
+    }
     try {
       const stored = localStorage.getItem(getAddressKey());
       if (stored) {
-        setSavedAddresses(JSON.parse(stored));
-      } else if (myOrders.length > 0 && myOrders[0].address) {
-        // Pre-seed an initial default address from their latest placed order
-        const o = myOrders[0];
-        const cleanAddr = o.address.replace(/\[Payment:.*?\]/i, "").trim();
-        const initial: SavedAddress = {
-          id: `addr_${Date.now()}`,
-          name: o.customerName || currentUser.name,
-          phone: o.phone || currentUser.phone || "",
-          street: cleanAddr,
-          city: "Delhi",
-          state: "Delhi",
-          pincode: cleanAddr.match(/\d{6}/)?.[0] || "110001",
-          type: "Home",
-          isDefault: true,
-        };
-        setSavedAddresses([initial]);
-        localStorage.setItem(getAddressKey(), JSON.stringify([initial]));
+        const parsed = JSON.parse(stored);
+        setSavedAddresses(Array.isArray(parsed) ? parsed : []);
+      } else {
+        // Fresh accounts start with 0 addresses (no inheritance from guest or other accounts)
+        setSavedAddresses([]);
       }
-    } catch {}
-  }, [currentUser, myOrders]);
+    } catch {
+      setSavedAddresses([]);
+    }
+  }, [currentUser]);
 
   const saveAddressesToStorage = (updated: SavedAddress[]) => {
     setSavedAddresses(updated);
@@ -202,8 +198,8 @@ export default function AccountPage() {
       name: currentUser?.name || "",
       phone: currentUser?.phone || "",
       street: "",
-      city: "New Delhi",
       state: "Delhi",
+      city: STATE_CITIES_MAP["Delhi"]?.[0] || "New Delhi",
       pincode: "",
       type: "Home",
       isDefault: savedAddresses.length === 0,
@@ -217,8 +213,8 @@ export default function AccountPage() {
       name: addr.name,
       phone: addr.phone,
       street: addr.street,
-      city: addr.city,
-      state: addr.state,
+      state: addr.state || "Delhi",
+      city: addr.city || (STATE_CITIES_MAP[addr.state || "Delhi"]?.[0] || "New Delhi"),
       pincode: addr.pincode,
       type: addr.type,
       isDefault: addr.isDefault,
@@ -291,10 +287,12 @@ export default function AccountPage() {
     }
 
     try {
-      const stored: string[] = JSON.parse(localStorage.getItem("my_order_ids") || "[]");
+      const userKey = currentUser?.email?.toLowerCase().trim() || currentUser?.phone || "default";
+      const key = `account_order_ids_${userKey}`;
+      const stored: string[] = JSON.parse(localStorage.getItem(key) || "[]");
       if (!stored.includes(matchingOrder.id)) {
         stored.unshift(matchingOrder.id);
-        localStorage.setItem("my_order_ids", JSON.stringify(stored));
+        localStorage.setItem(key, JSON.stringify(stored));
       }
       setLinkOrderMsg({
         text: `Order #${matchingOrder.id} successfully linked to your account!`,
@@ -315,11 +313,13 @@ export default function AccountPage() {
   const handleSignOut = () => {
     localStorage.removeItem("user_session");
     window.dispatchEvent(new Event("session-updated"));
+    setSavedAddresses([]);
     setAuthMode("signin");
     setIdentifier("");
     setPassword("");
     setFullName("");
     setAuthError("");
+    setLinkOrderMsg(null);
   };
 
   // Submit Unified Auth (Login or Signup)
@@ -546,7 +546,6 @@ export default function AccountPage() {
                   <form onSubmit={handleLinkOrder} className="flex gap-2 w-full sm:w-auto">
                     <input
                       type="text"
-                      placeholder="e.g. FS-1627"
                       value={linkOrderIdInput}
                       onChange={(e) => setLinkOrderIdInput(e.target.value)}
                       className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-36"
@@ -906,7 +905,6 @@ export default function AccountPage() {
                           type="tel"
                           required
                           maxLength={10}
-                          placeholder="9876543210"
                           value={addressForm.phone}
                           onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, "") })}
                           className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black"
@@ -921,34 +919,30 @@ export default function AccountPage() {
                       <textarea
                         required
                         rows={2}
-                        placeholder="e.g. Flat 302, Palm Heights, Main Street"
                         value={addressForm.street}
                         onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
                         className="w-full border border-neutral-300 px-3 py-2.5 text-xs uppercase focus:outline-none focus:border-black"
                       />
                     </div>
 
+                    {/* 1st State dropdown, 2nd City dropdown as per state, 3rd PIN Code manually */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
-                          City *
-                        </label>
-                        <input
-                          type="text"
-                          required
-                          value={addressForm.city}
-                          onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                          className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold uppercase focus:outline-none focus:border-black"
-                        />
-                      </div>
                       <div>
                         <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
                           State *
                         </label>
                         <select
                           value={addressForm.state}
-                          onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })}
-                          className="w-full border border-neutral-300 px-2 py-2.5 text-xs font-bold bg-white focus:outline-none focus:border-black"
+                          onChange={(e) => {
+                            const nextState = e.target.value;
+                            const nextCities = STATE_CITIES_MAP[nextState] || ["Other"];
+                            setAddressForm({
+                              ...addressForm,
+                              state: nextState,
+                              city: nextCities[0] || "",
+                            });
+                          }}
+                          className="w-full border border-neutral-300 px-2 py-2.5 text-xs font-bold uppercase bg-white focus:outline-none focus:border-black cursor-pointer"
                         >
                           {INDIAN_STATES.map((st) => (
                             <option key={st} value={st}>
@@ -957,6 +951,24 @@ export default function AccountPage() {
                           ))}
                         </select>
                       </div>
+
+                      <div>
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
+                          City *
+                        </label>
+                        <select
+                          value={addressForm.city}
+                          onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
+                          className="w-full border border-neutral-300 px-2 py-2.5 text-xs font-bold uppercase bg-white focus:outline-none focus:border-black cursor-pointer"
+                        >
+                          {(STATE_CITIES_MAP[addressForm.state] || ["Other"]).map((ct) => (
+                            <option key={ct} value={ct}>
+                              {ct}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
                       <div>
                         <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-700 mb-1">
                           PIN Code *
@@ -965,7 +977,6 @@ export default function AccountPage() {
                           type="text"
                           required
                           maxLength={6}
-                          placeholder="110001"
                           value={addressForm.pincode}
                           onChange={(e) => setAddressForm({ ...addressForm, pincode: e.target.value.replace(/\D/g, "") })}
                           className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black"
@@ -1100,31 +1111,24 @@ export default function AccountPage() {
                   <input
                     type="text"
                     required
-                    placeholder="E.G. ARYAN SHARMA"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black placeholder:font-normal placeholder:text-neutral-400"
+                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"
                   />
                 </div>
               )}
 
               {/* Field 1: Email OR Mobile Number */}
               <div>
-                <div className="flex justify-between items-baseline mb-1.5">
-                  <label className="block text-[10px] font-black tracking-[0.2em] text-neutral-800 uppercase">
-                    Email or Mobile Number *
-                  </label>
-                  <span className="text-[9px] font-bold text-neutral-400 uppercase">
-                    Email or 10-Digit Mobile
-                  </span>
-                </div>
+                <label className="block text-[10px] font-black tracking-[0.2em] text-neutral-800 uppercase mb-1.5">
+                  Email or Mobile Number *
+                </label>
                 <input
                   type="text"
                   required
-                  placeholder="name@domain.com or 9876543210"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black placeholder:font-normal placeholder:text-neutral-400"
+                  className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
                 />
               </div>
 
@@ -1149,10 +1153,9 @@ export default function AccountPage() {
                   <input
                     type={showPassword ? "text" : "password"}
                     required
-                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black placeholder:font-normal placeholder:text-neutral-400 pr-16"
+                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black pr-16"
                   />
                   <button
                     type="button"
@@ -1291,7 +1294,6 @@ export default function AccountPage() {
                   <input
                     type="text"
                     required
-                    placeholder="E.G. BLU-9021 OR FS-1234"
                     value={guestOrderId}
                     onChange={(e) => setGuestOrderId(e.target.value)}
                     className="flex-1 border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"

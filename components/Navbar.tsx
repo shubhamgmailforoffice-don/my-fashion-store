@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo, useEffect, useSyncExternalStore } from "react";
 import { products, Product } from "@/lib/data";
+import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
 
 export interface CartItem {
   id: string;
@@ -80,8 +81,8 @@ export default function Navbar() {
   const [shippingPhone, setShippingPhone] = useState("");
   const [shippingEmail, setShippingEmail] = useState("");
   const [shippingAddress, setShippingAddress] = useState("");
-  const [shippingCity, setShippingCity] = useState("");
   const [shippingState, setShippingState] = useState("Delhi");
+  const [shippingCity, setShippingCity] = useState("New Delhi");
   const [shippingPincode, setShippingPincode] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "cod">("upi");
   const [utrNumber, setUtrNumber] = useState("");
@@ -89,6 +90,12 @@ export default function Navbar() {
   const [orderError, setOrderError] = useState("");
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
+
+  const handleShippingStateChange = (newState: string) => {
+    setShippingState(newState);
+    const cities = STATE_CITIES_MAP[newState] || [];
+    setShippingCity(cities[0] || "");
+  };
 
   // Auto pre-fill checkout fields if user is logged in
   useEffect(() => {
@@ -235,6 +242,14 @@ export default function Navbar() {
       try {
         const orderId = data.order?.id;
         if (orderId) {
+          if (currentUser?.email) {
+            const accKey = `account_order_ids_${currentUser.email.toLowerCase().trim()}`;
+            const storedAcc: string[] = JSON.parse(localStorage.getItem(accKey) || "[]");
+            if (!storedAcc.includes(orderId)) {
+              storedAcc.unshift(orderId);
+              localStorage.setItem(accKey, JSON.stringify(storedAcc));
+            }
+          }
           const stored: string[] = JSON.parse(localStorage.getItem("my_order_ids") || "[]");
           if (!stored.includes(orderId)) {
             stored.unshift(orderId);
@@ -813,7 +828,6 @@ export default function Navbar() {
                     <input
                       type="text"
                       required
-                      placeholder="E.G. ARYAN SHARMA"
                       value={shippingName}
                       onChange={(e) => setShippingName(e.target.value)}
                       className="w-full border border-gray-300 px-4 py-3 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"
@@ -829,7 +843,6 @@ export default function Navbar() {
                         type="tel"
                         required
                         maxLength={10}
-                        placeholder="9876543210"
                         value={shippingPhone}
                         onChange={(e) => setShippingPhone(e.target.value.replace(/\D/g, ""))}
                         className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
@@ -841,7 +854,6 @@ export default function Navbar() {
                       </label>
                       <input
                         type="email"
-                        placeholder="name@example.com"
                         value={shippingEmail}
                         onChange={(e) => setShippingEmail(e.target.value)}
                         className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
@@ -856,40 +868,48 @@ export default function Navbar() {
                     <input
                       type="text"
                       required
-                      placeholder="B-42 Vasant Vihar, Near Central Mall"
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
                       className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
                     />
                   </div>
 
-                  <div className="grid grid-cols-3 gap-3">
-                    <div>
-                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
-                        City *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="New Delhi"
-                        value={shippingCity}
-                        onChange={(e) => setShippingCity(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
-                      />
-                    </div>
+                  {/* 1st State dropdown, 2nd City dropdown as per state, 3rd PIN Code manually */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
                         State *
                       </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Delhi"
+                      <select
                         value={shippingState}
-                        onChange={(e) => setShippingState(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
-                      />
+                        onChange={(e) => handleShippingStateChange(e.target.value)}
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black cursor-pointer"
+                      >
+                        {INDIAN_STATES.map((st) => (
+                          <option key={st} value={st}>
+                            {st}
+                          </option>
+                        ))}
+                      </select>
                     </div>
+
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        City *
+                      </label>
+                      <select
+                        value={shippingCity}
+                        onChange={(e) => setShippingCity(e.target.value)}
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black cursor-pointer"
+                      >
+                        {(STATE_CITIES_MAP[shippingState] || ["Other"]).map((ct) => (
+                          <option key={ct} value={ct}>
+                            {ct}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
                     <div>
                       <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
                         PIN Code *
@@ -898,7 +918,6 @@ export default function Navbar() {
                         type="text"
                         required
                         maxLength={6}
-                        placeholder="110057"
                         value={shippingPincode}
                         onChange={(e) => setShippingPincode(e.target.value.replace(/\D/g, ""))}
                         className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
@@ -1029,7 +1048,6 @@ export default function Navbar() {
                         </label>
                         <input
                           type="text"
-                          placeholder="e.g. 429384719284"
                           value={utrNumber}
                           onChange={(e) => setUtrNumber(e.target.value)}
                           className="w-full border border-gray-300 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider focus:outline-none focus:border-black bg-white"
