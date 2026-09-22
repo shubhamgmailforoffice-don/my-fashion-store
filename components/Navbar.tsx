@@ -40,6 +40,23 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [productsList, setProductsList] = useState<Product[]>(products);
 
+  // Checkout Modal States
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutStep, setCheckoutStep] = useState<"details" | "payment" | "success">("details");
+  const [shippingName, setShippingName] = useState("");
+  const [shippingPhone, setShippingPhone] = useState("");
+  const [shippingEmail, setShippingEmail] = useState("");
+  const [shippingAddress, setShippingAddress] = useState("");
+  const [shippingCity, setShippingCity] = useState("");
+  const [shippingState, setShippingState] = useState("Delhi");
+  const [shippingPincode, setShippingPincode] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"upi" | "cod">("upi");
+  const [utrNumber, setUtrNumber] = useState("");
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [orderError, setOrderError] = useState("");
+  const [placedOrder, setPlacedOrder] = useState<any>(null);
+  const [copiedUpi, setCopiedUpi] = useState(false);
+
   // Sync products when search is opened
   useEffect(() => {
     if (isSearchOpen) {
@@ -111,6 +128,57 @@ export default function Navbar() {
     saveCart(updated);
   };
 
+  const handlePlaceOrder = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setOrderError("");
+
+    if (!shippingName.trim() || !shippingPhone.trim() || !shippingAddress.trim() || !shippingPincode.trim()) {
+      setOrderError("Please fill out all required shipping fields.");
+      return;
+    }
+
+    setIsPlacingOrder(true);
+
+    try {
+      const fullAddress = `${shippingAddress.trim()}, ${shippingCity.trim() || "Delhi"}, ${shippingState} - ${shippingPincode.trim()}`;
+      const payload = {
+        customerName: shippingName.trim(),
+        email: shippingEmail.trim() || "customer@example.com",
+        phone: shippingPhone.trim(),
+        address: fullAddress,
+        items: cartItems.map((item) => ({
+          name: item.name,
+          price: item.price,
+          image: item.image,
+          size: item.size,
+          color: item.color,
+          quantity: item.quantity,
+        })),
+        total: subtotal,
+      };
+
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to place order.");
+      }
+
+      setPlacedOrder(data.order);
+      setCheckoutStep("success");
+      saveCart([]);
+    } catch (err: unknown) {
+      setOrderError(err instanceof Error ? err.message : "Error placing order");
+    } finally {
+      setIsPlacingOrder(false);
+    }
+  };
+
+
   // Search results filtering
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
@@ -153,52 +221,52 @@ export default function Navbar() {
             </button>
           </div>
 
-          {/* Left: Desktop Navigation */}
-          <nav className="hidden lg:flex lg:gap-x-7 items-center">
+          {/* Left: Desktop Navigation with safe spacing */}
+          <nav className="hidden lg:flex items-center gap-x-3.5 xl:gap-x-6">
             <Link
               href="/shop"
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase"
+              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
             >
               Shop All
             </Link>
             <Link
               href="/collections"
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase"
+              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
             >
               Collections
             </Link>
             <Link
               href="/shop?category=Tops"
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase"
+              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
             >
               Tops
             </Link>
             <Link
               href="/shop?category=Bottoms"
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase"
+              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
             >
               Bottoms
             </Link>
             <Link
               href="/shop-by-color"
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase"
+              className="text-[11px] xl:text-xs font-bold tracking-wider xl:tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
             >
               Shop by Color
             </Link>
           </nav>
 
-          {/* Center: Iconic DRIVEN Logo */}
-          <div className="flex lg:absolute lg:left-1/2 lg:-translate-x-1/2">
+          {/* Center: Iconic DRIVEN Logo with safe padding */}
+          <div className="flex items-center justify-center px-4 xl:px-8">
             <Link
               href="/"
-              className="text-2xl font-black tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02]"
+              className="text-xl sm:text-2xl font-black tracking-[0.22em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
             >
               DRIVEN
             </Link>
           </div>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-x-5">
+          <div className="flex items-center gap-x-3.5 sm:gap-x-5">
             <button
               onClick={() => setIsSearchOpen(true)}
               className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5"
@@ -583,7 +651,11 @@ export default function Navbar() {
 
                   <div className="space-y-2 pt-2">
                     <button
-                      onClick={() => alert("Connecting to DRIVEN Secure Checkout...")}
+                      onClick={() => {
+                        setIsCartOpen(false);
+                        setIsCheckoutOpen(true);
+                        setCheckoutStep("details");
+                      }}
                       className="w-full bg-black text-white hover:bg-orange-600 py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2"
                     >
                       <span>Proceed to Checkout</span>
@@ -603,6 +675,375 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* DRIVEN SECURE UPI CHECKOUT MODAL */}
+      {isCheckoutOpen && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white max-w-xl w-full border border-neutral-200 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+            {/* Modal Header */}
+            <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-black text-white">
+              <div>
+                <p className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                  DRIVEN SECURE CHECKOUT
+                </p>
+                <h3 className="text-sm font-black tracking-widest uppercase">
+                  {checkoutStep === "details" && "Step 1: Delivery Address"}
+                  {checkoutStep === "payment" && "Step 2: Pay via UPI / QR Code"}
+                  {checkoutStep === "success" && "Order Confirmed!"}
+                </h3>
+              </div>
+              {checkoutStep !== "success" && (
+                <button
+                  onClick={() => setIsCheckoutOpen(false)}
+                  className="text-gray-400 hover:text-white text-sm font-bold uppercase tracking-wider"
+                >
+                  &times; Close
+                </button>
+              )}
+            </div>
+
+            {/* Modal Body */}
+            <div className="overflow-y-auto p-6 sm:p-8 flex-1">
+              {/* STEP 1: SHIPPING DETAILS */}
+              {checkoutStep === "details" && (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setCheckoutStep("payment");
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="flex justify-between items-center border-b border-gray-100 pb-3 mb-2">
+                    <span className="text-xs font-black uppercase tracking-wider text-black">
+                      Order Total ({cartCount} Items)
+                    </span>
+                    <span className="text-xs font-black text-black">
+                      RS. {subtotal.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="E.G. ARYAN SHARMA"
+                      value={shippingName}
+                      onChange={(e) => setShippingName(e.target.value)}
+                      className="w-full border border-gray-300 px-4 py-3 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        Mobile Number * (For Delivery)
+                      </label>
+                      <input
+                        type="tel"
+                        required
+                        maxLength={10}
+                        placeholder="9876543210"
+                        value={shippingPhone}
+                        onChange={(e) => setShippingPhone(e.target.value.replace(/\D/g, ""))}
+                        className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        Email Address (Optional)
+                      </label>
+                      <input
+                        type="email"
+                        placeholder="name@example.com"
+                        value={shippingEmail}
+                        onChange={(e) => setShippingEmail(e.target.value)}
+                        className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                      Street Address (House/Flat No, Landmark) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="B-42 Vasant Vihar, Near Central Mall"
+                      value={shippingAddress}
+                      onChange={(e) => setShippingAddress(e.target.value)}
+                      className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        City *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="New Delhi"
+                        value={shippingCity}
+                        onChange={(e) => setShippingCity(e.target.value)}
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        State *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Delhi"
+                        value={shippingState}
+                        onChange={(e) => setShippingState(e.target.value)}
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                        PIN Code *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        maxLength={6}
+                        placeholder="110057"
+                        value={shippingPincode}
+                        onChange={(e) => setShippingPincode(e.target.value.replace(/\D/g, ""))}
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="pt-3">
+                    <button
+                      type="submit"
+                      className="w-full bg-black hover:bg-orange-600 text-white py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors"
+                    >
+                      Continue to Payment (RS. {subtotal.toLocaleString()}) &rarr;
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* STEP 2: PAYMENT METHOD (UPI QR CODE OR COD) */}
+              {checkoutStep === "payment" && (
+                <form onSubmit={handlePlaceOrder} className="space-y-6">
+                  {orderError && (
+                    <div className="bg-red-50 text-red-700 p-3 text-xs font-bold uppercase border-l-4 border-red-600">
+                      {orderError}
+                    </div>
+                  )}
+
+                  {/* Payment Options Toggle */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("upi")}
+                      className={`p-4 border text-left transition-all ${
+                        paymentMethod === "upi"
+                          ? "border-black bg-black text-white shadow-md"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-black"
+                      }`}
+                    >
+                      <span className="text-base block mb-1">📱</span>
+                      <p className="text-xs font-black tracking-wider uppercase">UPI QR Code</p>
+                      <p
+                        className={`text-[9px] uppercase mt-0.5 ${
+                          paymentMethod === "upi" ? "text-orange-400" : "text-gray-400"
+                        }`}
+                      >
+                        GPay • PhonePe • Paytm
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod("cod")}
+                      className={`p-4 border text-left transition-all ${
+                        paymentMethod === "cod"
+                          ? "border-black bg-black text-white shadow-md"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-black"
+                      }`}
+                    >
+                      <span className="text-base block mb-1">💵</span>
+                      <p className="text-xs font-black tracking-wider uppercase">Cash on Delivery</p>
+                      <p
+                        className={`text-[9px] uppercase mt-0.5 ${
+                          paymentMethod === "cod" ? "text-gray-300" : "text-gray-400"
+                        }`}
+                      >
+                        Pay at Doorstep
+                      </p>
+                    </button>
+                  </div>
+
+                  {/* UPI QR Code Container */}
+                  {paymentMethod === "upi" && (
+                    <div className="border border-gray-200 bg-zinc-50 p-6 text-center space-y-4">
+                      <div>
+                        <span className="text-[9px] font-black tracking-[0.25em] text-orange-600 uppercase">
+                          SCAN TO PAY WITH ANY UPI APP
+                        </span>
+                        <p className="text-xs text-gray-600 uppercase tracking-wider font-bold mt-1">
+                          Amount Payable:{" "}
+                          <span className="text-black font-black text-sm">
+                            RS. {subtotal.toLocaleString()}
+                          </span>
+                        </p>
+                      </div>
+
+                      {/* Real Dynamic QR Code */}
+                      <div className="flex justify-center">
+                        <div className="p-3 bg-white border border-gray-300 shadow-md inline-block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
+                              `upi://pay?pa=drivenstore@upi&pn=DRIVEN&am=${subtotal}&cu=INR&tn=DRIVEN_CLOTHING`
+                            )}`}
+                            alt="Scan UPI QR Code"
+                            width={220}
+                            height={220}
+                            className="w-48 h-48 object-contain mx-auto"
+                          />
+                        </div>
+                      </div>
+
+                      {/* UPI ID Copy Pill */}
+                      <div className="max-w-xs mx-auto flex items-center justify-between border border-gray-300 bg-white px-3 py-2 text-xs">
+                        <div className="text-left">
+                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest block">
+                            UPI ID
+                          </span>
+                          <span className="font-mono font-bold text-xs text-black">
+                            drivenstore@upi
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard.writeText("drivenstore@upi");
+                            setCopiedUpi(true);
+                            setTimeout(() => setCopiedUpi(false), 2000);
+                          }}
+                          className="bg-black text-white hover:bg-orange-500 hover:text-black px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors"
+                        >
+                          {copiedUpi ? "COPIED ✓" : "COPY"}
+                        </button>
+                      </div>
+
+                      <div className="text-left pt-2">
+                        <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                          Transaction Reference / UTR (Optional)
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 429384719284"
+                          value={utrNumber}
+                          onChange={(e) => setUtrNumber(e.target.value)}
+                          className="w-full border border-gray-300 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider focus:outline-none focus:border-black bg-white"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* COD Note */}
+                  {paymentMethod === "cod" && (
+                    <div className="border border-gray-200 bg-zinc-50 p-6 space-y-2">
+                      <p className="text-xs font-black uppercase tracking-wider text-black">
+                        Cash on Delivery Terms:
+                      </p>
+                      <p className="text-xs text-gray-600 uppercase tracking-wider leading-relaxed">
+                        • Please keep exact cash (RS. {subtotal.toLocaleString()}) ready at the time of delivery.
+                        <br />
+                        • You can also pay via UPI to the delivery executive when the parcel arrives at your doorstep.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Actions */}
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setCheckoutStep("details")}
+                      className="w-1/3 border border-gray-300 text-black hover:bg-gray-100 py-4 text-xs font-black tracking-widest uppercase transition-colors"
+                    >
+                      &larr; Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isPlacingOrder}
+                      className="w-2/3 bg-black hover:bg-orange-600 text-white disabled:bg-gray-300 py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors flex items-center justify-center gap-2"
+                    >
+                      {isPlacingOrder ? (
+                        <>
+                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Processing...</span>
+                        </>
+                      ) : (
+                        <span>Place Order &rarr;</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* STEP 3: ORDER SUCCESS */}
+              {checkoutStep === "success" && placedOrder && (
+                <div className="text-center py-6 space-y-6">
+                  <div className="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+                    ✓
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase">
+                      ORDER PLACED SUCCESSFULLY
+                    </span>
+                    <h2 className="text-2xl font-black tracking-wider uppercase text-black mt-1">
+                      Order #{placedOrder.id}
+                    </h2>
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mt-1">
+                      Total Amount: RS. {placedOrder.total?.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="bg-zinc-50 border border-gray-200 p-5 text-left text-xs uppercase space-y-2">
+                    <p className="font-black text-black">Delivery Destination:</p>
+                    <p className="text-gray-700 font-medium leading-relaxed">{placedOrder.address}</p>
+                    <p className="text-gray-500 font-bold pt-1">
+                      Estimated Delivery: 3-5 Business Days via Express Air
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsCheckoutOpen(false)}
+                      className="flex-1 bg-black text-white hover:bg-orange-600 py-3.5 text-xs font-black tracking-widest uppercase transition-colors"
+                    >
+                      Continue Shopping
+                    </button>
+                    <Link
+                      href="/account"
+                      onClick={() => setIsCheckoutOpen(false)}
+                      className="flex-1 border border-black text-black hover:bg-black hover:text-white py-3.5 text-xs font-black tracking-widest uppercase transition-colors text-center inline-block"
+                    >
+                      View in My Orders &rarr;
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
 
       {/* Mobile Bottom Navigation Bar (Matching official DRIVEN mobile app experience) */}
       <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 py-2 px-6 flex items-center justify-around">

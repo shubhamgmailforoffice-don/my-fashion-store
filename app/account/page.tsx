@@ -108,12 +108,12 @@ export default function AccountPage() {
     }
 
     if (!password.trim()) {
-      setAuthError("Password is compulsory. Please enter your password.");
+      setAuthError("Please enter your password.");
       return;
     }
 
     if (authMode === "signup" && password.length < 4) {
-      setAuthError("Password is compulsory and must be at least 4 characters.");
+      setAuthError("Password must be at least 4 characters.");
       return;
     }
 
@@ -561,11 +561,11 @@ export default function AccountPage() {
                 />
               </div>
 
-              {/* Field 2: Compulsory Password */}
+              {/* Field 2: Password */}
               <div>
                 <div className="flex justify-between items-baseline mb-1.5">
                   <label className="block text-[10px] font-black tracking-[0.2em] text-neutral-800 uppercase">
-                    Password <span className="text-orange-600 font-bold">(Compulsory) *</span>
+                    Password *
                   </label>
                   {authMode === "signin" && (
                     <button
@@ -743,20 +743,6 @@ export default function AccountPage() {
                 )}
               </form>
             )}
-
-            {/* Quick Demo Staff Login Button */}
-            <div className="pt-2 border-t border-neutral-100 flex justify-between items-center text-xs">
-              <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
-                Staff & Admin Portal
-              </span>
-              <button
-                type="button"
-                onClick={() => handleQuickDemo("admin")}
-                className="bg-neutral-100 hover:bg-black text-neutral-700 hover:text-white px-3 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors"
-              >
-                1-Click Admin Sign In &rarr;
-              </button>
-            </div>
           </div>
         )}
 
@@ -777,7 +763,7 @@ export default function AccountPage() {
               Secure Access
             </p>
             <p className="text-[8px] text-neutral-400 uppercase tracking-wider">
-              Compulsory Password
+              256-Bit Encrypted
             </p>
           </div>
           <div>
