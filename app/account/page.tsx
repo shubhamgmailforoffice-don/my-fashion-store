@@ -28,6 +28,7 @@ export interface SavedAddress {
   pincode: string;
   type: "Home" | "Work" | "Other";
   isDefault: boolean;
+  whatsapp?: string;
 }
 
 import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
@@ -79,7 +80,7 @@ export default function AccountPage() {
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState<string | null>(null);
-  const [addressForm, setAddressForm] = useState<Omit<SavedAddress, "id">>({
+  const [addressForm, setAddressForm] = useState<Omit<SavedAddress, "id"> & { sameWhatsApp: boolean }>({
     name: "",
     phone: "",
     street: "",
@@ -88,6 +89,8 @@ export default function AccountPage() {
     pincode: "",
     type: "Home",
     isDefault: false,
+    whatsapp: "",
+    sameWhatsApp: true,
   });
 
   // Manual Secure Order Link input
@@ -240,6 +243,8 @@ export default function AccountPage() {
       pincode: "",
       type: "Home",
       isDefault: savedAddresses.length === 0,
+      whatsapp: "",
+      sameWhatsApp: true,
     });
     setIsAddressModalOpen(true);
   };
@@ -255,6 +260,8 @@ export default function AccountPage() {
       pincode: addr.pincode,
       type: addr.type,
       isDefault: addr.isDefault,
+      whatsapp: addr.whatsapp || "",
+      sameWhatsApp: !addr.whatsapp || addr.whatsapp === addr.phone,
     });
     setIsAddressModalOpen(true);
   };
@@ -266,17 +273,38 @@ export default function AccountPage() {
       return;
     }
 
+    if (!addressForm.sameWhatsApp && (!addressForm.whatsapp || addressForm.whatsapp.trim().length !== 10)) {
+      alert("Please enter a valid 10-digit WhatsApp number or check the box to use your mobile number.");
+      return;
+    }
+
+    const finalWhatsApp = addressForm.sameWhatsApp
+      ? addressForm.phone
+      : (addressForm.whatsapp?.trim() || addressForm.phone);
+
+    const addrPayload: Omit<SavedAddress, "id"> = {
+      name: addressForm.name,
+      phone: addressForm.phone,
+      street: addressForm.street,
+      city: addressForm.city,
+      state: addressForm.state,
+      pincode: addressForm.pincode,
+      type: addressForm.type,
+      isDefault: addressForm.isDefault,
+      whatsapp: finalWhatsApp,
+    };
+
     let updated: SavedAddress[];
     if (editingAddressId) {
       updated = savedAddresses.map((a) => {
         if (a.id === editingAddressId) {
-          return { ...addressForm, id: a.id };
+          return { ...addrPayload, id: a.id };
         }
         return addressForm.isDefault ? { ...a, isDefault: false } : a;
       });
     } else {
       const newAddr: SavedAddress = {
-        ...addressForm,
+        ...addrPayload,
         id: `addr_${Date.now()}`,
         isDefault: addressForm.isDefault || savedAddresses.length === 0,
       };
@@ -1017,6 +1045,52 @@ export default function AccountPage() {
                           className="w-full border border-neutral-300 px-3 py-2.5 text-xs font-bold focus:outline-none focus:border-black"
                         />
                       </div>
+                    </div>
+
+                    {/* WhatsApp Notification Auto-Tick Option */}
+                    <div className="bg-neutral-50 border border-neutral-200 p-3 space-y-2">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={addressForm.sameWhatsApp}
+                          onChange={(e) =>
+                            setAddressForm({ ...addressForm, sameWhatsApp: e.target.checked })
+                          }
+                          className="w-4 h-4 accent-black rounded cursor-pointer"
+                        />
+                        <span className="text-[11px] font-bold text-neutral-900 tracking-wider uppercase flex items-center gap-1.5">
+                          <span className="text-emerald-600 font-normal">💬</span> Send order & tracking updates on WhatsApp to this number
+                        </span>
+                      </label>
+
+                      {!addressForm.sameWhatsApp && (
+                        <div className="pt-2 border-t border-neutral-200">
+                          <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-800 mb-1">
+                            Alternate WhatsApp Number *
+                          </label>
+                          <div className="flex items-center">
+                            <span className="px-3 py-2 bg-neutral-200 border border-r-0 border-neutral-300 text-xs font-bold text-neutral-700">
+                              +91
+                            </span>
+                            <input
+                              type="tel"
+                              maxLength={10}
+                              placeholder="Enter 10-digit WhatsApp number"
+                              value={addressForm.whatsapp}
+                              onChange={(e) =>
+                                setAddressForm({
+                                  ...addressForm,
+                                  whatsapp: e.target.value.replace(/\D/g, ""),
+                                })
+                              }
+                              className="w-full border border-neutral-300 px-3 py-2 text-xs font-bold focus:outline-none focus:border-black bg-white"
+                            />
+                          </div>
+                          <p className="text-[9px] text-neutral-500 uppercase tracking-wider mt-1">
+                            Order confirmation and courier tracking will be sent to this WhatsApp number.
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     <div>

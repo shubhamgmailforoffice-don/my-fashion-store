@@ -691,11 +691,14 @@ function AdminContent() {
                 const isUPI = order.address.includes("UPI");
                 const trackingMatch = order.address.match(/\[Tracking:\s*(.*?)\]/i);
                 const trackingInfo = trackingMatch ? trackingMatch[1] : "";
+                const waMatch = order.address.match(/\[WhatsApp:\s*([+0-9]+)\]/i);
                 const cleanDisplayAddress = order.address
                   .replace(/\[Payment:.*?\]/i, "")
                   .replace(/\[Tracking:.*?\]/i, "")
+                  .replace(/\[WhatsApp:.*?\]/i, "")
                   .trim();
                 const phoneClean = order.phone ? order.phone.replace(/\D/g, "") : "";
+                const waNumber = waMatch ? waMatch[1].replace(/\D/g, "") : phoneClean;
                 const isCollapsed = collapsedOrders[order.id];
 
                 return (
@@ -801,14 +804,14 @@ function AdminContent() {
                             {phoneClean && (
                               <div className="pt-2 flex items-center gap-2 flex-wrap">
                                 <a
-                                  href={`https://wa.me/91${phoneClean}?text=${encodeURIComponent(
+                                  href={`https://wa.me/91${waNumber.slice(-10)}?text=${encodeURIComponent(
                                     `Hello ${order.customerName}, this is DRIIVN Operations regarding your order #${order.id}.`
                                   )}`}
                                   target="_blank"
                                   rel="noreferrer"
                                   className="text-[10px] font-bold uppercase text-emerald-300 bg-emerald-950/60 border border-emerald-800 hover:bg-emerald-900/60 px-2.5 py-1 transition-colors flex items-center gap-1"
                                 >
-                                  <span>💬 WhatsApp</span>
+                                  <span>💬 WhatsApp{waMatch ? " (Direct)" : ""}</span>
                                 </a>
                                 <a
                                   href={`tel:+91${phoneClean}`}
@@ -817,6 +820,11 @@ function AdminContent() {
                                   <span>📞 Call</span>
                                 </a>
                               </div>
+                            )}
+                            {waMatch && (
+                              <p className="text-emerald-400 font-mono text-[11px] pt-1">
+                                WhatsApp: +91 {waNumber.slice(-10)}
+                              </p>
                             )}
                           </div>
 
@@ -1168,7 +1176,7 @@ function AdminContent() {
                     <th className="py-3.5 px-4">Member Name</th>
                     <th className="py-3.5 px-4">Email Address</th>
                     <th className="py-3.5 px-4">Mobile Number</th>
-                    <th className="py-3.5 px-4">Role</th>
+                    <th className="py-3.5 px-4">Signup Date</th>
                     <th className="py-3.5 px-4">Orders Placed</th>
                     <th className="py-3.5 px-4 text-right">Actions</th>
                   </tr>
@@ -1202,16 +1210,18 @@ function AdminContent() {
                         <td className="py-3.5 px-4 font-mono text-neutral-300">
                           {user.phone ? `+91 ${user.phone}` : <span className="text-neutral-500 italic">None</span>}
                         </td>
-                        <td className="py-3.5 px-4">
-                          <span
-                            className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-xs ${
-                              user.role === "admin"
-                                ? "bg-orange-500 text-black font-black"
-                                : "bg-neutral-800 text-neutral-300"
-                            }`}
-                          >
-                            {user.role}
-                          </span>
+                        <td className="py-3.5 px-4 font-mono text-neutral-300">
+                          <div className="flex flex-col">
+                            <span className="font-bold text-white text-xs">
+                              {user.createdAt
+                                ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+                                    day: "2-digit",
+                                    month: "short",
+                                    year: "numeric",
+                                  })
+                                : "Recent"}
+                            </span>
+                          </div>
                         </td>
                         <td className="py-3.5 px-4">
                           <span className="font-black text-white">{userOrderCount} Orders</span>

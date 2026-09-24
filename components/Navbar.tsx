@@ -86,6 +86,8 @@ export default function Navbar() {
   const [shippingState, setShippingState] = useState("Delhi");
   const [shippingCity, setShippingCity] = useState("New Delhi");
   const [shippingPincode, setShippingPincode] = useState("");
+  const [sameWhatsApp, setSameWhatsApp] = useState(true);
+  const [customWhatsApp, setCustomWhatsApp] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "cod">("upi");
   const [utrNumber, setUtrNumber] = useState("");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
@@ -107,16 +109,22 @@ export default function Navbar() {
       if (!shippingPhone && currentUser.phone) setShippingPhone(currentUser.phone);
 
       try {
-        const storedAddr = localStorage.getItem(`user_addresses_${currentUser.id || currentUser.email}`);
+        const storedAddr = localStorage.getItem(`user_addresses_${currentUser.id || currentUser.email || currentUser.phone}`);
         if (storedAddr) {
           const list = JSON.parse(storedAddr);
           if (Array.isArray(list) && list.length > 0) {
             const def = list.find((a: any) => a.isDefault) || list[0];
             if (def) {
+              if (!shippingName && def.name) setShippingName(def.name);
+              if (!shippingPhone && def.phone) setShippingPhone(def.phone);
               if (!shippingAddress && def.street) setShippingAddress(def.street);
               if (!shippingCity && def.city) setShippingCity(def.city);
               if (def.state) setShippingState(def.state);
               if (!shippingPincode && def.pincode) setShippingPincode(def.pincode);
+              if (def.whatsapp) {
+                setSameWhatsApp(false);
+                setCustomWhatsApp(def.whatsapp);
+              }
             }
           }
         }
@@ -204,11 +212,20 @@ export default function Navbar() {
       return;
     }
 
+    if (!sameWhatsApp && customWhatsApp.trim().length !== 10) {
+      setOrderError("Please enter a valid 10-digit WhatsApp number or tick the box to use your delivery number.");
+      return;
+    }
+
     setIsPlacingOrder(true);
 
     try {
+      const waNumber = !sameWhatsApp && customWhatsApp.trim().length === 10
+        ? customWhatsApp.trim()
+        : shippingPhone.trim();
+      const waTag = waNumber ? `[WhatsApp: ${waNumber}]` : "";
       const paymentTag = `[Payment: ${paymentMethod === "cod" ? "Cash on Delivery (COD)" : `UPI Paid${utrNumber.trim() ? ` - UTR: ${utrNumber.trim()}` : ""}`}]`;
-      const fullAddress = `${shippingAddress.trim()}, ${shippingCity.trim() || "Delhi"}, ${shippingState} - ${shippingPincode.trim()} ${paymentTag}`;
+      const fullAddress = `${shippingAddress.trim()}, ${shippingCity.trim() || "Delhi"}, ${shippingState} - ${shippingPincode.trim()} ${waTag} ${paymentTag}`;
       const payload = {
         customerName: shippingName.trim(),
         email: shippingEmail.trim() || "customer@example.com",
@@ -868,6 +885,7 @@ export default function Navbar() {
                         type="tel"
                         required
                         maxLength={10}
+                        placeholder="10-digit mobile number"
                         value={shippingPhone}
                         onChange={(e) => setShippingPhone(e.target.value.replace(/\D/g, ""))}
                         className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
@@ -879,11 +897,51 @@ export default function Navbar() {
                       </label>
                       <input
                         type="email"
+                        placeholder="e.g. name@domain.com"
                         value={shippingEmail}
                         onChange={(e) => setShippingEmail(e.target.value)}
                         className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
                       />
                     </div>
+                  </div>
+
+                  {/* WhatsApp Notification Auto-Tick Option */}
+                  <div className="bg-neutral-50 border border-neutral-200 p-3 space-y-2">
+                    <label className="flex items-center gap-2 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={sameWhatsApp}
+                        onChange={(e) => setSameWhatsApp(e.target.checked)}
+                        className="w-4 h-4 accent-black rounded cursor-pointer"
+                      />
+                      <span className="text-[11px] font-bold text-neutral-900 tracking-wider uppercase flex items-center gap-1.5">
+                        <span className="text-emerald-600 font-normal">💬</span> Send order & tracking updates on WhatsApp to this number
+                      </span>
+                    </label>
+
+                    {!sameWhatsApp && (
+                      <div className="pt-2 border-t border-neutral-200">
+                        <label className="block text-[10px] font-black tracking-widest uppercase text-neutral-800 mb-1">
+                          Alternate WhatsApp Number *
+                        </label>
+                        <div className="flex items-center">
+                          <span className="px-3 py-2.5 bg-neutral-200 border border-r-0 border-gray-300 text-xs font-bold text-neutral-700">
+                            +91
+                          </span>
+                          <input
+                            type="tel"
+                            maxLength={10}
+                            placeholder="Enter 10-digit WhatsApp number"
+                            value={customWhatsApp}
+                            onChange={(e) => setCustomWhatsApp(e.target.value.replace(/\D/g, ""))}
+                            className="w-full border border-gray-300 px-3 py-2.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black bg-white"
+                          />
+                        </div>
+                        <p className="text-[9px] text-neutral-500 uppercase tracking-wider mt-1">
+                          We will send your order confirmation and live courier tracking to this WhatsApp number.
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div>
