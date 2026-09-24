@@ -49,6 +49,8 @@ function AdminContent() {
   const [productCategoryFilter, setProductCategoryFilter] = useState<string>("All");
 
   const [userSearchQuery, setUserSearchQuery] = useState("");
+  const [trackingInputs, setTrackingInputs] = useState<Record<string, string>>({});
+  const [savingTrackingId, setSavingTrackingId] = useState<string | null>(null);
 
   // Edit / Add Product Modal State
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -202,6 +204,36 @@ function AdminContent() {
       }
     } catch (err) {
       console.error("Failed to toggle stock:", err);
+    }
+  };
+
+  // Update order tracking / courier info
+  const handleSaveTracking = async (orderId: string, currentTracking: string) => {
+    const newTracking = trackingInputs[orderId] !== undefined ? trackingInputs[orderId] : currentTracking;
+    setSavingTrackingId(orderId);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: orderId, tracking: newTracking }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setOrdersList((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, address: data.order.address } : o))
+        );
+        try {
+          localStorage.setItem("app_orders_last_updated", String(Date.now()));
+          const channel = new BroadcastChannel("driven_orders_sync");
+          channel.postMessage({ type: "order_tracking_updated", orderId });
+          channel.close();
+        } catch {}
+        window.dispatchEvent(new Event("orders-updated"));
+      }
+    } catch (err) {
+      console.error("Failed to update tracking:", err);
+    } finally {
+      setSavingTrackingId(null);
     }
   };
 
@@ -512,7 +544,12 @@ function AdminContent() {
               {filteredOrders.map((order) => {
                 const isCOD = order.address.includes("COD");
                 const isUPI = order.address.includes("UPI");
-                const cleanDisplayAddress = order.address.replace(/\[Payment:.*?\]/i, "").trim();
+                const trackingMatch = order.address.match(/\[Tracking:\s*(.*?)\]/i);
+                const trackingInfo = trackingMatch ? trackingMatch[1] : "";
+                const cleanDisplayAddress = order.address
+                  .replace(/\[Payment:.*?\]/i, "")
+                  .replace(/\[Tracking:.*?\]/i, "")
+                  .trim();
                 const phoneClean = order.phone ? order.phone.replace(/\D/g, "") : "";
 
                 return (
@@ -611,6 +648,38 @@ function AdminContent() {
                             Payment Ref: {order.address.match(/UTR:.*?(?=\]|$)/)?.[0]}
                           </p>
                         )}
+
+                        {/* Courier & AWB Tracking Form */}
+                        <div className="mt-3 pt-3 border-t border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                          <span className="text-[9px] font-black uppercase tracking-wider text-orange-400 whitespace-nowrap flex items-center gap-1">
+                            <span>📦</span> Courier / AWB:
+                          </span>
+                          <input
+                            type="text"
+                            placeholder="e.g. Delhivery - 1492049182"
+                            value={trackingInputs[order.id] !== undefined ? trackingInputs[order.id] : trackingInfo}
+                            onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
+                            className="bg-black border border-neutral-700 px-3 py-1 text-xs font-mono text-white placeholder:text-neutral-500 w-full sm:w-60 focus:outline-none focus:border-orange-500 uppercase"
+                          />
+                          <button
+                            type="button"
+                            disabled={savingTrackingId === order.id}
+                            onClick={() => handleSaveTracking(order.id, trackingInfo)}
+                            className="bg-neutral-800 hover:bg-orange-600 disabled:bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
+                          >
+                            {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
+                          </button>
+                          {trackingInfo && (
+                            <a
+                              href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-neutral-400 hover:text-white text-[10px] font-bold uppercase underline sm:ml-auto"
+                            >
+                              Track &rarr;
+                            </a>
+                          )}
+                        </div>
                       </div>
                     </div>
 

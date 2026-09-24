@@ -665,7 +665,12 @@ export default function AccountPage() {
                     {myOrders.map((order) => {
                       const isCOD = order.address.includes("COD");
                       const isUPI = order.address.includes("UPI");
-                      const cleanDisplayAddress = order.address.replace(/\[Payment:.*?\]/i, "").trim();
+                      const trackingMatch = order.address.match(/\[Tracking:\s*(.*?)\]/i);
+                      const trackingInfo = trackingMatch ? trackingMatch[1] : null;
+                      const cleanDisplayAddress = order.address
+                        .replace(/\[Payment:.*?\]/i, "")
+                        .replace(/\[Tracking:.*?\]/i, "")
+                        .trim();
 
                       return (
                         <div
@@ -787,6 +792,31 @@ export default function AccountPage() {
                             <p className="text-[10px] text-neutral-600 font-medium uppercase tracking-wider mt-3">
                               <span className="font-bold text-black">Delivery To:</span> {cleanDisplayAddress}
                             </p>
+
+                            {/* Live Courier Dispatch Pill */}
+                            {trackingInfo && (
+                              <div className="mt-3 p-3 bg-neutral-50 border border-neutral-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-sm">📦</span>
+                                  <div>
+                                    <p className="text-[9px] font-black uppercase text-neutral-500 tracking-wider">
+                                      Courier Partner & AWB
+                                    </p>
+                                    <p className="text-xs font-mono font-bold text-black uppercase">
+                                      {trackingInfo}
+                                    </p>
+                                  </div>
+                                </div>
+                                <a
+                                  href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="bg-black hover:bg-orange-600 text-white px-3.5 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors inline-block"
+                                >
+                                  Track Courier &rarr;
+                                </a>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );

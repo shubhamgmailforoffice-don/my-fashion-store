@@ -85,14 +85,14 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <span className="cursor-pointer hover:text-black transition-colors" onClick={() => alert("Complimentary express shipping on orders above ₹5,000 across India. Standard delivery takes 3-5 business days.")}>
+                <Link href="/shipping-policy" className="hover:text-black transition-colors">
                   Shipping Policy
-                </span>
+                </Link>
               </li>
               <li>
-                <span className="cursor-pointer hover:text-black transition-colors" onClick={() => alert("7-day return and exchange window on unworn garments with original tags attached. Blind Box items are final sale.")}>
+                <Link href="/returns" className="hover:text-black transition-colors">
                   Returns & Exchanges
-                </span>
+                </Link>
               </li>
             </ul>
           </div>
@@ -130,9 +130,9 @@ export default function Footer() {
             © 2026 DRIVEN. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-6 text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            <span>Privacy Policy</span>
-            <span>Terms of Service</span>
-            <span>Authenticity Guarantee</span>
+            <Link href="/privacy" className="hover:text-black transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-black transition-colors">Terms of Service</Link>
+            <Link href="/returns" className="hover:text-black transition-colors">Authenticity Guarantee</Link>
           </div>
         </div>
       </div>

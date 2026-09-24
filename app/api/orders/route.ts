@@ -79,21 +79,35 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, status } = body;
+    const { id, status, tracking } = body;
 
-    if (!id || !status) {
+    if (!id) {
       return NextResponse.json(
-        { success: false, error: "Order ID and status are required" },
+        { success: false, error: "Order ID is required" },
         { status: 400 }
       );
+    }
+
+    const allOrders = await getAsyncOrders();
+    const existingOrder = allOrders.find((o) => o.id === id);
+
+    let updatedAddress: string | undefined = undefined;
+    if (typeof tracking === "string") {
+      const currentAddress = existingOrder?.address || "";
+      const baseAddress = currentAddress.replace(/\[Tracking:.*?\]/i, "").trim();
+      updatedAddress = tracking.trim() ? `${baseAddress} [Tracking: ${tracking.trim()}]` : baseAddress;
     }
 
     if (process.env.DATABASE_URL) {
       try {
         const { prisma } = await import("@/lib/prisma");
+        const updateData: { status?: string; address?: string } = {};
+        if (status) updateData.status = status;
+        if (updatedAddress !== undefined) updateData.address = updatedAddress;
+
         await prisma.order.update({
           where: { id },
-          data: { status },
+          data: updateData,
         });
       } catch (err) {
         console.error("Prisma order update error:", err);
@@ -103,17 +117,16 @@ export async function PUT(request: Request) {
     const db = getDB();
     const orderIndex = db.orders.findIndex((o) => o.id === id);
 
-    if (orderIndex === -1) {
-      return NextResponse.json(
-        { success: false, error: "Order not found" },
-        { status: 404 }
-      );
+    if (orderIndex !== -1) {
+      if (status) db.orders[orderIndex].status = status;
+      if (updatedAddress !== undefined) db.orders[orderIndex].address = updatedAddress;
+      saveDB(db);
     }
 
-    db.orders[orderIndex].status = status;
-    saveDB(db);
-
-    return NextResponse.json({ success: true, order: db.orders[orderIndex] });
+    return NextResponse.json({
+      success: true,
+      order: orderIndex !== -1 ? db.orders[orderIndex] : { id, status, address: updatedAddress },
+    });
   } catch (error) {
     return NextResponse.json(
       { success: false, error: String(error) },
