@@ -351,13 +351,21 @@ export default function Navbar() {
             </nav>
           </div>
 
-          {/* Center Column: Iconic DRIVEN Logo mathematically centered */}
+          {/* Center Column: Iconic DRIIVN Logo mathematically centered */}
           <div className="flex items-center justify-center text-center">
             <Link
               href="/"
-              className="text-lg sm:text-2xl font-black tracking-[0.2em] sm:tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
+              className="transition-transform hover:scale-105 flex items-center justify-center py-1"
+              aria-label="DRIIVN Home"
             >
-              DRIVEN
+              <Image
+                src="/logo-black.png"
+                alt="DRIIVN"
+                width={170}
+                height={22}
+                className="h-5 sm:h-6 md:h-7 w-auto object-contain"
+                priority
+              />
             </Link>
           </div>
 
@@ -426,7 +434,13 @@ export default function Navbar() {
           <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-2xl z-50 flex flex-col justify-between p-6">
             <div>
               <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                <span className="text-xl font-black tracking-[0.2em] uppercase">DRIVEN</span>
+                <Image
+                  src="/logo-black.png"
+                  alt="DRIIVN"
+                  width={130}
+                  height={18}
+                  className="h-5 w-auto object-contain"
+                />
                 <button
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="p-1 text-gray-500 hover:text-black"
@@ -496,7 +510,7 @@ export default function Navbar() {
                 India’s Premier Streetwear Brand
               </p>
               <p className="text-[9px] font-bold tracking-widest text-black uppercase">
-                DRIVEN DESIGN ARCHIVES
+                DRIIVN DESIGN ARCHIVES
               </p>
             </div>
           </div>
@@ -631,7 +645,7 @@ export default function Navbar() {
                     Shopping Bag ({cartCount})
                   </h2>
                   <span className="text-[9px] font-bold tracking-widest text-orange-500 uppercase">
-                    DRIVEN OFFICIAL STORE
+                    DRIIVN OFFICIAL STORE
                   </span>
                 </div>
                 <button
@@ -786,7 +800,7 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* DRIVEN SECURE UPI CHECKOUT MODAL */}
+      {/* DRIIVN SECURE UPI CHECKOUT MODAL */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
           <div className="bg-white max-w-xl w-full border border-neutral-200 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
@@ -794,7 +808,7 @@ export default function Navbar() {
             <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-black text-white">
               <div>
                 <p className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase">
-                  DRIVEN SECURE CHECKOUT
+                  DRIIVN SECURE CHECKOUT
                 </p>
                 <h3 className="text-sm font-black tracking-widest uppercase">
                   {checkoutStep === "details" && "Step 1: Delivery Address"}
@@ -1020,7 +1034,7 @@ export default function Navbar() {
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img
                             src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
-                              `upi://pay?pa=drivenstore@upi&pn=DRIVEN&am=${subtotal}&cu=INR&tn=DRIVEN_CLOTHING`
+                              `upi://pay?pa=driivnstore@upi&pn=DRIIVN&am=${subtotal}&cu=INR&tn=DRIIVN_CLOTHING`
                             )}`}
                             alt="Scan UPI QR Code"
                             width={220}
@@ -1037,13 +1051,13 @@ export default function Navbar() {
                             UPI ID
                           </span>
                           <span className="font-mono font-bold text-xs text-black">
-                            drivenstore@upi
+                            driivnstore@upi
                           </span>
                         </div>
                         <button
                           type="button"
                           onClick={() => {
-                            navigator.clipboard.writeText("drivenstore@upi");
+                            navigator.clipboard.writeText("driivnstore@upi");
                             setCopiedUpi(true);
                             setTimeout(() => setCopiedUpi(false), 2000);
                           }}

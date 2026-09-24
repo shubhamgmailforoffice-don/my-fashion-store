@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Returns & Exchanges | DRIVEN Streetwear",
-  description: "Official 7-day hassle-free return and exchange policy for DRIVEN luxury streetwear garments.",
+  title: "Returns & Exchanges | DRIIVN Streetwear",
+  description: "Official 7-day hassle-free return and exchange policy for DRIIVN luxury streetwear garments.",
 };
 
 export default function ReturnsPolicyPage() {
@@ -28,7 +28,7 @@ export default function ReturnsPolicyPage() {
             1. 7-Day Return & Exchange Window
           </h2>
           <p>
-            At DRIVEN, we take immense pride in our heavyweight fabrics and silhouette engineering. However, if a size does not fit as desired or you are not completely satisfied, we accept returns and size exchanges within <strong>7 days of verified delivery</strong>.
+            At DRIIVN, we take immense pride in our heavyweight fabrics and silhouette engineering. However, if a size does not fit as desired or you are not completely satisfied, we accept returns and size exchanges within <strong>7 days of verified delivery</strong>.
           </p>
         </section>
 
@@ -41,7 +41,7 @@ export default function ReturnsPolicyPage() {
             <p className="font-bold text-black">To qualify for a full exchange or return:</p>
             <ul className="list-disc pl-5 space-y-1 text-gray-600">
               <li>The garment must be unworn, unwashed, and scent-free (no perfumes or deodorants).</li>
-              <li>Original DRIVEN garment tags, neck seals, and brand packaging must remain intact.</li>
+              <li>Original DRIIVN garment tags, neck seals, and brand packaging must remain intact.</li>
               <li>Free promotional gifts or dustbags must be included with the returned package.</li>
             </ul>
           </div>
@@ -59,7 +59,7 @@ export default function ReturnsPolicyPage() {
             Initiating an exchange is straightforward:
           </p>
           <ol className="list-decimal pl-5 space-y-2 text-gray-600">
-            <li>Visit your <Link href="/account" className="text-orange-600 font-bold underline">Member Account</Link> or contact concierge at <span className="font-bold text-black">returns@drivenstore.in</span> with your Order ID.</li>
+            <li>Visit your <Link href="/account" className="text-orange-600 font-bold underline">Member Account</Link> or contact concierge at <span className="font-bold text-black">returns@driivnstore.in</span> with your Order ID.</li>
             <li>Our courier partner will arrange a doorstep reverse pickup within 48 to 72 hours.</li>
             <li>Upon quality inspection at our warehouse, your requested replacement size will be dispatched immediately.</li>
           </ol>

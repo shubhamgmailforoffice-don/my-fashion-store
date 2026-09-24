@@ -21,7 +21,7 @@ export default async function Home() {
         {/* Massive Streetwear Watermark */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
           <span className="text-[17vw] font-black text-zinc-900/40 tracking-[0.15em] uppercase leading-none select-none">
-            DRIVEN
+            DRIIVN
           </span>
         </div>
 
@@ -139,7 +139,7 @@ export default async function Home() {
               Worn Worldwide.
             </h2>
             <p className="text-xs sm:text-sm text-gray-300 uppercase tracking-widest leading-relaxed">
-              DRIVEN was born out of a desire to create unapologetic, high-octane luxury streetwear. Every garment is cut from custom-milled French Terry and ripstop cotton, tested for drape and durability, and finished with meticulous tactile printing techniques.
+              DRIIVN was born out of a desire to create unapologetic, high-octane luxury streetwear. Every garment is cut from custom-milled French Terry and ripstop cotton, tested for drape and durability, and finished with meticulous tactile printing techniques.
             </p>
             <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-800">
               <div>
@@ -160,7 +160,7 @@ export default async function Home() {
           <div className="lg:col-span-6 relative aspect-[4/3] bg-zinc-900 border border-zinc-800 overflow-hidden">
             <Image
               src="/images/products/black-nocturnal-hoodie.jpg"
-              alt="DRIVEN Couture Process"
+              alt="DRIIVN Couture Process"
               fill
               className="object-cover"
             />

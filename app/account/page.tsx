@@ -130,7 +130,7 @@ export default function AccountPage() {
     // Cross-tab sync via BroadcastChannel
     let channel: BroadcastChannel | null = null;
     try {
-      channel = new BroadcastChannel("driven_orders_sync");
+      channel = new BroadcastChannel("driivn_orders_sync");
       channel.onmessage = () => fetchOrders();
     } catch {}
 
@@ -357,7 +357,7 @@ export default function AccountPage() {
       // Notify all tabs and refresh local orders list
       try {
         localStorage.setItem("app_orders_last_updated", String(Date.now()));
-        const channel = new BroadcastChannel("driven_orders_sync");
+        const channel = new BroadcastChannel("driivn_orders_sync");
         channel.postMessage({ type: "order_linked", orderId: data.orderId });
         channel.close();
       } catch {}
@@ -474,7 +474,7 @@ export default function AccountPage() {
       );
     } else {
       setGuestTrackResult(
-        `Order #${clean} confirmed and prepped at DRIVEN central fulfillment hub.`
+        `Order #${clean} confirmed and prepped at DRIIVN central fulfillment hub.`
       );
     }
   };
@@ -486,7 +486,7 @@ export default function AccountPage() {
         {/* Editorial Top Brand Identifier */}
         <div className="text-center mb-8 sm:mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[9px] font-black tracking-[0.35em] uppercase mb-4">
-            <span>DRIVEN</span>
+            <span>DRIIVN</span>
             <span>•</span>
             <span>MEMBER CLUB</span>
           </div>
@@ -496,7 +496,7 @@ export default function AccountPage() {
           <p className="text-xs text-neutral-500 tracking-wider uppercase mt-2 max-w-sm mx-auto">
             {currentUser
               ? `Account: ${currentUser.role.toUpperCase()} • Direct Portal Access`
-              : "Enter your Email or Mobile Number and Password to access your DRIVEN account."}
+              : "Enter your Email or Mobile Number and Password to access your DRIIVN account."}
           </p>
         </div>
 
@@ -506,7 +506,7 @@ export default function AccountPage() {
             {/* VIP Status Banner */}
             <div className="bg-neutral-950 text-white p-6 sm:p-8 relative overflow-hidden border border-neutral-800 shadow-xl">
               <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 text-neutral-900/60 font-black text-7xl select-none pointer-events-none">
-                DRIVEN
+                DRIIVN
               </div>
               <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -938,7 +938,7 @@ export default function AccountPage() {
             {activeTab === "perks" && (
               <div className="border border-neutral-200 p-6 bg-white space-y-6">
                 <h3 className="text-xs font-black uppercase tracking-widest text-black border-b border-neutral-100 pb-3">
-                  DRIVEN Member Privileges
+                  DRIIVN Member Privileges
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="border border-neutral-100 p-5 bg-neutral-50">
@@ -1336,7 +1336,7 @@ export default function AccountPage() {
                   </>
                 ) : (
                   <span>
-                    {authMode === "signin" ? "Sign In to DRIVEN →" : "Create DRIVEN Account →"}
+                    {authMode === "signin" ? "Sign In to DRIIVN →" : "Create DRIIVN Account →"}
                   </span>
                 )}
               </button>
@@ -1346,7 +1346,7 @@ export default function AccountPage() {
             <div className="text-center pt-2">
               {authMode === "signin" ? (
                 <p className="text-xs text-neutral-500 uppercase tracking-wider">
-                  New to DRIVEN?{" "}
+                  New to DRIIVN?{" "}
                   <button
                     type="button"
                     onClick={() => {

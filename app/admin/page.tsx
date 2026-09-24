@@ -123,7 +123,7 @@ function AdminContent() {
     // 2. Cross-tab sync via BroadcastChannel
     let channel: BroadcastChannel | null = null;
     try {
-      channel = new BroadcastChannel("driven_orders_sync");
+      channel = new BroadcastChannel("driivn_orders_sync");
       channel.onmessage = () => {
         fetch("/api/orders", { cache: "no-store" })
           .then((r) => r.json())
@@ -179,7 +179,7 @@ function AdminContent() {
         // Multi-tab broadcast
         try {
           localStorage.setItem("app_orders_last_updated", String(Date.now()));
-          const channel = new BroadcastChannel("driven_orders_sync");
+          const channel = new BroadcastChannel("driivn_orders_sync");
           channel.postMessage({ type: "order_status_updated", orderId, status: newStatus });
           channel.close();
         } catch {}
@@ -228,7 +228,7 @@ function AdminContent() {
         );
         try {
           localStorage.setItem("app_orders_last_updated", String(Date.now()));
-          const channel = new BroadcastChannel("driven_orders_sync");
+          const channel = new BroadcastChannel("driivn_orders_sync");
           channel.postMessage({ type: "order_tracking_updated", orderId });
           channel.close();
         } catch {}
@@ -465,7 +465,7 @@ function AdminContent() {
             Control Center • Real-time Operations
           </span>
           <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest text-white mt-1">
-            DRIVEN Administration
+            DRIIVN Administration
           </h1>
         </div>
 
@@ -802,7 +802,7 @@ function AdminContent() {
                               <div className="pt-2 flex items-center gap-2 flex-wrap">
                                 <a
                                   href={`https://wa.me/91${phoneClean}?text=${encodeURIComponent(
-                                    `Hello ${order.customerName}, this is DRIVEN Operations regarding your order #${order.id}.`
+                                    `Hello ${order.customerName}, this is DRIIVN Operations regarding your order #${order.id}.`
                                   )}`}
                                   target="_blank"
                                   rel="noreferrer"

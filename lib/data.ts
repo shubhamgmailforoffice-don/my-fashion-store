@@ -151,7 +151,7 @@ export const collections: CollectionInfo[] = [
   },
   {
     slug: "racing-club",
-    name: "Driven Racing Club",
+    name: "DRIIVN Racing Club",
     tag: "SPEEDWAY SERIES",
     concept: "C.02 / GRAPHIC CAPSULE",
     description: "Inspired by vintage motorsport culture. High-octane contrast colorways, speed typography, and dropped-shoulder boxy cuts.",
@@ -160,7 +160,7 @@ export const collections: CollectionInfo[] = [
   },
   {
     slug: "essentials",
-    name: "Driven Basics & Essentials",
+    name: "DRIIVN Basics & Essentials",
     tag: "DAILY UNIFORM",
     concept: "C.03 / PERMANENT LINE",
     description: "Premium daily uniform. Minimal branding, meticulously tailored silhouettes, and rugged long-staple cotton fabrication.",
@@ -190,7 +190,7 @@ export const colors = [
 export const stores: StoreLocation[] = [
   {
     city: "New Delhi",
-    name: "DRIVEN DLF PROMENADE",
+    name: "DRIIVN DLF PROMENADE",
     address: "Ground Floor, DLF Promenade Mall, Vasant Kunj, New Delhi - 110070",
     timing: "11:00 AM - 10:00 PM (Mon - Sun)",
     phone: "+91 98100 00001",
@@ -198,7 +198,7 @@ export const stores: StoreLocation[] = [
   },
   {
     city: "Mumbai",
-    name: "DRIVEN KALA GHODA",
+    name: "DRIIVN KALA GHODA",
     address: "Forbes Street, Kala Ghoda, Fort, Mumbai, Maharashtra - 400001",
     timing: "11:00 AM - 09:30 PM (Mon - Sun)",
     phone: "+91 98200 00002",
@@ -206,7 +206,7 @@ export const stores: StoreLocation[] = [
   },
   {
     city: "Hyderabad",
-    name: "DRIVEN BANJARA HILLS",
+    name: "DRIIVN BANJARA HILLS",
     address: "Road No. 36, Jubilee Hills / Banjara Hills, Hyderabad, Telangana - 500034",
     timing: "11:30 AM - 10:00 PM (Mon - Sun)",
     phone: "+91 98300 00003",

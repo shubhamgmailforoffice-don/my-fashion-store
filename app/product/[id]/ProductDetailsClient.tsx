@@ -242,7 +242,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
           <div className="lg:col-span-5 flex flex-col justify-start">
             <div className="border-b border-gray-100 pb-6">
               <span className="text-[10px] font-bold tracking-[0.3em] text-orange-500 uppercase block mb-1">
-                DRIVEN COUTURE
+                DRIIVN COUTURE
               </span>
               <h1 className="text-2xl md:text-3xl font-black tracking-widest text-black uppercase leading-tight mb-3">
                 {product.name}
@@ -469,7 +469,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               <div className="flex justify-between items-center border-b border-gray-100 pb-4">
                 <div>
                   <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
-                    DRIVEN MEASUREMENT TABLE
+                    DRIIVN MEASUREMENT TABLE
                   </span>
                   <h3 className="text-base font-black tracking-widest uppercase">
                     Oversized Fit Guide (Inches)

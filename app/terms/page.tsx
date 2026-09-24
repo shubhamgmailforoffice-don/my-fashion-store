@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Terms of Service | DRIVEN Streetwear",
-  description: "Terms and conditions governing purchases, limited edition drops, and website usage for DRIVEN.",
+  title: "Terms of Service | DRIIVN Streetwear",
+  description: "Terms and conditions governing purchases, limited edition drops, and website usage for DRIIVN.",
 };
 
 export default function TermsOfServicePage() {
@@ -17,7 +17,7 @@ export default function TermsOfServicePage() {
           Terms of Service
         </h1>
         <p className="text-xs text-gray-500 tracking-widest uppercase mt-2">
-          Governing Usage of DRIVEN Storefront & Collectibles
+          Governing Usage of DRIIVN Storefront & Collectibles
         </p>
       </div>
 
@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
             1. Acceptance of Terms
           </h2>
           <p>
-            By accessing DRIVEN (the "Site") or purchasing our garments and accessories, you acknowledge and agree to be bound by these Terms of Service. If you disagree with any part of these terms, please refrain from using the platform.
+            By accessing DRIIVN (the "Site") or purchasing our garments and accessories, you acknowledge and agree to be bound by these Terms of Service. If you disagree with any part of these terms, please refrain from using the platform.
           </p>
         </section>
 
@@ -36,7 +36,7 @@ export default function TermsOfServicePage() {
             2. Limited Edition Drops & Availability
           </h2>
           <p>
-            DRIVEN operates on conceptual, limited-inventory releases. Items placed in your digital shopping bag are not reserved until checkout is completed and confirmed. We reserve the right to restrict purchase quantities per individual customer or IP address to prevent commercial scalping.
+            DRIIVN operates on conceptual, limited-inventory releases. Items placed in your digital shopping bag are not reserved until checkout is completed and confirmed. We reserve the right to restrict purchase quantities per individual customer or IP address to prevent commercial scalping.
           </p>
         </section>
 
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
             4. Intellectual Property & Brand Ownership
           </h2>
           <p>
-            All graphics, high-density print designs, typography, brand marks, lookbook photography, and code belonging to DRIVEN are protected under copyright and trademark laws. Any unauthorized commercial reproduction or counterfeit manufacturing will be subject to legal prosecution.
+            All graphics, high-density print designs, typography, brand marks, lookbook photography, and code belonging to DRIIVN are protected under copyright and trademark laws. Any unauthorized commercial reproduction or counterfeit manufacturing will be subject to legal prosecution.
           </p>
         </section>
 

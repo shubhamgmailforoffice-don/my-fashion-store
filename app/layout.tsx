@@ -23,9 +23,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "DRIVEN | High-Octane Luxury Streetwear",
+  title: "DRIIVN | High-Octane Luxury Streetwear",
   description:
-    "DRIVEN, an original high-end luxury streetwear brand in India. Engineered with custom-milled heavyweight French Terry, bold typography, and boxy unisex silhouettes.",
+    "DRIIVN, an original high-end luxury streetwear brand in India. Engineered with custom-milled heavyweight French Terry, bold typography, and boxy unisex silhouettes.",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -40,7 +41,7 @@ export default function AdminLayout({
 
     try {
       // 1. Direct passkey check for admin
-      if (adminPasswordInput === "admin123" || adminPasswordInput === "DRIVEN2026") {
+      if (adminPasswordInput === "admin123" || adminPasswordInput === "DRIIVN2026" || adminPasswordInput === "DRIVEN2026") {
         const adminData = {
           id: "admin-1",
           name: "Head of Operations",
@@ -118,7 +119,7 @@ export default function AdminLayout({
               Security Protocol
             </span>
             <h1 className="text-xl font-black tracking-widest uppercase text-white">
-              DRIVEN CONTROL CENTER
+              DRIIVN CONTROL CENTER
             </h1>
             <p className="text-xs text-neutral-400 uppercase tracking-wider">
               Restricted management area. Enter the administrative passkey to proceed.
@@ -182,7 +183,7 @@ export default function AdminLayout({
                 Control Center
               </span>
               <h1 className="text-sm font-black tracking-widest uppercase text-white leading-none">
-                DRIVEN OPERATIONS
+                DRIIVN OPERATIONS
               </h1>
             </div>
           </div>
@@ -235,12 +236,21 @@ export default function AdminLayout({
       <aside className="hidden md:flex w-64 bg-[#121212] border-r border-neutral-800 flex-col justify-between p-6 flex-shrink-0">
         <div className="space-y-8">
           <div>
-            <span className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase block">
+            <span className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase block mb-1">
               Control Center
             </span>
-            <h1 className="text-lg font-black tracking-widest uppercase text-white mt-1">
-              DRIVEN OPERATIONS
-            </h1>
+            <div className="flex flex-col items-start gap-1">
+              <Image
+                src="/logo-white.png"
+                alt="DRIIVN"
+                width={140}
+                height={18}
+                className="h-5 w-auto object-contain"
+              />
+              <span className="text-[8px] font-black tracking-[0.25em] text-neutral-400 uppercase">
+                OPERATIONS
+              </span>
+            </div>
           </div>
 
           <nav className="space-y-2">

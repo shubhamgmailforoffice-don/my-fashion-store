@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 
@@ -30,11 +31,17 @@ export default function Footer() {
           
           {/* Brand Info (2 columns on md) */}
           <div className="md:col-span-2 space-y-4">
-            <h2 className="text-base font-black tracking-[0.25em] uppercase">
-              DRIVEN
-            </h2>
+            <Link href="/" className="inline-block">
+              <Image
+                src="/logo-black.png"
+                alt="DRIIVN"
+                width={160}
+                height={20}
+                className="h-6 w-auto object-contain"
+              />
+            </Link>
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase max-w-sm">
-              DRIVEN is India’s premier luxury streetwear house, founded in 2026. Focused on custom-milled heavyweight French Terry fabrics, automotive-inspired high-octane graphics, and collectible limited drops.
+              DRIIVN is India’s premier luxury streetwear house, founded in 2026. Focused on custom-milled heavyweight French Terry fabrics, automotive-inspired high-octane graphics, and collectible limited drops.
             </p>
             <div className="pt-2 text-[10px] font-bold tracking-widest text-orange-500 uppercase">
               <span>DESIGNED IN INDIA • WORN WORLDWIDE</span>
@@ -134,7 +141,7 @@ export default function Footer() {
         {/* Bottom copyright row */}
         <div className="mt-14 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            © 2026 DRIVEN. ALL RIGHTS RESERVED.
+            © 2026 DRIIVN. ALL RIGHTS RESERVED.
           </p>
           <div className="flex gap-6 text-[10px] font-bold text-gray-400 tracking-widest uppercase">
             <Link href="/privacy" className="hover:text-black transition-colors">Privacy Policy</Link>

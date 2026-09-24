@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Shipping Policy | DRIVEN Streetwear",
-  description: "Official domestic and international shipping policy, delivery timelines, and transit guidelines for DRIVEN garments.",
+  title: "Shipping Policy | DRIIVN Streetwear",
+  description: "Official domestic and international shipping policy, delivery timelines, and transit guidelines for DRIIVN garments.",
 };
 
 export default function ShippingPolicyPage() {
@@ -28,7 +28,7 @@ export default function ShippingPolicyPage() {
             1. Order Processing Time
           </h2>
           <p>
-            All standard orders placed at DRIVEN are processed and dispatched within <strong>24 to 48 business hours</strong> (excluding Sundays and national gazetted holidays).
+            All standard orders placed at DRIIVN are processed and dispatched within <strong>24 to 48 business hours</strong> (excluding Sundays and national gazetted holidays).
           </p>
           <p>
             Limited edition drops, pre-orders, and serialized archive pieces will adhere to the specific timeline listed on the individual product lookbook page.
@@ -88,7 +88,7 @@ export default function ShippingPolicyPage() {
             5. Damaged or Tampered Parcels
           </h2>
           <p>
-            Our packaging utilizes high-security tamper-evident polybags and custom security seals. If the package appears visibly opened, damaged, or torn upon arrival, <strong>do not accept the package</strong>. Immediately record a photo/video and notify our concierge within 24 hours at <span className="font-bold text-black">support@drivenstore.in</span>.
+            Our packaging utilizes high-security tamper-evident polybags and custom security seals. If the package appears visibly opened, damaged, or torn upon arrival, <strong>do not accept the package</strong>. Immediately record a photo/video and notify our concierge within 24 hours at <span className="font-bold text-black">support@driivnstore.in</span>.
           </p>
         </section>
       </div>

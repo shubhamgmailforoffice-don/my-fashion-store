@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Privacy Policy | DRIVEN Streetwear",
-  description: "Official customer privacy policy, data security, and encryption compliance for DRIVEN.",
+  title: "Privacy Policy | DRIIVN Streetwear",
+  description: "Official customer privacy policy, data security, and encryption compliance for DRIIVN.",
 };
 
 export default function PrivacyPolicyPage() {
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
             1. Information We Collect
           </h2>
           <p>
-            When you browse, register, or order from DRIVEN, we collect necessary transactional and identity details to fulfill your streetwear purchases:
+            When you browse, register, or order from DRIIVN, we collect necessary transactional and identity details to fulfill your streetwear purchases:
           </p>
           <ul className="list-disc pl-5 space-y-1 text-gray-600">
             <li><strong>Identity & Contact Details:</strong> Full Name, Email Address, 10-Digit Mobile Number.</li>
@@ -50,7 +50,7 @@ export default function PrivacyPolicyPage() {
             3. Payment Data Security
           </h2>
           <p>
-            DRIVEN does not directly store, process, or view credit/debit card numbers or UPI PINs on our servers. All digital transactions are processed through RBI-authorized payment processors and encrypted gateways.
+            DRIIVN does not directly store, process, or view credit/debit card numbers or UPI PINs on our servers. All digital transactions are processed through RBI-authorized payment processors and encrypted gateways.
           </p>
         </section>
 
@@ -68,7 +68,7 @@ export default function PrivacyPolicyPage() {
             5. Contacting the Data Protection Officer
           </h2>
           <p>
-            For inquiries regarding your stored account data, address removal, or account closure, email our data desk at: <span className="font-bold text-black">privacy@drivenstore.in</span>.
+            For inquiries regarding your stored account data, address removal, or account closure, email our data desk at: <span className="font-bold text-black">privacy@driivnstore.in</span>.
           </p>
         </section>
       </div>

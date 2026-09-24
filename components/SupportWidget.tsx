@@ -17,7 +17,7 @@ const INITIAL_MESSAGES: ChatMessage[] = [
   {
     id: "welcome",
     sender: "bot",
-    text: "Welcome to DRIVEN Client Services. How can we assist your wardrobe today?",
+    text: "Welcome to DRIIVN Client Services. How can we assist your wardrobe today?",
     timestamp: "Just now",
     options: [
       "Track My Order",
@@ -40,7 +40,7 @@ export default function SupportWidget() {
 
   // Official Support Contacts
   const WHATSAPP_NUMBER = "919999999999";
-  const SUPPORT_EMAIL = "support@drivenstore.in";
+  const SUPPORT_EMAIL = "support@driivnstore.in";
   const SUPPORT_PHONE = "+91 99999 99999";
 
   // Hide widget inside Admin Control Center
@@ -125,7 +125,7 @@ export default function SupportWidget() {
       }
       // 2. Sizing & Fit Guide
       else if (lower.includes("size") || lower.includes("fit") || lower.includes("gsm")) {
-        botResponse.text = "DRIVEN garments are engineered with relaxed, boxy luxury silhouettes:\n• Tops & Tees: Cut in 280 GSM combed French Terry cotton with dropped shoulders.\n• Hoodies: Heavyweight 420 GSM French Terry for structured drape.\n• We recommend choosing your true size for our signature oversized look, or size down for a standard regular fit.";
+        botResponse.text = "DRIIVN garments are engineered with relaxed, boxy luxury silhouettes:\n• Tops & Tees: Cut in 280 GSM combed French Terry cotton with dropped shoulders.\n• Hoodies: Heavyweight 420 GSM French Terry for structured drape.\n• We recommend choosing your true size for our signature oversized look, or size down for a standard regular fit.";
         botResponse.options = ["Returns & Exchanges Policy", "Track My Order", "WhatsApp Stylist"];
       }
       // 3. Shipping Timelines
@@ -146,7 +146,7 @@ export default function SupportWidget() {
         botResponse.actionLink = {
           label: "Open WhatsApp Chat Now 💬",
           url: `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-            "Hi DRIVEN Concierge, I would like assistance with an inquiry."
+            "Hi DRIIVN Concierge, I would like assistance with an inquiry."
           )}`,
           external: true,
         };
@@ -154,7 +154,7 @@ export default function SupportWidget() {
       }
       // 6. Default Fallback
       else {
-        botResponse.text = "Thank you for reaching out to DRIVEN Concierge. You can track orders, check sizing, or chat with a personal stylist directly on WhatsApp.";
+        botResponse.text = "Thank you for reaching out to DRIIVN Concierge. You can track orders, check sizing, or chat with a personal stylist directly on WhatsApp.";
         botResponse.options = [
           "Track My Order",
           "Sizing & Fit Guide",
@@ -184,7 +184,7 @@ export default function SupportWidget() {
             </div>
             <div className="text-left hidden sm:block">
               <p className="text-[10px] font-black uppercase tracking-widest leading-none">
-                DRIVEN Concierge
+                DRIIVN Concierge
               </p>
               <p className="text-[8px] text-neutral-400 group-hover:text-white uppercase tracking-wider mt-0.5">
                 WhatsApp • Live Help
@@ -208,7 +208,7 @@ export default function SupportWidget() {
               </div>
               <div>
                 <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-1.5">
-                  DRIVEN Concierge
+                  DRIIVN Concierge
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                 </h3>
                 <p className="text-[9px] text-neutral-400 uppercase tracking-wider">
@@ -360,7 +360,7 @@ export default function SupportWidget() {
               {/* WhatsApp Priority Card */}
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-                  "Hello DRIVEN Support Desk, I would like to inquire about my order / product sizing."
+                  "Hello DRIIVN Support Desk, I would like to inquire about my order / product sizing."
                 )}`}
                 target="_blank"
                 rel="noreferrer"
@@ -385,9 +385,9 @@ export default function SupportWidget() {
               {/* Official Email Desk */}
               <a
                 href={`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(
-                  "DRIVEN Inquiry - Client Support"
+                  "DRIIVN Inquiry - Client Support"
                 )}&body=${encodeURIComponent(
-                  "Hello DRIVEN Concierge,\n\nMy inquiry details:\n• Order ID (if applicable):\n• Description:\n\nThank you."
+                  "Hello DRIIVN Concierge,\n\nMy inquiry details:\n• Order ID (if applicable):\n• Description:\n\nThank you."
                 )}`}
                 className="block p-4 border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 transition-colors"
               >
