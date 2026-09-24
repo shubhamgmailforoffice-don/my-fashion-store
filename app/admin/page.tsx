@@ -99,12 +99,70 @@ function AdminContent() {
     }
   };
 
+  // Live real-time synchronization & background polling
   useEffect(() => {
     refreshData();
+
+    // 1. Cross-tab sync via storage event
+    const handleStorageUpdate = (e: StorageEvent) => {
+      if (e.key === "app_orders_last_updated") {
+        fetch("/api/orders", { cache: "no-store" })
+          .then((r) => r.json())
+          .then((orders) => Array.isArray(orders) && setOrdersList(orders))
+          .catch(() => {});
+      }
+    };
+    window.addEventListener("storage", handleStorageUpdate);
+
+    // 2. Cross-tab sync via BroadcastChannel
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel("driven_orders_sync");
+      channel.onmessage = () => {
+        fetch("/api/orders", { cache: "no-store" })
+          .then((r) => r.json())
+          .then((orders) => Array.isArray(orders) && setOrdersList(orders))
+          .catch(() => {});
+      };
+    } catch {}
+
+    // 3. Live polling every 4 seconds so incoming customer orders and updates show without reload
+    const pollTimer = setInterval(() => {
+      fetch("/api/orders", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((orders) => {
+          if (Array.isArray(orders)) setOrdersList(orders);
+        })
+        .catch(() => {});
+    }, 4000);
+
+    const handleFocus = () => {
+      fetch("/api/orders", { cache: "no-store" })
+        .then((r) => r.json())
+        .then((orders) => Array.isArray(orders) && setOrdersList(orders))
+        .catch(() => {});
+    };
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageUpdate);
+      window.removeEventListener("focus", handleFocus);
+      clearInterval(pollTimer);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
+    };
   }, []);
 
-  // Update order status
+  // Update order status with instant optimistic update & multi-tab broadcast
   const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
+    // 1. Immediate optimistic UI feedback
+    setOrdersList((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, status: newStatus as any } : o))
+    );
+
     try {
       const res = await fetch("/api/orders", {
         method: "PUT",
@@ -112,13 +170,20 @@ function AdminContent() {
         body: JSON.stringify({ id: orderId, status: newStatus }),
       });
       if (res.ok) {
-        setOrdersList((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, status: newStatus as any } : o))
-        );
+        // Multi-tab broadcast
+        try {
+          localStorage.setItem("app_orders_last_updated", String(Date.now()));
+          const channel = new BroadcastChannel("driven_orders_sync");
+          channel.postMessage({ type: "order_status_updated", orderId, status: newStatus });
+          channel.close();
+        } catch {}
         window.dispatchEvent(new Event("orders-updated"));
+      } else {
+        refreshData();
       }
     } catch (err) {
       console.error("Failed to update status:", err);
+      refreshData();
     }
   };
 

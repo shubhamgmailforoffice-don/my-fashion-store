@@ -90,8 +90,10 @@ export default function AccountPage() {
     isDefault: false,
   });
 
-  // Manual Order Link input
+  // Manual Secure Order Link input
   const [linkOrderIdInput, setLinkOrderIdInput] = useState("");
+  const [linkContactInput, setLinkContactInput] = useState("");
+  const [linkLoading, setLinkLoading] = useState(false);
   const [linkOrderMsg, setLinkOrderMsg] = useState<{ text: string; success: boolean } | null>(null);
 
   // Guest Order Tracking Drawer / Modal
@@ -111,11 +113,42 @@ export default function AccountPage() {
       .catch(() => {});
   };
 
+  // Real-time live synchronization (Auto-sync without reload)
   useEffect(() => {
     fetchOrders();
     const handleOrderUpdate = () => fetchOrders();
     window.addEventListener("orders-updated", handleOrderUpdate);
-    return () => window.removeEventListener("orders-updated", handleOrderUpdate);
+
+    // Cross-tab sync via localStorage storage event
+    const handleStorageUpdate = (e: StorageEvent) => {
+      if (e.key === "app_orders_last_updated") {
+        fetchOrders();
+      }
+    };
+    window.addEventListener("storage", handleStorageUpdate);
+
+    // Cross-tab sync via BroadcastChannel
+    let channel: BroadcastChannel | null = null;
+    try {
+      channel = new BroadcastChannel("driven_orders_sync");
+      channel.onmessage = () => fetchOrders();
+    } catch {}
+
+    // Live background polling (every 4 seconds) so admin status updates appear automatically
+    const pollTimer = setInterval(fetchOrders, 4000);
+    window.addEventListener("focus", handleOrderUpdate);
+
+    return () => {
+      window.removeEventListener("orders-updated", handleOrderUpdate);
+      window.removeEventListener("storage", handleStorageUpdate);
+      window.removeEventListener("focus", handleOrderUpdate);
+      clearInterval(pollTimer);
+      if (channel) {
+        try {
+          channel.close();
+        } catch {}
+      }
+    };
   }, []);
 
   // Filter orders strictly for the logged-in user
@@ -145,8 +178,12 @@ export default function AccountPage() {
     })();
 
     return userOrders.filter((o) => {
-      // 1. Explicitly linked to this user's account
-      if (accountOrderIds.includes(o.id)) return true;
+      // 1. Explicitly linked to this user's account (only if no conflicting different email)
+      if (accountOrderIds.includes(o.id)) {
+        if (!o.email || !userEmailClean || o.email.toLowerCase().trim() === userEmailClean) {
+          return true;
+        }
+      }
 
       // 2. Exact email match
       if (userEmailClean && o.email && userEmailClean === o.email.toLowerCase().trim()) return true;
@@ -269,39 +306,67 @@ export default function AccountPage() {
     saveAddressesToStorage(updated);
   };
 
-  // Helper to link order ID manually
-  const handleLinkOrder = (e: React.FormEvent) => {
+  // Helper to link order ID securely via backend authentication
+  const handleLinkOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     setLinkOrderMsg(null);
     if (!linkOrderIdInput.trim()) return;
 
-    const cleanInput = linkOrderIdInput.trim().toUpperCase().replace(/^#/, "");
-    const matchingOrder = userOrders.find((o) => o.id.toUpperCase().includes(cleanInput));
-
-    if (!matchingOrder) {
-      setLinkOrderMsg({
-        text: `Order #${cleanInput} was not found. Please verify the ID.`,
-        success: false,
-      });
-      return;
-    }
-
+    setLinkLoading(true);
     try {
-      const userKey = currentUser?.email?.toLowerCase().trim() || currentUser?.phone || "default";
-      const key = `account_order_ids_${userKey}`;
-      const stored: string[] = JSON.parse(localStorage.getItem(key) || "[]");
-      if (!stored.includes(matchingOrder.id)) {
-        stored.unshift(matchingOrder.id);
-        localStorage.setItem(key, JSON.stringify(stored));
+      const res = await fetch("/api/orders/link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orderId: linkOrderIdInput.trim(),
+          currentUserEmail: currentUser?.email,
+          currentUserPhone: currentUser?.phone,
+          verificationContact: linkContactInput.trim() || undefined,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setLinkOrderMsg({
+          text: data.error || "Failed to link order. Security verification failed.",
+          success: false,
+        });
+        setLinkLoading(false);
+        return;
       }
+
+      // Secure link confirmed: save to account_order_ids for immediate display
+      const userKey = (currentUser?.email || currentUser?.phone || "").toLowerCase().trim();
+      if (userKey && data.orderId) {
+        const key = `account_order_ids_${userKey}`;
+        const stored: string[] = JSON.parse(localStorage.getItem(key) || "[]");
+        if (!stored.includes(data.orderId)) {
+          stored.unshift(data.orderId);
+          localStorage.setItem(key, JSON.stringify(stored));
+        }
+      }
+
       setLinkOrderMsg({
-        text: `Order #${matchingOrder.id} successfully linked to your account!`,
+        text: data.message || `Order #${data.orderId} verified and linked successfully!`,
         success: true,
       });
       setLinkOrderIdInput("");
+      setLinkContactInput("");
+
+      // Notify all tabs and refresh local orders list
+      try {
+        localStorage.setItem("app_orders_last_updated", String(Date.now()));
+        const channel = new BroadcastChannel("driven_orders_sync");
+        channel.postMessage({ type: "order_linked", orderId: data.orderId });
+        channel.close();
+      } catch {}
       window.dispatchEvent(new Event("orders-updated"));
-    } catch {
-      setLinkOrderMsg({ text: "Failed to link order.", success: false });
+      fetchOrders();
+    } catch (err) {
+      setLinkOrderMsg({ text: "An error occurred while linking your order: " + String(err), success: false });
+    } finally {
+      setLinkLoading(false);
     }
   };
 
@@ -533,28 +598,40 @@ export default function AccountPage() {
             {/* TAB 1: ORDERS */}
             {activeTab === "orders" && (
               <div className="space-y-6">
-                {/* 1-Click Order Link Helper */}
-                <div className="bg-neutral-50 border border-neutral-200 p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-black uppercase tracking-wider text-black">
+                {/* 1-Click Secure Order Link Helper */}
+                <div className="bg-neutral-50 border border-neutral-200 p-4 sm:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+                  <div className="space-y-1 max-w-sm">
+                    <p className="text-xs font-black uppercase tracking-wider text-black flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-orange-500 inline-block" />
                       Placed an order as guest or earlier?
                     </p>
-                    <p className="text-[10px] text-neutral-500 uppercase tracking-wider">
-                      Enter your Order ID below to link it permanently to your account.
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-wider leading-relaxed">
+                      Enter Order ID and checkout phone/email to verify identity and link the order securely.
                     </p>
                   </div>
-                  <form onSubmit={handleLinkOrder} className="flex gap-2 w-full sm:w-auto">
+                  <form onSubmit={handleLinkOrder} className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
                     <input
                       type="text"
+                      placeholder="ORDER ID (E.G. FS-4253)"
                       value={linkOrderIdInput}
                       onChange={(e) => setLinkOrderIdInput(e.target.value)}
-                      className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-36"
+                      required
+                      className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-44"
+                    />
+                    <input
+                      type="text"
+                      placeholder="MOBILE OR EMAIL (OPTIONAL)"
+                      value={linkContactInput}
+                      onChange={(e) => setLinkContactInput(e.target.value)}
+                      title="Enter mobile or email used during guest checkout if different from current account"
+                      className="border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-52"
                     />
                     <button
                       type="submit"
-                      className="bg-black hover:bg-orange-600 text-white px-4 py-2 text-xs font-black tracking-widest uppercase whitespace-nowrap transition-colors"
+                      disabled={linkLoading}
+                      className="bg-black hover:bg-orange-600 disabled:bg-neutral-400 text-white px-5 py-2 text-xs font-black tracking-widest uppercase whitespace-nowrap transition-colors flex items-center justify-center gap-1.5"
                     >
-                      Link Order
+                      {linkLoading ? "VERIFYING..." : "LINK ORDER"}
                     </button>
                   </form>
                 </div>
