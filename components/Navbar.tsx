@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo, useEffect, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
 import { products, Product } from "@/lib/data";
 import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
 
@@ -53,6 +54,7 @@ const getSessionSnapshot = (): string => {
 const getSessionServerSnapshot = () => "";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -279,6 +281,11 @@ export default function Navbar() {
     );
   }, [searchQuery, productsList]);
 
+  // Do not render storefront navigation or announcement bar inside Admin Control Center
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <>
       {/* Top Announcement Bar */}
@@ -348,20 +355,20 @@ export default function Navbar() {
           <div className="flex items-center justify-center text-center">
             <Link
               href="/"
-              className="text-xl sm:text-2xl font-black tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
+              className="text-lg sm:text-2xl font-black tracking-[0.2em] sm:tracking-[0.25em] text-black uppercase transition-transform hover:scale-[1.02] whitespace-nowrap"
             >
               DRIVEN
             </Link>
           </div>
 
-          {/* Right Column: Actions */}
-          <div className="flex items-center justify-end gap-x-3 sm:gap-x-4 xl:gap-x-5">
+          {/* Right Column: Actions (Collision-Free on Mobile) */}
+          <div className="flex items-center justify-end gap-x-2 sm:gap-x-4 xl:gap-x-5">
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
+              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap p-1"
               aria-label="Search catalogue"
             >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <span className="hidden sm:inline">Search</span>
@@ -380,20 +387,24 @@ export default function Navbar() {
               title={currentUser ? `Signed in as ${currentUser.name}` : "Member Portal"}
             >
               {currentUser ? (
-                <>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-200 flex-shrink-0" />
-                  <span className="max-w-[70px] sm:max-w-[100px] xl:max-w-[130px] truncate">
+                <div className="flex items-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 py-1 px-2 rounded-full transition-colors">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                  <span className="hidden sm:inline max-w-[80px] xl:max-w-[120px] truncate text-[11px] font-bold">
                     {currentUser.name.split(" ")[0]}
                   </span>
-                </>
+                  <span className="sm:hidden text-[10px] font-black">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
               ) : (
-                <span className="hidden sm:inline">Account</span>
+                <span className="hidden sm:inline text-xs font-bold">Account</span>
               )}
             </Link>
 
+            {/* Desktop-Only Bag Button (Hidden on Mobile as requested, permanently in bottom bar) */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
+              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1147,64 +1158,74 @@ export default function Navbar() {
       )}
 
 
-      {/* Mobile Bottom Navigation Bar (Matching official DRIVEN mobile app experience) */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur-md border-t border-gray-200 py-2 px-6 flex items-center justify-around">
+      {/* Mobile Bottom Navigation Bar (Permanent Luxury Frosted Glass Dock) */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/80 backdrop-blur-xl border-t border-neutral-200/80 py-2 px-3 flex items-center justify-around shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
         <Link
           href="/shop"
-          className="flex flex-col items-center text-gray-700 hover:text-black"
+          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
-          <span className="text-[8px] font-bold tracking-widest uppercase mt-1">Explore</span>
+          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Explore</span>
         </Link>
 
         <button
+          type="button"
           onClick={() => setIsSearchOpen(true)}
-          className="flex flex-col items-center text-gray-700 hover:text-black"
+          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <span className="text-[8px] font-bold tracking-widest uppercase mt-1">Search</span>
+          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Search</span>
         </button>
 
         <Link
-          href="/stores"
-          className="flex flex-col items-center text-gray-700 hover:text-black"
+          href="/collections"
+          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
-          <span className="text-[8px] font-bold tracking-widest uppercase mt-1">Stores</span>
+          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Drops</span>
         </Link>
 
         <Link
           href="/account"
-          className="flex flex-col items-center text-gray-700 hover:text-black"
+          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-          <span className="text-[8px] font-bold tracking-widest uppercase mt-1">Account</span>
+          <div className="relative">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            {currentUser && (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 absolute -top-0.5 -right-0.5 ring-2 ring-white" />
+            )}
+          </div>
+          <span className="text-[8px] font-black tracking-widest uppercase mt-1">
+            {currentUser ? "Account" : "Sign In"}
+          </span>
         </Link>
 
         <button
+          type="button"
           onClick={() => setIsCartOpen(true)}
-          className="flex flex-col items-center text-gray-700 hover:text-orange-600 relative"
+          className="flex flex-col items-center text-gray-900 hover:text-orange-600 relative py-1 px-2"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-          </svg>
-          {cartCount > 0 && (
-            <span className="absolute -top-1 right-2 bg-orange-600 text-white rounded-full text-[8px] font-bold w-4 h-4 flex items-center justify-center">
-              {cartCount}
-            </span>
-          )}
-          <span className="text-[8px] font-bold tracking-widest uppercase mt-1">Bag</span>
+          <div className="relative">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            {cartCount > 0 && (
+              <span className="absolute -top-1.5 -right-2 bg-orange-600 text-white rounded-full text-[8px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
+                {cartCount}
+              </span>
+            )}
+          </div>
+          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Bag</span>
         </button>
-      </div>
+      </nav>
     </>
   );
 }

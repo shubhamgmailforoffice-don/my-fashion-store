@@ -172,8 +172,67 @@ export default function AdminLayout({
   // Authenticated Admin Dashboard Layout
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col md:flex-row font-sans">
-      {/* Admin Sidebar */}
-      <aside className="w-full md:w-64 bg-[#121212] border-b md:border-b-0 md:border-r border-neutral-800 flex flex-col justify-between p-6 flex-shrink-0">
+      {/* Mobile Top Bar (Compact, logo & direct navigation, zero clutter) */}
+      <header className="md:hidden bg-[#121212] border-b border-neutral-800 p-3.5 sticky top-0 z-30">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+            <div>
+              <span className="text-[8px] font-black tracking-[0.25em] text-orange-500 uppercase block">
+                Control Center
+              </span>
+              <h1 className="text-sm font-black tracking-widest uppercase text-white leading-none">
+                DRIVEN OPERATIONS
+              </h1>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="text-[9px] font-bold uppercase tracking-wider text-neutral-400 hover:text-white border border-neutral-800 px-2 py-1"
+            >
+              Storefront &rarr;
+            </Link>
+            <button
+              onClick={handleAdminSignOut}
+              title="Sign Out"
+              className="w-7 h-7 rounded-full bg-orange-600 flex items-center justify-center font-black text-[10px] text-white"
+            >
+              {adminUser?.name?.[0]?.toUpperCase() || "A"}
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pb-0.5 text-[10px] font-black tracking-wider uppercase">
+          <Link
+            href="/admin?tab=orders"
+            className="px-2.5 py-1 bg-neutral-900 border border-neutral-800 text-neutral-200 hover:text-white whitespace-nowrap"
+          >
+            Orders
+          </Link>
+          <Link
+            href="/admin?tab=products"
+            className="px-2.5 py-1 bg-neutral-900 border border-neutral-800 text-neutral-200 hover:text-white whitespace-nowrap"
+          >
+            Products
+          </Link>
+          <Link
+            href="/admin?tab=users"
+            className="px-2.5 py-1 bg-neutral-900 border border-neutral-800 text-neutral-200 hover:text-white whitespace-nowrap"
+          >
+            Users
+          </Link>
+          <Link
+            href="/shop"
+            target="_blank"
+            className="px-2.5 py-1 bg-orange-500/10 border border-orange-500/30 text-orange-400 hover:text-orange-300 whitespace-nowrap ml-auto"
+          >
+            Live Store ↗
+          </Link>
+        </div>
+      </header>
+
+      {/* Desktop Admin Sidebar */}
+      <aside className="hidden md:flex w-64 bg-[#121212] border-r border-neutral-800 flex-col justify-between p-6 flex-shrink-0">
         <div className="space-y-8">
           <div>
             <span className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase block">
@@ -260,7 +319,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Admin Content */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-10">
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-10">
         {children}
       </main>
     </div>

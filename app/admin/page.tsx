@@ -44,6 +44,10 @@ function AdminContent() {
   // Search & Filter States
   const [orderSearchQuery, setOrderSearchQuery] = useState("");
   const [orderStatusFilter, setOrderStatusFilter] = useState<string>("All");
+  const [orderPage, setOrderPage] = useState<number>(1);
+  const [ordersPerPage, setOrdersPerPage] = useState<number>(5);
+  const [collapsedOrders, setCollapsedOrders] = useState<Record<string, boolean>>({});
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const [productSearchQuery, setProductSearchQuery] = useState("");
   const [productCategoryFilter, setProductCategoryFilter] = useState<string>("All");
@@ -340,6 +344,28 @@ function AdminContent() {
     }
   };
 
+  // Status Counts for Orders
+  const orderStatusCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      All: ordersList.length,
+      Pending: 0,
+      Processing: 0,
+      Shipped: 0,
+      Delivered: 0,
+      Cancelled: 0,
+    };
+    ordersList.forEach((o) => {
+      const st = o.status;
+      if (counts[st] !== undefined) {
+        counts[st]++;
+      } else {
+        const found = Object.keys(counts).find((k) => k.toLowerCase() === (st || "").toLowerCase());
+        if (found) counts[found]++;
+      }
+    });
+    return counts;
+  }, [ordersList]);
+
   // Filtered Orders
   const filteredOrders = useMemo(() => {
     return ordersList.filter((o) => {
@@ -356,6 +382,48 @@ function AdminContent() {
       return matchesStatus && matchesSearch;
     });
   }, [ordersList, orderStatusFilter, orderSearchQuery]);
+
+  // Reset pagination when search, filter or page size changes
+  useEffect(() => {
+    setOrderPage(1);
+  }, [orderStatusFilter, orderSearchQuery, ordersPerPage]);
+
+  // Orders Pagination calculations
+  const effectivePerPage = ordersPerPage === -1 ? (filteredOrders.length || 1) : ordersPerPage;
+  const totalOrderPages = Math.max(1, Math.ceil(filteredOrders.length / effectivePerPage));
+  const currentOrderPage = Math.min(orderPage, totalOrderPages);
+  const startIndex = (currentOrderPage - 1) * effectivePerPage;
+  const endIndex = Math.min(startIndex + effectivePerPage, filteredOrders.length);
+  const paginatedOrders = useMemo(() => {
+    return filteredOrders.slice(startIndex, startIndex + effectivePerPage);
+  }, [filteredOrders, startIndex, effectivePerPage]);
+
+  const toggleOrderCollapse = (orderId: string) => {
+    setCollapsedOrders((prev) => ({
+      ...prev,
+      [orderId]: !prev[orderId],
+    }));
+  };
+
+  const collapseAllOrders = () => {
+    const next: Record<string, boolean> = {};
+    paginatedOrders.forEach((o) => {
+      next[o.id] = true;
+    });
+    setCollapsedOrders(next);
+  };
+
+  const expandAllOrders = () => {
+    setCollapsedOrders({});
+  };
+
+  const handleCopy = (text: string, id: string) => {
+    try {
+      navigator.clipboard?.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 1500);
+    } catch {}
+  };
 
   // Filtered Products
   const filteredProducts = useMemo(() => {
@@ -487,17 +555,26 @@ function AdminContent() {
       {/* TAB 1: ORDERS & DISPATCH (ALL INFO: CUSTOMER, PHONE, ADDRESS, COD/UPI) */}
       {/* ========================================================================= */}
       {activeTab === "orders" && (
-        <section className="space-y-6">
-          {/* Controls Bar: Search & Status Filters */}
+        <section className="space-y-4">
+          {/* Controls Bar: Search & Status Filters with Count Badges */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[#141414] p-4 border border-neutral-800">
-            <div className="w-full md:w-96">
+            <div className="w-full md:w-96 relative">
               <input
                 type="text"
                 placeholder="Search by Order ID, Customer Name, Phone, City..."
                 value={orderSearchQuery}
                 onChange={(e) => setOrderSearchQuery(e.target.value)}
-                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500 pr-8"
               />
+              {orderSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setOrderSearchQuery("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-bold"
+                >
+                  &times;
+                </button>
+              )}
             </div>
 
             <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto">
@@ -505,16 +582,84 @@ function AdminContent() {
                 <button
                   key={st}
                   type="button"
-                  onClick={() => setOrderStatusFilter(st)}
-                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                  onClick={() => {
+                    setOrderStatusFilter(st);
+                    setOrderPage(1);
+                  }}
+                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors flex items-center gap-1.5 ${
                     orderStatusFilter === st
                       ? "bg-white text-black font-black"
                       : "bg-[#1c1c1c] text-neutral-400 hover:text-white"
                   }`}
                 >
-                  {st}
+                  <span>{st}</span>
+                  <span
+                    className={`text-[9px] px-1.5 py-0.2 rounded-full ${
+                      orderStatusFilter === st
+                        ? "bg-black text-white"
+                        : "bg-neutral-800 text-neutral-300"
+                    }`}
+                  >
+                    {orderStatusCounts[st] || 0}
+                  </span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* Sub-controls: Pagination summary, Page size switcher, Collapse/Expand all */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#111] px-4 py-2.5 border border-neutral-800 text-xs">
+            <div className="flex items-center gap-2 text-neutral-400 font-bold uppercase text-[11px]">
+              <span>
+                Showing {filteredOrders.length === 0 ? 0 : startIndex + 1}–{endIndex} of {filteredOrders.length} Orders
+              </span>
+              {totalOrderPages > 1 && (
+                <span className="text-neutral-500">• Page {currentOrderPage} of {totalOrderPages}</span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Page Size Selector */}
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mr-1">Show:</span>
+                {[5, 10, 20, -1].map((sz) => (
+                  <button
+                    key={sz}
+                    type="button"
+                    onClick={() => {
+                      setOrdersPerPage(sz);
+                      setOrderPage(1);
+                    }}
+                    className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                      ordersPerPage === sz
+                        ? "bg-orange-500 text-black font-black"
+                        : "bg-neutral-800 text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    {sz === -1 ? "All" : sz}
+                  </button>
+                ))}
+              </div>
+
+              <div className="h-4 w-[1px] bg-neutral-800 hidden sm:block" />
+
+              {/* Collapse / Expand All */}
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={collapseAllOrders}
+                  className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-900 border border-neutral-800 hover:border-neutral-600 text-neutral-300 transition-colors"
+                >
+                  − Collapse All
+                </button>
+                <button
+                  type="button"
+                  onClick={expandAllOrders}
+                  className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-900 border border-neutral-800 hover:border-neutral-600 text-neutral-300 transition-colors"
+                >
+                  + Expand All
+                </button>
+              </div>
             </div>
           </div>
 
@@ -541,7 +686,7 @@ function AdminContent() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredOrders.map((order) => {
+              {paginatedOrders.map((order) => {
                 const isCOD = order.address.includes("COD");
                 const isUPI = order.address.includes("UPI");
                 const trackingMatch = order.address.match(/\[Tracking:\s*(.*?)\]/i);
@@ -551,24 +696,33 @@ function AdminContent() {
                   .replace(/\[Tracking:.*?\]/i, "")
                   .trim();
                 const phoneClean = order.phone ? order.phone.replace(/\D/g, "") : "";
+                const isCollapsed = collapsedOrders[order.id];
 
                 return (
                   <div
                     key={order.id}
-                    className="bg-[#121212] border border-neutral-800 p-6 space-y-5 hover:border-neutral-700 transition-colors"
+                    className="bg-[#121212] border border-neutral-800 p-4 sm:p-5 space-y-4 hover:border-neutral-700 transition-colors"
                   >
                     {/* Header Row */}
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-neutral-800 pb-4">
-                      <div className="flex items-center gap-3 flex-wrap">
-                        <span className="text-base font-black font-mono tracking-wider text-orange-400">
-                          #{order.id}
-                        </span>
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-neutral-800 pb-3">
+                      <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(order.id, order.id)}
+                          className="text-base font-black font-mono tracking-wider text-orange-400 hover:text-orange-300 flex items-center gap-1"
+                          title="Click to copy Order ID"
+                        >
+                          <span>#{order.id}</span>
+                          <span className="text-[10px] text-neutral-500 font-sans">
+                            {copiedId === order.id ? "✓ Copied" : "📋"}
+                          </span>
+                        </button>
                         <span className="text-xs text-neutral-400 font-bold uppercase">
-                          Date: {order.date}
+                          {order.date}
                         </span>
                         {/* Payment Method Badge */}
                         <span
-                          className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-1 ${
+                          className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-0.5 ${
                             isCOD
                               ? "bg-neutral-800 text-neutral-200 border border-neutral-700"
                               : isUPI
@@ -576,149 +730,233 @@ function AdminContent() {
                               : "bg-neutral-800 text-neutral-300"
                           }`}
                         >
-                          {isCOD ? "💵 Cash on Delivery (COD)" : isUPI ? "📱 UPI QR Paid" : "Prepaid"}
+                          {isCOD ? "💵 COD" : isUPI ? "📱 UPI QR Paid" : "Prepaid"}
+                        </span>
+                        <span className="text-xs text-white font-bold uppercase truncate max-w-[150px] sm:max-w-none">
+                          👤 {order.customerName}
+                        </span>
+                        <span className="text-[10px] text-neutral-400 uppercase font-mono">
+                          ({order.items.length} item{order.items.length > 1 ? "s" : ""})
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end">
-                        <span className="text-sm font-black text-white">
-                          Total: RS. {order.total.toLocaleString()}
+                      <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end flex-wrap">
+                        <span className="text-sm font-black text-white whitespace-nowrap">
+                          RS. {order.total.toLocaleString()}
                         </span>
+
                         {/* Status Updater */}
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           <span className="text-[9px] uppercase font-bold text-neutral-400">Status:</span>
                           <select
                             value={order.status}
                             onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                            className="bg-black border border-neutral-600 text-xs font-bold uppercase text-white px-3 py-1.5 outline-none cursor-pointer focus:border-orange-500"
+                            className={`text-xs font-bold uppercase px-2.5 py-1 outline-none cursor-pointer border ${
+                              order.status === "Pending"
+                                ? "bg-amber-950/50 border-amber-600 text-amber-300"
+                                : order.status === "Processing"
+                                ? "bg-blue-950/50 border-blue-600 text-blue-300"
+                                : order.status === "Shipped"
+                                ? "bg-purple-950/50 border-purple-600 text-purple-300"
+                                : order.status === "Delivered"
+                                ? "bg-emerald-950/50 border-emerald-600 text-emerald-300"
+                                : "bg-red-950/50 border-red-600 text-red-300"
+                            }`}
                           >
-                            <option value="Pending">Pending</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
+                            <option value="Pending" className="bg-black text-white">Pending</option>
+                            <option value="Processing" className="bg-black text-white">Processing</option>
+                            <option value="Shipped" className="bg-black text-white">Shipped</option>
+                            <option value="Delivered" className="bg-black text-white">Delivered</option>
+                            <option value="Cancelled" className="bg-black text-white">Cancelled</option>
                           </select>
                         </div>
+
+                        {/* Toggle Card Details Button */}
+                        <button
+                          type="button"
+                          onClick={() => toggleOrderCollapse(order.id)}
+                          className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-neutral-800 hover:bg-neutral-700 text-white transition-colors"
+                        >
+                          {isCollapsed ? "+ Details" : "− Collapse"}
+                        </button>
                       </div>
                     </div>
 
-                    {/* Customer & Address Details Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[#161616] p-4 border border-neutral-800/80 text-xs">
-                      {/* Customer Info */}
-                      <div className="space-y-1">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
-                          Customer Information
-                        </span>
-                        <p className="font-bold text-white text-sm uppercase">{order.customerName}</p>
-                        <p className="text-neutral-300 font-mono">
-                          {order.phone ? `+91 ${order.phone}` : "No phone provided"}
-                        </p>
-                        <p className="text-neutral-400 text-[11px] truncate">{order.email || "No email"}</p>
-                        
-                        {phoneClean && (
-                          <div className="pt-2 flex items-center gap-3">
-                            <a
-                              href={`https://wa.me/91${phoneClean}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-[10px] font-bold uppercase text-emerald-400 hover:underline flex items-center gap-1"
-                            >
-                              <span>💬 WhatsApp</span>
-                            </a>
-                            <a
-                              href={`tel:+91${phoneClean}`}
-                              className="text-[10px] font-bold uppercase text-neutral-400 hover:text-white flex items-center gap-1"
-                            >
-                              <span>📞 Call</span>
-                            </a>
+                    {/* Collapsible Content */}
+                    {!isCollapsed && (
+                      <div className="space-y-4 pt-1">
+                        {/* Customer & Address Details Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-[#161616] p-4 border border-neutral-800/80 text-xs">
+                          {/* Customer Info */}
+                          <div className="space-y-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
+                              Customer Information
+                            </span>
+                            <p className="font-bold text-white text-sm uppercase">{order.customerName}</p>
+                            <p className="text-neutral-300 font-mono">
+                              {order.phone ? `+91 ${order.phone}` : "No phone provided"}
+                            </p>
+                            <p className="text-neutral-400 text-[11px] truncate">{order.email || "No email"}</p>
+                            
+                            {phoneClean && (
+                              <div className="pt-2 flex items-center gap-2 flex-wrap">
+                                <a
+                                  href={`https://wa.me/91${phoneClean}?text=${encodeURIComponent(
+                                    `Hello ${order.customerName}, this is DRIVEN Operations regarding your order #${order.id}.`
+                                  )}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-[10px] font-bold uppercase text-emerald-300 bg-emerald-950/60 border border-emerald-800 hover:bg-emerald-900/60 px-2.5 py-1 transition-colors flex items-center gap-1"
+                                >
+                                  <span>💬 WhatsApp</span>
+                                </a>
+                                <a
+                                  href={`tel:+91${phoneClean}`}
+                                  className="text-[10px] font-bold uppercase text-neutral-300 bg-neutral-900 border border-neutral-700 hover:bg-neutral-800 px-2.5 py-1 transition-colors flex items-center gap-1"
+                                >
+                                  <span>📞 Call</span>
+                                </a>
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
 
-                      {/* Delivery Address */}
-                      <div className="space-y-1 md:col-span-2">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
-                          Full Shipping & Delivery Address
-                        </span>
-                        <p className="text-neutral-200 uppercase font-medium leading-relaxed">
-                          {cleanDisplayAddress}
-                        </p>
-                        {order.address.includes("UTR:") && (
-                          <p className="text-orange-400 font-mono text-[11px] pt-1">
-                            Payment Ref: {order.address.match(/UTR:.*?(?=\]|$)/)?.[0]}
-                          </p>
-                        )}
+                          {/* Delivery Address */}
+                          <div className="space-y-1 md:col-span-2">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block mb-1">
+                              Full Shipping & Delivery Address
+                            </span>
+                            <p className="text-neutral-200 uppercase font-medium leading-relaxed">
+                              {cleanDisplayAddress}
+                            </p>
+                            {order.address.includes("UTR:") && (
+                              <p className="text-orange-400 font-mono text-[11px] pt-1">
+                                Payment Ref: {order.address.match(/UTR:.*?(?=\]|$)/)?.[0]}
+                              </p>
+                            )}
 
-                        {/* Courier & AWB Tracking Form */}
-                        <div className="mt-3 pt-3 border-t border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                          <span className="text-[9px] font-black uppercase tracking-wider text-orange-400 whitespace-nowrap flex items-center gap-1">
-                            <span>📦</span> Courier / AWB:
+                            {/* Courier & AWB Tracking Form */}
+                            <div className="mt-3 pt-3 border-t border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                              <span className="text-[9px] font-black uppercase tracking-wider text-orange-400 whitespace-nowrap flex items-center gap-1">
+                                <span>📦</span> Courier / AWB:
+                              </span>
+                              <input
+                                type="text"
+                                placeholder="e.g. Delhivery - 1492049182"
+                                value={trackingInputs[order.id] !== undefined ? trackingInputs[order.id] : trackingInfo}
+                                onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
+                                className="bg-black border border-neutral-700 px-3 py-1 text-xs font-mono text-white placeholder:text-neutral-500 w-full sm:w-60 focus:outline-none focus:border-orange-500 uppercase"
+                              />
+                              <button
+                                type="button"
+                                disabled={savingTrackingId === order.id}
+                                onClick={() => handleSaveTracking(order.id, trackingInfo)}
+                                className="bg-neutral-800 hover:bg-orange-600 disabled:bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
+                              >
+                                {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
+                              </button>
+                              {trackingInfo && (
+                                <a
+                                  href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-neutral-400 hover:text-white text-[10px] font-bold uppercase underline sm:ml-auto"
+                                >
+                                  Track &rarr;
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Ordered Items Table */}
+                        <div className="space-y-2">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block">
+                            Ordered Items ({order.items.length})
                           </span>
-                          <input
-                            type="text"
-                            placeholder="e.g. Delhivery - 1492049182"
-                            value={trackingInputs[order.id] !== undefined ? trackingInputs[order.id] : trackingInfo}
-                            onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
-                            className="bg-black border border-neutral-700 px-3 py-1 text-xs font-mono text-white placeholder:text-neutral-500 w-full sm:w-60 focus:outline-none focus:border-orange-500 uppercase"
-                          />
-                          <button
-                            type="button"
-                            disabled={savingTrackingId === order.id}
-                            onClick={() => handleSaveTracking(order.id, trackingInfo)}
-                            className="bg-neutral-800 hover:bg-orange-600 disabled:bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
-                          >
-                            {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
-                          </button>
-                          {trackingInfo && (
-                            <a
-                              href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-neutral-400 hover:text-white text-[10px] font-bold uppercase underline sm:ml-auto"
-                            >
-                              Track &rarr;
-                            </a>
-                          )}
+                          <div className="divide-y divide-neutral-800 border border-neutral-800 bg-[#141414]">
+                            {order.items.map((item, idx) => (
+                              <div key={idx} className="p-3 flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-3">
+                                  <div className="relative w-10 h-12 bg-neutral-900 border border-neutral-800 flex-shrink-0">
+                                    <Image
+                                      src={item.image || "/images/products/oversized-tshirt.jpg"}
+                                      alt={item.name}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                  <div>
+                                    <p className="font-bold text-white uppercase">{item.name}</p>
+                                    <p className="text-[10px] text-neutral-400 uppercase">
+                                      Size: <span className="text-white font-bold">{item.size}</span> • Quantity:{" "}
+                                      <span className="text-white font-bold">{item.quantity}</span>{" "}
+                                      {item.color ? `• Color: ${item.color}` : ""}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className="font-bold text-white">
+                                  RS. {(item.price * item.quantity).toLocaleString()}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
-
-                    {/* Ordered Items Table */}
-                    <div className="space-y-2">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400 block">
-                        Ordered Items ({order.items.length})
-                      </span>
-                      <div className="divide-y divide-neutral-800 border border-neutral-800 bg-[#141414]">
-                        {order.items.map((item, idx) => (
-                          <div key={idx} className="p-3 flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-3">
-                              <div className="relative w-10 h-12 bg-neutral-900 border border-neutral-800 flex-shrink-0">
-                                <Image
-                                  src={item.image || "/images/products/oversized-tshirt.jpg"}
-                                  alt={item.name}
-                                  fill
-                                  className="object-cover"
-                                />
-                              </div>
-                              <div>
-                                <p className="font-bold text-white uppercase">{item.name}</p>
-                                <p className="text-[10px] text-neutral-400 uppercase">
-                                  Size: <span className="text-white font-bold">{item.size}</span> • Quantity:{" "}
-                                  <span className="text-white font-bold">{item.quantity}</span>{" "}
-                                  {item.color ? `• Color: ${item.color}` : ""}
-                                </p>
-                              </div>
-                            </div>
-                            <span className="font-bold text-white">
-                              RS. {(item.price * item.quantity).toLocaleString()}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Bottom Pagination Bar */}
+          {filteredOrders.length > 0 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#141414] p-4 border border-neutral-800 mt-6">
+              <div className="text-xs text-neutral-400 font-bold uppercase">
+                Showing {startIndex + 1}–{endIndex} of {filteredOrders.length} orders
+                {ordersPerPage !== -1 && (
+                  <span className="text-neutral-500 ml-2">
+                    (Page {currentOrderPage} of {totalOrderPages})
+                  </span>
+                )}
+              </div>
+
+              {totalOrderPages > 1 && (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <button
+                    type="button"
+                    disabled={currentOrderPage <= 1}
+                    onClick={() => setOrderPage((p) => Math.max(1, p - 1))}
+                    className="px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-neutral-900 border border-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-800 text-white transition-colors"
+                  >
+                    &larr; Prev
+                  </button>
+
+                  {Array.from({ length: totalOrderPages }, (_, i) => i + 1).map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setOrderPage(p)}
+                      className={`w-8 h-8 text-xs font-black uppercase transition-colors ${
+                        currentOrderPage === p
+                          ? "bg-orange-500 text-black font-black"
+                          : "bg-neutral-900 border border-neutral-800 text-neutral-300 hover:bg-neutral-800 hover:text-white"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    disabled={currentOrderPage >= totalOrderPages}
+                    onClick={() => setOrderPage((p) => Math.min(totalOrderPages, p + 1))}
+                    className="px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-neutral-900 border border-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-800 text-white transition-colors"
+                  >
+                    Next &rarr;
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </section>
