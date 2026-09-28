@@ -324,9 +324,9 @@ export default function Navbar() {
       {/* Top Announcement Bar */}
       <div className="bg-black text-white text-[10px] font-bold tracking-[0.25em] py-2 px-4 text-center uppercase border-b border-neutral-800 flex items-center justify-center gap-4 select-none">
         <span className="hidden sm:inline">COMPLIMENTARY SHIPPING ON ORDERS OVER RS. 5,000</span>
-        <span className="hidden sm:inline text-orange-500">•</span>
+        <span className="hidden sm:inline text-[#E8262A]">•</span>
         <span>FALL-WINTER 2026 DROPS LIVE</span>
-        <span className="hidden md:inline text-orange-500">•</span>
+        <span className="hidden md:inline text-[#E8262A]">•</span>
         <span className="hidden md:inline">FLAGSHIP STORES: DELHI • MUMBAI • HYDERABAD</span>
       </div>
 
@@ -353,31 +353,31 @@ export default function Navbar() {
             <nav className="hidden lg:flex items-center gap-x-3 xl:gap-x-5">
               <Link
                 href="/shop"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
               >
                 Shop All
               </Link>
               <Link
                 href="/collections"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
               >
                 Collections
               </Link>
               <Link
                 href="/shop?category=Tops"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
               >
                 Tops
               </Link>
               <Link
                 href="/shop?category=Bottoms"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
               >
                 Bottoms
               </Link>
               <Link
                 href="/shop-by-color"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase whitespace-nowrap"
+                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
               >
                 <span className="hidden xl:inline">Shop by Color</span>
                 <span className="xl:hidden">Colors</span>
@@ -408,7 +408,7 @@ export default function Navbar() {
             {/* Desktop-Only Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap p-1"
+              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap p-1"
               aria-label="Search catalogue"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -419,7 +419,7 @@ export default function Navbar() {
 
             <Link
               href="/stores"
-              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase md:block whitespace-nowrap"
+              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase md:block whitespace-nowrap"
             >
               Stores
             </Link>
@@ -427,7 +427,7 @@ export default function Navbar() {
             {/* Desktop-Only Account */}
             <Link
               href="/account"
-              className="hidden lg:flex text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
+              className="hidden lg:flex text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
               title={currentUser ? `Signed in as ${currentUser.name}` : "Member Portal"}
             >
               {currentUser ? (
@@ -445,7 +445,7 @@ export default function Navbar() {
             {/* Desktop-Only Bag Button */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
+              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -502,49 +502,49 @@ export default function Navbar() {
                 <Link
                   href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-orange-600 py-1"
+                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-[#E8262A] py-1"
                 >
                   Shop All
                 </Link>
                 <Link
                   href="/collections"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-orange-600 py-1"
+                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-[#E8262A] py-1"
                 >
                   Collections
                 </Link>
                 <Link
                   href="/shop?category=Tops"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
+                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
                 >
                   Tops & Hoodies
                 </Link>
                 <Link
                   href="/shop?category=Bottoms"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
+                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
                 >
                   Bottoms & Cargos
                 </Link>
                 <Link
                   href="/shop-by-color"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
+                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
                 >
                   Shop by Color
                 </Link>
                 <Link
                   href="/stores"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
+                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
                 >
                   Flagship Stores
                 </Link>
                 <Link
                   href="/account"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-orange-600 py-1"
+                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
                 >
                   {currentUser ? `Hi, ${currentUser.name} (Dashboard)` : "Account / Member Sign In"}
                 </Link>
@@ -652,7 +652,7 @@ export default function Navbar() {
                             />
                           </div>
                           <div>
-                            <span className="text-[8px] font-bold tracking-widest text-orange-500 uppercase block">
+                            <span className="text-[8px] font-bold tracking-widest text-[#E8262A] uppercase block">
                               {item.category} • {item.subCategory || "Streetwear"}
                             </span>
                             <h4 className="text-xs font-black tracking-wider text-black uppercase line-clamp-1">
@@ -690,7 +690,7 @@ export default function Navbar() {
                   <h2 className="text-sm font-black tracking-widest uppercase text-gray-900">
                     Shopping Bag ({cartCount})
                   </h2>
-                  <span className="text-[9px] font-bold tracking-widest text-orange-500 uppercase">
+                  <span className="text-[9px] font-bold tracking-widest text-[#E8262A] uppercase">
                     DRIIVN OFFICIAL STORE
                   </span>
                 </div>
@@ -740,7 +740,7 @@ export default function Navbar() {
                     <Link
                       href="/shop"
                       onClick={() => setIsCartOpen(false)}
-                      className="bg-black text-white text-xs font-black tracking-widest uppercase px-8 py-3.5 hover:bg-orange-600 transition-colors"
+                      className="bg-black text-white text-xs font-black tracking-widest uppercase px-8 py-3.5 hover:bg-[#E8262A] transition-colors"
                     >
                       Shop New Drops
                     </Link>
@@ -794,7 +794,7 @@ export default function Navbar() {
                             <button
                               type="button"
                               onClick={() => handleRemoveItem(item.id, item.size)}
-                              className="text-[10px] font-black text-orange-600 hover:text-black uppercase tracking-widest transition-colors"
+                              className="text-[10px] font-black text-[#E8262A] hover:text-black uppercase tracking-widest transition-colors"
                             >
                               Remove
                             </button>
@@ -826,7 +826,7 @@ export default function Navbar() {
                         setIsCheckoutOpen(true);
                         setCheckoutStep("details");
                       }}
-                      className="w-full bg-black text-white hover:bg-orange-600 py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-black text-white hover:bg-[#E8262A] py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2"
                     >
                       <span>Proceed to Checkout</span>
                       <span>•</span>
@@ -853,7 +853,7 @@ export default function Navbar() {
             {/* Modal Header */}
             <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-black text-white">
               <div>
-                <p className="text-[9px] font-black tracking-[0.3em] text-orange-500 uppercase">
+                <p className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase">
                   DRIIVN SECURE CHECKOUT
                 </p>
                 <h3 className="text-sm font-black tracking-widest uppercase">
@@ -1040,7 +1040,7 @@ export default function Navbar() {
                   <div className="pt-3">
                     <button
                       type="submit"
-                      className="w-full bg-black hover:bg-orange-600 text-white py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors"
+                      className="w-full bg-black hover:bg-[#E8262A] text-white py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors"
                     >
                       Continue to Payment (RS. {subtotal.toLocaleString()}) &rarr;
                     </button>
@@ -1072,7 +1072,7 @@ export default function Navbar() {
                       <p className="text-xs font-black tracking-wider uppercase">UPI QR Code</p>
                       <p
                         className={`text-[9px] uppercase mt-0.5 ${
-                          paymentMethod === "upi" ? "text-orange-400" : "text-gray-400"
+                          paymentMethod === "upi" ? "text-[#E8262A]" : "text-gray-400"
                         }`}
                       >
                         GPay • PhonePe • Paytm
@@ -1104,7 +1104,7 @@ export default function Navbar() {
                   {paymentMethod === "upi" && (
                     <div className="border border-gray-200 bg-zinc-50 p-6 text-center space-y-4">
                       <div>
-                        <span className="text-[9px] font-black tracking-[0.25em] text-orange-600 uppercase">
+                        <span className="text-[9px] font-black tracking-[0.25em] text-[#E8262A] uppercase">
                           SCAN TO PAY WITH ANY UPI APP
                         </span>
                         <p className="text-xs text-gray-600 uppercase tracking-wider font-bold mt-1">
@@ -1148,7 +1148,7 @@ export default function Navbar() {
                             setCopiedUpi(true);
                             setTimeout(() => setCopiedUpi(false), 2000);
                           }}
-                          className="bg-black text-white hover:bg-orange-500 hover:text-black px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors"
+                          className="bg-black text-white hover:bg-[#E8262A] hover:text-white px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors"
                         >
                           {copiedUpi ? "COPIED ✓" : "COPY"}
                         </button>
@@ -1194,7 +1194,7 @@ export default function Navbar() {
                     <button
                       type="submit"
                       disabled={isPlacingOrder}
-                      className="w-2/3 bg-black hover:bg-orange-600 text-white disabled:bg-gray-300 py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors flex items-center justify-center gap-2"
+                      className="w-2/3 bg-black hover:bg-[#E8262A] text-white disabled:bg-gray-300 py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors flex items-center justify-center gap-2"
                     >
                       {isPlacingOrder ? (
                         <>
@@ -1216,7 +1216,7 @@ export default function Navbar() {
                     ✓
                   </div>
                   <div>
-                    <span className="text-[10px] font-black tracking-[0.3em] text-orange-600 uppercase">
+                    <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase">
                       ORDER PLACED SUCCESSFULLY
                     </span>
                     <h2 className="text-2xl font-black tracking-wider uppercase text-black mt-1">
@@ -1239,7 +1239,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setIsCheckoutOpen(false)}
-                      className="flex-1 bg-black text-white hover:bg-orange-600 py-3.5 text-xs font-black tracking-widest uppercase transition-colors"
+                      className="flex-1 bg-black text-white hover:bg-[#E8262A] py-3.5 text-xs font-black tracking-widest uppercase transition-colors"
                     >
                       Continue Shopping
                     </button>
@@ -1268,14 +1268,14 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setIsReelsOpen(true)}
-          className="w-12 h-12 rounded-full bg-white text-blue-600 shadow-[0_8px_25px_rgba(37,99,235,0.35)] border-2 border-blue-500 ring-2 ring-blue-400/30 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          className="w-12 h-12 rounded-full bg-white text-[#E8262A] shadow-[0_8px_25px_rgba(232,38,42,0.35)] border-2 border-[#E8262A] ring-2 ring-[#E8262A]/30 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
           aria-label="Open DRIIVN Lookbook Reels"
           title="DRIIVN Lookbook Reels"
         >
           <div className="relative flex items-center justify-center">
             {/* Film / Reel Icon */}
             <svg
-              className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform"
+              className="w-6 h-6 text-[#E8262A] group-hover:scale-110 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1287,8 +1287,8 @@ export default function Navbar() {
                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
               />
             </svg>
-            <span className="w-2 h-2 rounded-full bg-blue-500 absolute -top-1 -right-1 animate-ping" />
-            <span className="w-2 h-2 rounded-full bg-blue-500 absolute -top-1 -right-1" />
+            <span className="w-2 h-2 rounded-full bg-[#E8262A] absolute -top-1 -right-1 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#E8262A] absolute -top-1 -right-1" />
           </div>
         </button>
 
@@ -1360,7 +1360,7 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-orange-500 text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1.5 -right-2 bg-[#E8262A] text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
                   {cartCount}
                 </span>
               )}

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/lib/data";
 import { Order } from "@/lib/store";
+import InventoryManager from "@/components/admin/InventoryManager";
+import SectionsManager from "@/components/admin/SectionsManager";
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
 
@@ -33,8 +35,8 @@ interface RegisteredUser {
 
 function AdminContent() {
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") as "orders" | "products" | "users" | null;
-  const [activeTab, setActiveTab] = useState<"orders" | "products" | "users">(initialTab || "orders");
+  const initialTab = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "users" | null;
+  const [activeTab, setActiveTab] = useState<"orders" | "products" | "inventory" | "sections" | "users">(initialTab || "orders");
 
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
@@ -80,8 +82,8 @@ function AdminContent() {
 
   // Sync tab with URL parameter if it changes
   useEffect(() => {
-    const tabParam = searchParams.get("tab") as "orders" | "products" | "users" | null;
-    if (tabParam && (tabParam === "orders" || tabParam === "products" || tabParam === "users")) {
+    const tabParam = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "users" | null;
+    if (tabParam && ["orders", "products", "inventory", "sections", "users"].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [searchParams]);
@@ -459,12 +461,12 @@ function AdminContent() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-800 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-300 pb-6 font-inter">
         <div>
-          <span className="text-[10px] font-black tracking-[0.3em] text-orange-500 uppercase">
+          <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase font-inter">
             Control Center • Real-time Operations
           </span>
-          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-widest text-white mt-1">
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-black mt-1 font-anton">
             DRIIVN Administration
           </h1>
         </div>
@@ -472,7 +474,7 @@ function AdminContent() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => refreshData()}
-            className="border border-neutral-700 hover:border-white text-neutral-300 hover:text-white px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors"
+            className="border border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors rounded-xl shadow-xs"
           >
             ↻ Refresh
           </button>
@@ -481,7 +483,7 @@ function AdminContent() {
               setActiveTab("products");
               setIsAddModalOpen(true);
             }}
-            className="bg-white text-black hover:bg-orange-500 hover:text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5"
+            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95"
           >
             <span>+ Add Product</span>
           </button>
@@ -489,63 +491,99 @@ function AdminContent() {
       </div>
 
       {/* Top High-level Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Total Revenue</p>
-          <p className="text-xl sm:text-2xl font-black text-white mt-1">RS. {totalRevenue.toLocaleString()}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-inter">
+        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Revenue</p>
+          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">RS. {totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Total Orders</p>
-          <p className="text-xl sm:text-2xl font-black text-white mt-1">{ordersList.length}</p>
+        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Orders</p>
+          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{ordersList.length}</p>
         </div>
-        <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Live Catalog</p>
-          <p className="text-xl sm:text-2xl font-black text-white mt-1">{productsList.length} Items</p>
+        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Live Catalog</p>
+          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{productsList.length} Items</p>
         </div>
-        <div className="bg-[#141414] border border-neutral-800 p-5">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Registered Users</p>
-          <p className="text-xl sm:text-2xl font-black text-orange-400 mt-1">{usersList.length} Members</p>
+        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Registered Users</p>
+          <p className="text-xl sm:text-2xl font-black text-[#E8262A] mt-1 font-anton">{usersList.length} Members</p>
         </div>
       </div>
 
-      {/* THREE DEDICATED TABS */}
-      <div className="flex border-b border-neutral-800 gap-x-2">
+      {/* FIVE DEDICATED TABS */}
+      <div className="flex border-b border-neutral-300 gap-x-2 overflow-x-auto no-scrollbar font-inter">
         <button
           onClick={() => setActiveTab("orders")}
-          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === "orders"
-              ? "border-orange-500 text-white bg-neutral-900/50"
-              : "border-transparent text-neutral-400 hover:text-white"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
           }`}
         >
           <span>1. Orders & Dispatch</span>
-          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-orange-400">
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "orders" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
+          }`}>
             {ordersList.length}
           </span>
         </button>
         <button
           onClick={() => setActiveTab("products")}
-          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === "products"
-              ? "border-orange-500 text-white bg-neutral-900/50"
-              : "border-transparent text-neutral-400 hover:text-white"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
           }`}
         >
           <span>2. Products & Photos</span>
-          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-neutral-300">
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "products" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
+          }`}>
             {productsList.length}
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("users")}
-          className={`py-3 px-6 text-xs font-black tracking-widest uppercase border-b-2 transition-colors flex items-center gap-2 ${
-            activeTab === "users"
-              ? "border-orange-500 text-white bg-neutral-900/50"
-              : "border-transparent text-neutral-400 hover:text-white"
+          onClick={() => setActiveTab("inventory")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "inventory"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
           }`}
         >
-          <span>3. Registered Users</span>
-          <span className="bg-neutral-800 px-2 py-0.5 text-[10px] rounded-full text-neutral-300">
+          <span>3. Inventory & Stock</span>
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "inventory" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
+          }`}>
+            {productsList.filter(p => p.inStock === false).length > 0 ? `${productsList.filter(p => p.inStock === false).length} Out` : "All In"}
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab("sections")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "sections"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
+          }`}
+        >
+          <span>4. Storefront Sections</span>
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "sections" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
+          }`}>
+            Active
+          </span>
+        </button>
+        <button
+          onClick={() => setActiveTab("users")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "users"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
+          }`}
+        >
+          <span>5. Registered Users</span>
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "users" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
+          }`}>
             {usersList.length}
           </span>
         </button>
@@ -564,7 +602,7 @@ function AdminContent() {
                 placeholder="Search by Order ID, Customer Name, Phone, City..."
                 value={orderSearchQuery}
                 onChange={(e) => setOrderSearchQuery(e.target.value)}
-                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500 pr-8"
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#E8262A] pr-8"
               />
               {orderSearchQuery && (
                 <button
@@ -632,7 +670,7 @@ function AdminContent() {
                     }}
                     className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider transition-colors ${
                       ordersPerPage === sz
-                        ? "bg-orange-500 text-black font-black"
+                        ? "bg-[#E8262A] text-white font-black"
                         : "bg-neutral-800 text-neutral-400 hover:text-white"
                     }`}
                   >
@@ -678,7 +716,7 @@ function AdminContent() {
                     setOrderSearchQuery("");
                     setOrderStatusFilter("All");
                   }}
-                  className="text-orange-400 text-xs uppercase font-bold underline"
+                  className="text-[#E8262A] text-xs uppercase font-bold underline"
                 >
                   Clear search filters
                 </button>
@@ -712,7 +750,7 @@ function AdminContent() {
                         <button
                           type="button"
                           onClick={() => handleCopy(order.id, order.id)}
-                          className="text-base font-black font-mono tracking-wider text-orange-400 hover:text-orange-300 flex items-center gap-1"
+                          className="text-base font-black font-mono tracking-wider text-[#E8262A] hover:text-[#d01e22] flex items-center gap-1"
                           title="Click to copy Order ID"
                         >
                           <span>#{order.id}</span>
@@ -837,14 +875,14 @@ function AdminContent() {
                               {cleanDisplayAddress}
                             </p>
                             {order.address.includes("UTR:") && (
-                              <p className="text-orange-400 font-mono text-[11px] pt-1">
+                              <p className="text-[#E8262A] font-mono text-[11px] pt-1">
                                 Payment Ref: {order.address.match(/UTR:.*?(?=\]|$)/)?.[0]}
                               </p>
                             )}
 
                             {/* Courier & AWB Tracking Form */}
                             <div className="mt-3 pt-3 border-t border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center gap-2">
-                              <span className="text-[9px] font-black uppercase tracking-wider text-orange-400 whitespace-nowrap flex items-center gap-1">
+                              <span className="text-[9px] font-black uppercase tracking-wider text-[#E8262A] whitespace-nowrap flex items-center gap-1">
                                 <span>📦</span> Courier / AWB:
                               </span>
                               <input
@@ -852,13 +890,13 @@ function AdminContent() {
                                 placeholder="e.g. Delhivery - 1492049182"
                                 value={trackingInputs[order.id] !== undefined ? trackingInputs[order.id] : trackingInfo}
                                 onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
-                                className="bg-black border border-neutral-700 px-3 py-1 text-xs font-mono text-white placeholder:text-neutral-500 w-full sm:w-60 focus:outline-none focus:border-orange-500 uppercase"
+                                className="bg-black border border-neutral-700 px-3 py-1 text-xs font-mono text-white placeholder:text-neutral-500 w-full sm:w-60 focus:outline-none focus:border-[#E8262A] uppercase"
                               />
                               <button
                                 type="button"
                                 disabled={savingTrackingId === order.id}
                                 onClick={() => handleSaveTracking(order.id, trackingInfo)}
-                                className="bg-neutral-800 hover:bg-orange-600 disabled:bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
+                                className="bg-neutral-800 hover:bg-[#E8262A] disabled:bg-neutral-900 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap"
                               >
                                 {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
                               </button>
@@ -947,7 +985,7 @@ function AdminContent() {
                       onClick={() => setOrderPage(p)}
                       className={`w-8 h-8 text-xs font-black uppercase transition-colors ${
                         currentOrderPage === p
-                          ? "bg-orange-500 text-black font-black"
+                          ? "bg-[#E8262A] text-white font-black"
                           : "bg-neutral-900 border border-neutral-800 text-neutral-300 hover:bg-neutral-800 hover:text-white"
                       }`}
                     >
@@ -983,7 +1021,7 @@ function AdminContent() {
                 placeholder="Search products by title, sub-category..."
                 value={productSearchQuery}
                 onChange={(e) => setProductSearchQuery(e.target.value)}
-                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#E8262A]"
               />
             </div>
 
@@ -1059,7 +1097,7 @@ function AdminContent() {
                       <td className="py-3 px-4">
                         <p className="font-black text-white uppercase text-xs">{product.name}</p>
                         <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-400 uppercase">
-                          <span className="text-orange-400 font-bold">{product.category}</span>
+                          <span className="text-[#E8262A] font-bold">{product.category}</span>
                           <span>•</span>
                           <span>{product.subCategory || "Streetwear"}</span>
                           <span>•</span>
@@ -1115,7 +1153,7 @@ function AdminContent() {
                         <button
                           type="button"
                           onClick={() => setEditingProduct({ ...product })}
-                          className="bg-white text-black hover:bg-orange-500 hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors"
+                          className="bg-white text-black hover:bg-[#E8262A] hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors"
                         >
                           Edit & Photos
                         </button>
@@ -1137,7 +1175,25 @@ function AdminContent() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 3: REGISTERED USERS (WHO CREATED ACCOUNTS) */}
+      {/* TAB 3: INVENTORY & STOCK MANAGEMENT */}
+      {/* ========================================================================= */}
+      {activeTab === "inventory" && (
+        <InventoryManager
+          products={productsList}
+          onRefresh={refreshData}
+          onEditProduct={(prod) => setEditingProduct(prod)}
+        />
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: STOREFRONT SECTIONS & SHOWCASES */}
+      {/* ========================================================================= */}
+      {activeTab === "sections" && (
+        <SectionsManager products={productsList} />
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 5: REGISTERED USERS (WHO CREATED ACCOUNTS) */}
       {/* ========================================================================= */}
       {activeTab === "users" && (
         <section className="space-y-6">
@@ -1157,7 +1213,7 @@ function AdminContent() {
                 placeholder="Search by Name, Email, or Mobile Number..."
                 value={userSearchQuery}
                 onChange={(e) => setUserSearchQuery(e.target.value)}
-                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-orange-500"
+                className="w-full bg-[#1c1c1c] border border-neutral-700 px-3.5 py-2 text-xs font-bold tracking-wider text-white placeholder:text-neutral-500 focus:outline-none focus:border-[#E8262A]"
               />
             </div>
           </div>
@@ -1233,7 +1289,7 @@ function AdminContent() {
                               setActiveTab("orders");
                               setOrderSearchQuery(user.name);
                             }}
-                            className="text-[10px] text-orange-400 hover:text-orange-300 font-bold uppercase tracking-wider underline"
+                            className="text-[10px] text-[#E8262A] hover:text-[#d01e22] font-bold uppercase tracking-wider underline"
                           >
                             View Customer Orders &rarr;
                           </button>
@@ -1256,7 +1312,7 @@ function AdminContent() {
           <div className="bg-[#161616] border border-neutral-700 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
               <div>
-                <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
+                <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Product & Photo Editor
                 </span>
                 <h3 className="text-lg font-black tracking-widest uppercase mt-0.5">
@@ -1292,9 +1348,9 @@ function AdminContent() {
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, "edit")}
                     disabled={uploadingImage}
-                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-orange-500 hover:file:text-white file:cursor-pointer"
+                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-[#E8262A] hover:file:text-white file:cursor-pointer"
                   />
-                  {uploadingImage && <p className="text-xs text-orange-400 font-bold">Uploading image...</p>}
+                  {uploadingImage && <p className="text-xs text-[#E8262A] font-bold">Uploading image...</p>}
                   {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
                   
                   <div className="pt-1">
@@ -1404,7 +1460,7 @@ function AdminContent() {
                         }}
                         className={`w-10 h-10 border text-xs font-bold uppercase transition-all ${
                           isSelected
-                            ? "border-orange-500 bg-orange-500 text-black font-black"
+                            ? "border-[#E8262A] bg-[#E8262A] text-white font-black"
                             : "border-neutral-700 bg-neutral-900 text-neutral-500"
                         }`}
                       >
@@ -1422,7 +1478,7 @@ function AdminContent() {
                     type="checkbox"
                     checked={editingProduct.inStock !== false}
                     onChange={(e) => setEditingProduct({ ...editingProduct, inStock: e.target.checked })}
-                    className="w-4 h-4 accent-orange-500"
+                    className="w-4 h-4 accent-[#E8262A]"
                   />
                   <span className="text-xs font-bold uppercase text-white">Item In Stock (Available for Purchase)</span>
                 </label>
@@ -1438,7 +1494,7 @@ function AdminContent() {
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-orange-500 hover:bg-orange-600 text-black py-3 text-xs font-black uppercase"
+                  className="w-2/3 bg-[#E8262A] hover:bg-[#d01e22] text-white py-3 text-xs font-black uppercase"
                 >
                   {saveSuccess ? "Saved Successfully ✓" : "Save Changes"}
                 </button>
@@ -1456,7 +1512,7 @@ function AdminContent() {
           <div className="bg-[#161616] border border-neutral-700 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-white shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-800 pb-4">
               <div>
-                <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
+                <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Catalog Operations
                 </span>
                 <h3 className="text-lg font-black tracking-widest uppercase mt-0.5">
@@ -1492,9 +1548,9 @@ function AdminContent() {
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, "new")}
                     disabled={uploadingImage}
-                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-orange-500 hover:file:text-white file:cursor-pointer"
+                    className="text-xs text-neutral-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-black file:uppercase file:bg-white file:text-black hover:file:bg-[#E8262A] hover:file:text-white file:cursor-pointer"
                   />
-                  {uploadingImage && <p className="text-xs text-orange-400 font-bold">Uploading photo...</p>}
+                  {uploadingImage && <p className="text-xs text-[#E8262A] font-bold">Uploading photo...</p>}
                   {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
                 </div>
               </div>
@@ -1623,7 +1679,7 @@ function AdminContent() {
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-orange-500 hover:bg-orange-600 text-black py-3 text-xs font-black uppercase"
+                  className="w-2/3 bg-[#E8262A] hover:bg-[#d01e22] text-white py-3 text-xs font-black uppercase"
                 >
                   Publish New Product &rarr;
                 </button>

@@ -141,7 +141,7 @@ export default function WishlistDrawer({
               <Link
                 href="/shop"
                 onClick={onClose}
-                className="inline-block mt-3 bg-black text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full hover:bg-orange-600 transition-colors"
+                className="inline-block mt-3 bg-black text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full hover:bg-[#E8262A] transition-colors"
               >
                 Explore Catalogue
               </Link>
@@ -172,7 +172,7 @@ export default function WishlistDrawer({
                   <div className="flex items-center gap-2 pt-2">
                     <button
                       onClick={() => moveToCart(item)}
-                      className="bg-black text-white hover:bg-orange-600 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors"
+                      className="bg-black text-white hover:bg-[#E8262A] text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors"
                     >
                       Move to Bag
                     </button>

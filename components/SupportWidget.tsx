@@ -181,7 +181,7 @@ export default function SupportWidget() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group bg-black hover:bg-orange-600 text-white shadow-2xl border border-neutral-800 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
+            className="group bg-black hover:bg-[#E8262A] text-white shadow-2xl border border-neutral-800 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Open Concierge Support"
           >
             <div className="relative">
@@ -209,7 +209,7 @@ export default function SupportWidget() {
           {/* Header */}
           <div className="bg-black text-white p-4 flex items-center justify-between border-b border-neutral-800">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center font-black text-xs text-white">
+              <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
                 D
               </div>
               <div>
@@ -286,7 +286,7 @@ export default function SupportWidget() {
                               href={m.actionLink.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-block bg-orange-600 hover:bg-orange-500 text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors"
+                              className="inline-block bg-[#E8262A] hover:bg-[#d01e22] text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors"
                             >
                               {m.actionLink.label} &rarr;
                             </a>
@@ -294,7 +294,7 @@ export default function SupportWidget() {
                             <Link
                               href={m.actionLink.url}
                               onClick={() => setIsOpen(false)}
-                              className="inline-block bg-black hover:bg-orange-600 text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors"
+                              className="inline-block bg-black hover:bg-[#E8262A] text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors"
                             >
                               {m.actionLink.label} &rarr;
                             </Link>
@@ -352,7 +352,7 @@ export default function SupportWidget() {
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="bg-black hover:bg-orange-600 disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase transition-colors"
+                  className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase transition-colors"
                 >
                   &rarr;
                 </button>
@@ -439,7 +439,7 @@ export default function SupportWidget() {
                 <Link
                   href="/stores"
                   onClick={() => setIsOpen(false)}
-                  className="text-[10px] font-bold text-orange-600 hover:underline uppercase tracking-wider"
+                  className="text-[10px] font-bold text-[#E8262A] hover:underline uppercase tracking-wider"
                 >
                   Visit Physical Flagship Stores (Delhi &bull; Mumbai &bull; Hyderabad) &rarr;
                 </Link>

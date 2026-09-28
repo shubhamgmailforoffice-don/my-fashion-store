@@ -95,7 +95,7 @@ export default function QuickAddModal({
             />
           </div>
           <div className="flex-1 min-w-0">
-            <span className="text-[9px] font-bold text-orange-600 uppercase tracking-wider block">
+            <span className="text-[9px] font-bold text-[#E8262A] uppercase tracking-wider block">
               {product.category} &bull; {product.subCategory || "Edition"}
             </span>
             <h3 className="text-sm font-black uppercase tracking-tight text-neutral-900 truncate mt-0.5">
@@ -154,7 +154,7 @@ export default function QuickAddModal({
             className={`w-full py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
               isSuccess
                 ? "bg-emerald-600 text-white"
-                : "bg-black text-white hover:bg-orange-600 active:scale-98 shadow-lg"
+                : "bg-black text-white hover:bg-[#E8262A] active:scale-98 shadow-lg"
             }`}
           >
             {isSuccess ? "✓ Added to Bag!" : `Add to Bag • RS. ${product.price.toLocaleString()}`}

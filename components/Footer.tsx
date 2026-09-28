@@ -43,7 +43,7 @@ export default function Footer() {
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase max-w-sm">
               DRIIVN is India’s premier luxury streetwear house, founded in 2026. Focused on custom-milled heavyweight French Terry fabrics, automotive-inspired high-octane graphics, and collectible limited drops.
             </p>
-            <div className="pt-2 text-[10px] font-bold tracking-widest text-orange-500 uppercase">
+            <div className="pt-2 text-[10px] font-bold tracking-widest text-[#E8262A] uppercase">
               <span>DESIGNED IN INDIA • WORN WORLDWIDE</span>
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function Footer() {
               />
               <button
                 type="submit"
-                className="w-full bg-black text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-orange-600 transition-colors"
+                className="w-full bg-black text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors"
               >
                 {subscribed ? "✓ You Are On The List" : "Subscribe"}
               </button>

@@ -62,7 +62,7 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
                     </span>
                   )}
                   {product.isSale && (
-                    <span className="bg-orange-600 text-white px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase rounded-full">
+                    <span className="bg-[#E8262A] text-white px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase rounded-full">
                       Sale
                     </span>
                   )}
