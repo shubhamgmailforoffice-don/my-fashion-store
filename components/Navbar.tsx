@@ -8,6 +8,7 @@ import { products, Product } from "@/lib/data";
 import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
 import ReelsModal from "./ReelsModal";
 import WishlistDrawer from "./WishlistDrawer";
+import OrderButton from "./OrderButton";
 
 export interface CartItem {
   id: string;
@@ -127,6 +128,7 @@ export default function Navbar() {
   const [paymentMethod, setPaymentMethod] = useState<"upi" | "cod">("upi");
   const [utrNumber, setUtrNumber] = useState("");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isOrderAnimating, setIsOrderAnimating] = useState(false);
   const [orderError, setOrderError] = useState("");
   const [placedOrder, setPlacedOrder] = useState<any>(null);
   const [copiedUpi, setCopiedUpi] = useState(false);
@@ -241,6 +243,7 @@ export default function Navbar() {
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isOrderAnimating || isPlacingOrder) return;
     setOrderError("");
 
     if (!shippingName.trim() || !shippingPhone.trim() || !shippingAddress.trim() || !shippingPincode.trim()) {
@@ -253,6 +256,8 @@ export default function Navbar() {
       return;
     }
 
+    // Trigger the delivery truck animation immediately upon click
+    setIsOrderAnimating(true);
     setIsPlacingOrder(true);
 
     try {
@@ -290,7 +295,6 @@ export default function Navbar() {
       }
 
       setPlacedOrder(data.order);
-      setCheckoutStep("success");
       saveCart([]);
 
       // Automatically link placed order to current session & localStorage
@@ -313,10 +317,19 @@ export default function Navbar() {
           window.dispatchEvent(new Event("orders-updated"));
         }
       } catch {}
+
+      // Allow the delivery truck animation to run smoothly to completion.
+      // At 7.0s, "Order Placed" checkmark is shown on the button.
+      // At 8.8s, the modal transitions smoothly to the full order confirmation view!
+      setTimeout(() => {
+        setCheckoutStep("success");
+        setIsOrderAnimating(false);
+        setIsPlacingOrder(false);
+      }, 8800);
     } catch (err: unknown) {
-      setOrderError(err instanceof Error ? err.message : "Error placing order");
-    } finally {
+      setIsOrderAnimating(false);
       setIsPlacingOrder(false);
+      setOrderError(err instanceof Error ? err.message : "Error placing order");
     }
   };
 
@@ -1034,7 +1047,7 @@ export default function Navbar() {
                   {checkoutStep === "success" && "Order Confirmed!"}
                 </h3>
               </div>
-              {checkoutStep !== "success" && (
+              {checkoutStep !== "success" && !isOrderAnimating && (
                 <button
                   onClick={() => setIsCheckoutOpen(false)}
                   className="text-gray-400 hover:text-white text-sm font-bold uppercase tracking-wider"
@@ -1355,28 +1368,24 @@ export default function Navbar() {
                   )}
 
                   {/* Actions */}
-                  <div className="flex gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-black/5">
                     <button
                       type="button"
+                      disabled={isPlacingOrder || isOrderAnimating}
                       onClick={() => setCheckoutStep("details")}
-                      className="w-1/3 border border-gray-300 text-black hover:bg-gray-100 py-4 text-xs font-black tracking-widest uppercase transition-colors"
+                      className="w-full sm:w-auto px-6 py-3.5 border border-black/15 bg-white/70 hover:bg-white text-black text-xs font-black tracking-widest uppercase transition-all rounded-full shadow-2xs disabled:opacity-40 disabled:cursor-not-allowed order-2 sm:order-1"
                     >
                       &larr; Back
                     </button>
-                    <button
-                      type="submit"
-                      disabled={isPlacingOrder}
-                      className="w-2/3 bg-black hover:bg-[#E8262A] text-white disabled:bg-gray-300 py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors flex items-center justify-center gap-2"
-                    >
-                      {isPlacingOrder ? (
-                        <>
-                          <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Processing...</span>
-                        </>
-                      ) : (
-                        <span>Place Order &rarr;</span>
-                      )}
-                    </button>
+                    <div className="w-full sm:w-auto flex justify-center order-1 sm:order-2">
+                      <OrderButton
+                        type="submit"
+                        isAnimating={isOrderAnimating}
+                        disabled={isPlacingOrder && !isOrderAnimating}
+                        label="Complete Order"
+                        successLabel="Order Placed"
+                      />
+                    </div>
                   </div>
                 </form>
               )}
