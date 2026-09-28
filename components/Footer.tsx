@@ -82,17 +82,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Stores & Support */}
+          {/* Support & Help */}
           <div>
             <h3 className="text-xs font-black tracking-widest uppercase mb-5">
-              Stores & Help
+              Customer Care & Help
             </h3>
             <ul className="space-y-3 text-xs uppercase font-bold tracking-wider text-gray-500">
-              <li>
-                <Link href="/stores" className="hover:text-black transition-colors">
-                  Delhi • Mumbai • Hyderabad
-                </Link>
-              </li>
               <li>
                 <Link href="/account" className="hover:text-black transition-colors">
                   Track Your Order

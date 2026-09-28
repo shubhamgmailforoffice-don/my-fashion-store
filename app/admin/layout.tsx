@@ -228,6 +228,12 @@ export default function AdminLayout({
             Sections
           </Link>
           <Link
+            href="/admin?tab=categories"
+            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
+          >
+            Categories
+          </Link>
+          <Link
             href="/admin?tab=users"
             className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
           >
@@ -308,13 +314,23 @@ export default function AdminLayout({
             </Link>
 
             <Link
+              href="/admin?tab=categories"
+              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
+            >
+              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+              </svg>
+              <span>5. Categories & Menu</span>
+            </Link>
+
+            <Link
               href="/admin?tab=users"
               className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
             >
               <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              <span>5. Registered Users</span>
+              <span>6. Registered Users</span>
             </Link>
 
             <Link

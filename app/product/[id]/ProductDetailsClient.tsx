@@ -258,6 +258,14 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                   </span>
                 )}
               </div>
+              {product.stockQuantity !== undefined && product.stockQuantity > 0 && product.stockQuantity <= 5 && (
+                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mt-2.5">
+                  <span className="w-2 h-2 rounded-full bg-[#E8262A] animate-ping" />
+                  <span className="text-[11px] font-black text-[#E8262A] uppercase tracking-wider">
+                    Hurry! Only {product.stockQuantity} left in stock
+                  </span>
+                </div>
+              )}
               <p className="text-[9px] text-gray-400 tracking-wider mt-1 uppercase">
                 INCLUSIVE OF ALL TAXES • COMPLIMENTARY EXPRESS SHIPPING
               </p>

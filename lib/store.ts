@@ -283,6 +283,8 @@ export async function getAsyncProducts(): Promise<Product[]> {
           isBlindBox: p.isBlindBox,
           collectionSlug: p.collectionSlug,
           description: p.description ?? undefined,
+          stockQuantity: p.stockQuantity ?? 10,
+          visibleOnSite: p.visibleOnSite ?? true,
         }));
       }
     } catch {
@@ -314,6 +316,8 @@ export async function getAsyncProductById(id: string): Promise<Product | undefin
           isBlindBox: p.isBlindBox,
           collectionSlug: p.collectionSlug,
           description: p.description ?? undefined,
+          stockQuantity: p.stockQuantity ?? 10,
+          visibleOnSite: p.visibleOnSite ?? true,
         };
       }
     } catch {

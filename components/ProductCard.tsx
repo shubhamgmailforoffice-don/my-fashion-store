@@ -81,6 +81,11 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
                   RS. {product.originalPrice.toLocaleString()}
                 </p>
               )}
+              {product.stockQuantity !== undefined && product.stockQuantity > 0 && product.stockQuantity <= 5 && (
+                <span className="text-[10px] font-bold text-[#E8262A] tracking-wider uppercase ml-auto">
+                  Only {product.stockQuantity} left
+                </span>
+              )}
             </div>
           </Link>
 

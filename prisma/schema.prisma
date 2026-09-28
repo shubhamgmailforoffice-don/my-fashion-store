@@ -23,6 +23,8 @@ model Product {
   isBlindBox     Boolean  @default(false)
   collectionSlug String   @default("essentials")
   description    String?
+  stockQuantity  Int?     @default(10)
+  visibleOnSite  Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }

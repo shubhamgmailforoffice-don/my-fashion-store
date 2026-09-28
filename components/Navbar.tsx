@@ -64,6 +64,26 @@ export default function Navbar() {
   const [isReelsOpen, setIsReelsOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [productsList, setProductsList] = useState<Product[]>(products);
+  const [openMenuAccordion, setOpenMenuAccordion] = useState<string | null>(null);
+  const [navCategories, setNavCategories] = useState<{
+    topNavLinks: { name: string; href: string }[];
+    accordions: {
+      id: string;
+      name: string;
+      subCategories?: string[];
+      type?: string;
+      colors?: { name: string; palette: string[]; filter: string }[];
+      links?: { name: string; href: string }[];
+    }[];
+    bottomLinks: { name: string; href: string }[];
+  } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/categories", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => setNavCategories(d))
+      .catch(() => {});
+  }, []);
 
   // Allow other components to trigger reels or cart via window event
   useEffect(() => {
@@ -408,12 +428,7 @@ export default function Navbar() {
               <span>Search</span>
             </button>
 
-            <Link
-              href="/stores"
-              className="hidden text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase md:block whitespace-nowrap"
-            >
-              Stores
-            </Link>
+
 
             {/* Desktop-Only Account */}
             <Link
@@ -461,94 +476,251 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer Menu (Exact replica of Screenshots 7, 8, 9, 10 - No Walk-in Stores) */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 lg:hidden overflow-hidden" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 max-w-xs w-full bg-white shadow-2xl z-50 flex flex-col justify-between p-6">
-            <div>
-              <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
-                <Image
-                  src="/logo-black.png"
-                  alt="DRIIVN"
-                  width={130}
-                  height={18}
-                  className="h-5 w-auto object-contain"
-                />
+          <div className="fixed inset-y-0 left-0 max-w-[340px] sm:max-w-sm w-full bg-[#f4f4f4] shadow-2xl z-50 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-250 select-none">
+            {/* Drawer Top Header (Screenshot 7: x DRIIVN, bookmark, bag) */}
+            <div className="p-5 pb-2 flex items-center justify-between">
+              {/* Left Brand Pill with Close 'X' */}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="flex items-center gap-1.5 bg-neutral-200/90 hover:bg-neutral-300 border border-neutral-300/80 px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
+                aria-label="Close navigation menu"
+              >
+                <span className="text-xs font-bold text-neutral-800 leading-none">&times;</span>
+                <span className="text-[11px] font-black tracking-widest text-black uppercase font-mono">
+                  DRIIVN
+                </span>
+              </button>
+
+              {/* Right: Saved Bookmark & Bag */}
+              <div className="flex items-center gap-3">
                 <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-1 text-gray-500 hover:text-black"
-                  aria-label="Close menu"
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsWishlistOpen(true);
+                  }}
+                  className="p-1.5 text-neutral-800 hover:text-black transition-colors"
+                  aria-label="Saved items"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                   </svg>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    setIsCartOpen(true);
+                  }}
+                  className="p-1.5 text-neutral-800 hover:text-black transition-colors relative"
+                  aria-label="Shopping bag"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  </svg>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#E8262A] text-white rounded-full text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center">
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
               </div>
-
-              <nav className="space-y-4">
-                <Link
-                  href="/shop"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-[#E8262A] py-1"
-                >
-                  Shop All
-                </Link>
-                <Link
-                  href="/collections"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-black tracking-widest uppercase text-gray-900 hover:text-[#E8262A] py-1"
-                >
-                  Collections
-                </Link>
-                <Link
-                  href="/shop?category=Tops"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
-                >
-                  Tops & Hoodies
-                </Link>
-                <Link
-                  href="/shop?category=Bottoms"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
-                >
-                  Bottoms & Cargos
-                </Link>
-                <Link
-                  href="/shop-by-color"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
-                >
-                  Shop by Color
-                </Link>
-                <Link
-                  href="/stores"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
-                >
-                  Flagship Stores
-                </Link>
-                <Link
-                  href="/account"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="block text-sm font-bold tracking-widest uppercase text-gray-700 hover:text-[#E8262A] py-1"
-                >
-                  {currentUser ? `Hi, ${currentUser.name} (Dashboard)` : "Account / Member Sign In"}
-                </Link>
-              </nav>
             </div>
 
-            <div className="border-t border-gray-100 pt-6 space-y-2">
-              <p className="text-[9px] font-bold tracking-widest text-gray-400 uppercase">
-                India’s Premier Streetwear Brand
-              </p>
-              <p className="text-[9px] font-bold tracking-widest text-black uppercase">
-                DRIIVN DESIGN ARCHIVES
-              </p>
+            {/* Main Menu Body */}
+            <div className="flex-1 px-6 py-4 space-y-6">
+              {/* Section 1: Bold Top Links (Screenshot 7) */}
+              <div className="space-y-3 font-inter">
+                {(navCategories?.topNavLinks || [
+                  { name: "New Arrivals", href: "/shop" },
+                  { name: "Winter collection 2026", href: "/collections/winter-collection" },
+                  { name: "Basics", href: "/shop?category=Tops" },
+                  { name: "DRIIVN Racing Club", href: "/collections/racing-club" },
+                  { name: "Icons", href: "/shop" },
+                ]).map((link: any) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block text-sm font-bold text-neutral-900 hover:text-[#E8262A] transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Section 2: Expandable Accordions (+ / x) */}
+              <div className="border-t border-neutral-200/80 pt-4 space-y-4 font-inter">
+                {(navCategories?.accordions || [
+                  {
+                    id: "top",
+                    name: "Top",
+                    subCategories: ["T-shirts", "Polos", "Shirts", "Sweatshirts", "Hoodies", "Jackets"],
+                  },
+                  {
+                    id: "bottom",
+                    name: "Bottom",
+                    subCategories: ["Cargos", "Jeans", "Pants", "Shorts"],
+                  },
+                  {
+                    id: "accessories",
+                    name: "Accessories",
+                    subCategories: ["Bags", "Wallets", "Caps", "Socks"],
+                  },
+                  {
+                    id: "color",
+                    name: "Shop by color",
+                    type: "color",
+                    colors: [
+                      { name: "BLUES", palette: ["#1e3a8a", "#2563eb", "#60a5fa"], filter: "Blue" },
+                      { name: "BROWNS", palette: ["#451a03", "#78350f", "#d97706"], filter: "Brown" },
+                      { name: "GREENS", palette: ["#064e3b", "#059669", "#34d399"], filter: "Green" },
+                      { name: "NEUTRALS", palette: ["#18181b", "#71717a", "#e4e4e7"], filter: "Black" },
+                      { name: "PURPLES", palette: ["#581c87", "#7c3aed", "#c084fc"], filter: "Purple" },
+                      { name: "REDS", palette: ["#7f1d1d", "#dc2626", "#f87171"], filter: "Red" },
+                    ],
+                  },
+                  {
+                    id: "support",
+                    name: "Support",
+                    links: [
+                      { name: "Live Concierge Support", href: "#chat" },
+                      { name: "Track Your Order", href: "/account" },
+                      { name: "Complimentary Shipping", href: "/shipping-policy" },
+                      { name: "Returns & Exchanges", href: "/returns" },
+                    ],
+                  },
+                ]).map((acc: any) => {
+                  const isOpen = openMenuAccordion === acc.id;
+
+                  return (
+                    <div key={acc.id} className="space-y-3">
+                      {/* Accordion Row Header */}
+                      <button
+                        type="button"
+                        onClick={() => setOpenMenuAccordion(isOpen ? null : acc.id)}
+                        className="w-full flex items-center justify-between text-left text-sm font-medium text-neutral-800 hover:text-black py-0.5"
+                      >
+                        <span>{acc.name}</span>
+                        <span className="text-sm font-light text-neutral-500">
+                          {isOpen ? "×" : "+"}
+                        </span>
+                      </button>
+
+                      {/* Expanded Subcategory Pills (Screenshot 8 & 9 style) */}
+                      {isOpen && acc.subCategories && (
+                        <div className="flex flex-wrap gap-2 pt-1 pb-2 animate-in fade-in duration-150">
+                          {acc.subCategories.map((sub: string) => (
+                            <Link
+                              key={sub}
+                              href={`/shop?subCategory=${encodeURIComponent(sub)}`}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="bg-white hover:bg-neutral-100 text-neutral-800 text-xs font-medium px-3.5 py-1.5 rounded-full border border-neutral-200/90 shadow-2xs transition-all active:scale-95"
+                            >
+                              {sub}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Expanded Shop by Color Pills (Screenshot 10 style) */}
+                      {isOpen && acc.colors && (
+                        <div className="grid grid-cols-2 gap-2 pt-1 pb-2 animate-in fade-in duration-150">
+                          {acc.colors.map((c: any) => (
+                            <Link
+                              key={c.name}
+                              href={`/shop?color=${encodeURIComponent(c.filter)}`}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="bg-white hover:bg-neutral-100 border border-neutral-200/90 rounded-full px-3 py-1.5 flex items-center justify-between shadow-2xs transition-all active:scale-95"
+                            >
+                              <span className="text-[11px] font-bold text-neutral-800 tracking-wider">
+                                {c.name}
+                              </span>
+                              <div className="flex -space-x-1">
+                                {c.palette.map((hex: string, i: number) => (
+                                  <span
+                                    key={i}
+                                    className="w-2.5 h-2.5 rounded-full border border-white"
+                                    style={{ backgroundColor: hex }}
+                                  />
+                                ))}
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Expanded Support Links */}
+                      {isOpen && acc.links && (
+                        <div className="space-y-2 pt-1 pb-2 animate-in fade-in duration-150">
+                          {acc.links.map((link: any) => (
+                            <div key={link.name}>
+                              {link.href === "#chat" ? (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setIsMobileMenuOpen(false);
+                                    window.dispatchEvent(new CustomEvent("open-support"));
+                                  }}
+                                  className="block text-xs font-semibold text-neutral-700 hover:text-black py-1"
+                                >
+                                  {link.name} &rarr;
+                                </button>
+                              ) : (
+                                <Link
+                                  href={link.href}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className="block text-xs font-semibold text-neutral-700 hover:text-black py-1"
+                                >
+                                  {link.name}
+                                </Link>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Section 3: Bottom Story Links (Screenshot 7) */}
+              <div className="border-t border-neutral-200/80 pt-5 space-y-2.5 font-inter">
+                {(navCategories?.bottomLinks || [
+                  { name: "Our Story", href: "/terms" },
+                  { name: "Collaborations", href: "/collections" },
+                  { name: "Media & Press", href: "/privacy" },
+                ]).map((link: any) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block text-xs font-bold text-neutral-800 hover:text-[#E8262A] transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Bottom Drag Handle & Close Button (Screenshot 7, 8, 9, 10) */}
+            <div className="p-5 pt-3 border-t border-neutral-200/60 text-center">
+              <div className="w-10 h-1 bg-neutral-300 rounded-full mx-auto mb-2" />
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-xs font-medium text-neutral-400 hover:text-black transition-colors"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>

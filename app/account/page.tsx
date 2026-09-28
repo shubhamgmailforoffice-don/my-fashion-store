@@ -992,9 +992,9 @@ export default function AccountPage() {
                   </div>
                   <div className="border border-neutral-100 p-5 bg-neutral-50">
                     <p className="text-[10px] font-black text-orange-500 uppercase tracking-widest">Perk 04</p>
-                    <h4 className="text-xs font-black text-black uppercase mt-1">Flagship Invites</h4>
+                    <h4 className="text-xs font-black text-black uppercase mt-1">VIP Secret Drops</h4>
                     <p className="text-[10px] text-neutral-500 uppercase mt-1">
-                      Exclusive private invites to launch parties at Delhi & Mumbai flagship stores.
+                      Exclusive private access to limited archive releases, password vaults, and sample drops.
                     </p>
                   </div>
                 </div>

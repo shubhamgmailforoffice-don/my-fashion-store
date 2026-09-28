@@ -1,0 +1,54 @@
+{
+  "topNavLinks": [
+    { "name": "New Arrivals", "href": "/shop" },
+    { "name": "Winter collection 2026", "href": "/collections/winter-collection" },
+    { "name": "Basics", "href": "/shop?category=Tops" },
+    { "name": "DRIIVN Racing Club", "href": "/collections/racing-club" },
+    { "name": "Icons", "href": "/shop" }
+  ],
+  "accordions": [
+    {
+      "id": "top",
+      "name": "Top",
+      "subCategories": ["T-shirts", "Polos", "Shirts", "Sweatshirts", "Hoodies", "Jackets"]
+    },
+    {
+      "id": "bottom",
+      "name": "Bottom",
+      "subCategories": ["Cargos", "Jeans", "Pants", "Shorts"]
+    },
+    {
+      "id": "accessories",
+      "name": "Accessories",
+      "subCategories": ["Bags", "Wallets", "Caps", "Socks"]
+    },
+    {
+      "id": "color",
+      "name": "Shop by color",
+      "type": "color",
+      "colors": [
+        { "name": "BLUES", "palette": ["#1e3a8a", "#2563eb", "#60a5fa"], "filter": "Blue" },
+        { "name": "BROWNS", "palette": ["#451a03", "#78350f", "#d97706"], "filter": "Brown" },
+        { "name": "GREENS", "palette": ["#064e3b", "#059669", "#34d399"], "filter": "Green" },
+        { "name": "NEUTRALS", "palette": ["#18181b", "#71717a", "#e4e4e7"], "filter": "Black" },
+        { "name": "PURPLES", "palette": ["#581c87", "#7c3aed", "#c084fc"], "filter": "Purple" },
+        { "name": "REDS", "palette": ["#7f1d1d", "#dc2626", "#f87171"], "filter": "Red" }
+      ]
+    },
+    {
+      "id": "support",
+      "name": "Support",
+      "links": [
+        { "name": "Live Concierge Support", "href": "#chat" },
+        { "name": "Track Your Order", "href": "/account" },
+        { "name": "Complimentary Shipping", "href": "/shipping-policy" },
+        { "name": "Returns & Exchanges", "href": "/returns" }
+      ]
+    }
+  ],
+  "bottomLinks": [
+    { "name": "Our Story", "href": "/terms" },
+    { "name": "Collaborations", "href": "/collections" },
+    { "name": "Media & Press", "href": "/privacy" }
+  ]
+}

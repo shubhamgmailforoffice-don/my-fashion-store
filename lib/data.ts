@@ -4,8 +4,8 @@ export interface Product {
   price: number;
   originalPrice?: number;
   images: string[];
-  category: "Tops" | "Bottoms" | "Special" | "Accessories";
-  subCategory?: "T-Shirts" | "Hoodies" | "Cargo Pants" | "Joggers" | "Mystery Box" | "Bags" | "Wallets";
+  category: "Tops" | "Bottoms" | "Special" | "Accessories" | string;
+  subCategory?: string;
   colors: string[];
   sizes?: string[];
   inStock?: boolean;
@@ -14,6 +14,8 @@ export interface Product {
   isBlindBox?: boolean;
   collectionSlug: string;
   description?: string;
+  stockQuantity?: number;
+  visibleOnSite?: boolean;
 }
 
 export interface CollectionInfo {

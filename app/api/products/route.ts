@@ -5,8 +5,13 @@ import { Product } from "@/lib/data";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-export async function GET() {
-  const products = await getAsyncProducts();
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const includeDrafts = searchParams.get("all") === "true" || searchParams.get("admin") === "true";
+  let products = await getAsyncProducts();
+  if (!includeDrafts) {
+    products = products.filter((p) => p.visibleOnSite !== false);
+  }
   return NextResponse.json(products, {
     headers: {
       "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
@@ -26,7 +31,7 @@ export async function POST(request: Request) {
       originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
       images:
         body.images && body.images.length > 0
-          ? body.images
+          ? body.images.filter(Boolean)
           : ["/images/products/oversized-tshirt.jpg"],
       category: body.category || "Tops",
       subCategory: body.subCategory || "T-Shirts",
@@ -43,6 +48,8 @@ export async function POST(request: Request) {
       description:
         body.description ||
         "Premium heavyweight streetwear garment designed with dropped shoulders and boxy silhouette.",
+      stockQuantity: body.stockQuantity !== undefined ? Number(body.stockQuantity) : 10,
+      visibleOnSite: body.visibleOnSite !== undefined ? Boolean(body.visibleOnSite) : true,
     };
 
     if (process.env.DATABASE_URL) {
@@ -65,6 +72,8 @@ export async function POST(request: Request) {
             isBlindBox: newProduct.isBlindBox ?? false,
             collectionSlug: newProduct.collectionSlug || "essentials",
             description: newProduct.description || null,
+            stockQuantity: newProduct.stockQuantity ?? 10,
+            visibleOnSite: newProduct.visibleOnSite ?? true,
           },
         });
       } catch (err) {
@@ -109,10 +118,13 @@ export async function PUT(request: Request) {
       ...body,
       inStock: body.inStock !== undefined ? body.inStock : db.products[index].inStock ?? true,
       sizes: body.sizes !== undefined ? body.sizes : db.products[index].sizes ?? ["S", "M", "L", "XL", "XXL"],
+      images: body.images !== undefined ? body.images.filter(Boolean) : db.products[index].images,
       price: Number(body.price ?? db.products[index].price),
       originalPrice: body.originalPrice
         ? Number(body.originalPrice)
         : db.products[index].originalPrice,
+      stockQuantity: body.stockQuantity !== undefined ? Number(body.stockQuantity) : db.products[index].stockQuantity ?? 10,
+      visibleOnSite: body.visibleOnSite !== undefined ? Boolean(body.visibleOnSite) : db.products[index].visibleOnSite ?? true,
     };
 
     if (process.env.DATABASE_URL) {
@@ -135,6 +147,8 @@ export async function PUT(request: Request) {
             isBlindBox: updatedProduct.isBlindBox ?? false,
             collectionSlug: updatedProduct.collectionSlug || "essentials",
             description: updatedProduct.description || null,
+            stockQuantity: updatedProduct.stockQuantity ?? 10,
+            visibleOnSite: updatedProduct.visibleOnSite ?? true,
           },
         });
       } catch (err) {
