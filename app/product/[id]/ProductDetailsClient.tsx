@@ -244,7 +244,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               <span className="text-[10px] font-bold tracking-[0.3em] text-orange-500 uppercase block mb-1">
                 DRIIVN COUTURE
               </span>
-              <h1 className="text-2xl md:text-3xl font-black tracking-widest text-black uppercase leading-tight mb-3">
+              <h1 className="text-2xl md:text-3xl font-black tracking-normal text-black leading-tight mb-3">
                 {product.name}
               </h1>
 

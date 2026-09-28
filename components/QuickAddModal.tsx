@@ -98,7 +98,7 @@ export default function QuickAddModal({
             <span className="text-[9px] font-bold text-[#E8262A] uppercase tracking-wider block">
               {product.category} &bull; {product.subCategory || "Edition"}
             </span>
-            <h3 className="text-sm font-black uppercase tracking-tight text-neutral-900 truncate mt-0.5">
+            <h3 className="text-sm font-bold tracking-tight text-neutral-900 truncate mt-0.5">
               {product.name}
             </h3>
             <p className="text-sm font-bold text-neutral-800 mt-1">

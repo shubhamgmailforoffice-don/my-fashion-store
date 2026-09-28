@@ -162,7 +162,7 @@ export default function WishlistDrawer({
                 </div>
                 <div className="flex-1 min-w-0 flex flex-col justify-between">
                   <div>
-                    <h4 className="text-xs font-black uppercase tracking-tight text-neutral-900 truncate">
+                    <h4 className="text-xs font-bold tracking-tight text-neutral-900 truncate">
                       {item.name}
                     </h4>
                     <p className="text-xs font-bold text-neutral-700 mt-0.5">

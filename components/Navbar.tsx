@@ -618,6 +618,15 @@ export default function Navbar() {
                       {/* Expanded Subcategory Pills (Screenshot 8 & 9 style) */}
                       {isOpen && acc.subCategories && (
                         <div className="flex flex-wrap gap-2 pt-1 pb-2 animate-in fade-in duration-150">
+                          <Link
+                            href={`/shop?category=${encodeURIComponent(
+                              acc.id === "top" ? "Tops" : acc.id === "bottom" ? "Bottoms" : acc.name
+                            )}`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-2xs transition-all active:scale-95"
+                          >
+                            All {acc.name}
+                          </Link>
                           {acc.subCategories.map((sub: string) => (
                             <Link
                               key={sub}

@@ -630,7 +630,7 @@ export default function InventoryManager({
                             )}
                           </div>
                           <div>
-                            <p className="font-bold text-black uppercase text-xs group-hover:text-[#E8262A] transition-colors leading-snug">
+                            <p className="font-bold text-black text-xs group-hover:text-[#E8262A] transition-colors leading-snug">
                               {p.name}
                             </p>
                             <span className="text-[10px] font-mono text-neutral-400">

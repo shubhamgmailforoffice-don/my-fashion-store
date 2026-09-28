@@ -101,28 +101,139 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
     };
   }, []);
 
+  // Listen to URL searchParams changes immediately (e.g. mobile drawer navigation)
+  useEffect(() => {
+    const currentSub = searchParams.get("subCategory");
+    const currentCat = searchParams.get("category");
+    const currentColor = searchParams.get("color");
+
+    if (currentSub) {
+      const matched = filterPills.find((p) => p.toLowerCase() === currentSub.toLowerCase()) || currentSub;
+      setSelectedPill(matched);
+    } else if (currentCat) {
+      const matched = filterPills.find((p) => p.toLowerCase() === currentCat.toLowerCase()) || currentCat;
+      setSelectedPill(matched);
+    } else {
+      setSelectedPill("View all");
+    }
+
+    if (currentColor) {
+      setSelectedColor(currentColor);
+    }
+  }, [searchParams, filterPills]);
+
+  // Handle category pill click with smooth URL updating
+  const handlePillClick = (pill: string) => {
+    setSelectedPill(pill);
+    try {
+      const url = new URL(window.location.href);
+      if (pill === "View all") {
+        url.searchParams.delete("category");
+        url.searchParams.delete("subCategory");
+      } else {
+        const lower = pill.toLowerCase();
+        if (lower === "tops" || lower === "bottoms" || lower === "accessories" || lower === "special") {
+          url.searchParams.set("category", pill);
+          url.searchParams.delete("subCategory");
+        } else {
+          url.searchParams.set("subCategory", pill);
+          url.searchParams.delete("category");
+        }
+      }
+      window.history.pushState({}, "", url.toString());
+    } catch {}
+  };
+
   // Filter products
   const filteredProducts = useMemo(() => {
     return productsList.filter((product) => {
       // Category / SubCategory matching
       let matchesCategory = true;
-      if (selectedPill !== "View all") {
-        const pLower = selectedPill.toLowerCase();
-        const catLower = product.category.toLowerCase();
-        const subLower = (product.subCategory || "").toLowerCase();
+      if (selectedPill && selectedPill !== "View all") {
+        const pLower = selectedPill.trim().toLowerCase();
+        const catLower = (product.category || "").trim().toLowerCase();
+        const subLower = (product.subCategory || "").trim().toLowerCase();
+        const nameLower = (product.name || "").trim().toLowerCase();
 
-        if (pLower === "t-shirts") {
-          matchesCategory = subLower.includes("t-shirt") || catLower === "tops";
-        } else if (pLower === "hoodies") {
-          matchesCategory = subLower.includes("hoodie");
-        } else if (pLower === "sweatshirt") {
-          matchesCategory = subLower.includes("hoodie") || catLower === "tops";
-        } else if (pLower === "bottoms") {
-          matchesCategory = catLower === "bottoms" || subLower.includes("cargo");
+        // 1. T-Shirts / T-shirt filter (Must NOT match hoodies, sweatshirts, or jackets)
+        if (pLower === "t-shirts" || pLower === "t-shirt" || pLower === "tshirt" || pLower === "tshirts") {
+          if (subLower.includes("hoodie") || subLower.includes("jacket") || subLower.includes("sweatshirt")) {
+            matchesCategory = false;
+          } else {
+            matchesCategory =
+              subLower.includes("t-shirt") ||
+              subLower.includes("tshirt") ||
+              subLower === "t-shirts" ||
+              (!subLower && (nameLower.includes("t-shirt") || nameLower.includes("tshirt") || nameLower.includes("tee")));
+          }
+        }
+        // 2. Hoodies filter
+        else if (pLower === "hoodies" || pLower === "hoodie") {
+          matchesCategory = subLower.includes("hoodie") || (!subLower && nameLower.includes("hoodie"));
+        }
+        // 3. Shirts filter (Button-down shirts / collared shirts - NOT t-shirts or sweatshirts)
+        else if (pLower === "shirts" || pLower === "shirt") {
+          if (subLower.includes("t-shirt") || subLower.includes("tshirt") || subLower.includes("sweatshirt")) {
+            matchesCategory = false;
+          } else {
+            matchesCategory =
+              subLower.includes("shirt") ||
+              (!subLower && nameLower.includes("shirt") && !nameLower.includes("t-shirt") && !nameLower.includes("tshirt"));
+          }
+        }
+        // 4. Sweatshirts filter
+        else if (pLower === "sweatshirt" || pLower === "sweatshirts") {
+          matchesCategory = subLower.includes("sweatshirt") || (!subLower && nameLower.includes("sweatshirt"));
+        }
+        // 5. Jackets filter
+        else if (pLower === "jackets" || pLower === "jacket") {
+          matchesCategory = subLower.includes("jacket") || (!subLower && nameLower.includes("jacket"));
+        }
+        // 6. Polos filter
+        else if (pLower === "polos" || pLower === "polo") {
+          matchesCategory = subLower.includes("polo") || (!subLower && nameLower.includes("polo"));
+        }
+        // 7. Cargos filter
+        else if (pLower === "cargos" || pLower === "cargo") {
+          matchesCategory = subLower.includes("cargo") || (!subLower && nameLower.includes("cargo"));
+        }
+        // 8. Jeans filter
+        else if (pLower === "jeans" || pLower === "denim") {
+          matchesCategory =
+            subLower.includes("jean") ||
+            subLower.includes("denim") ||
+            (!subLower && (nameLower.includes("jean") || nameLower.includes("denim")));
+        }
+        // 9. Pants filter
+        else if (pLower === "pants" || pLower === "joggers" || pLower === "trackpants") {
+          matchesCategory =
+            subLower.includes("pant") ||
+            subLower.includes("jogger") ||
+            subLower.includes("trackpant") ||
+            (!subLower && (nameLower.includes("pant") || nameLower.includes("jogger")));
+        }
+        // 10. Shorts filter
+        else if (pLower === "shorts" || pLower === "short") {
+          matchesCategory = subLower.includes("short") || (!subLower && nameLower.includes("short"));
+        }
+        // 11. Top-level categories: "Tops", "Bottoms", "Accessories", "Special"
+        else if (pLower === "tops" || pLower === "top") {
+          matchesCategory = catLower === "tops" || catLower === "top";
+        } else if (pLower === "bottoms" || pLower === "bottom") {
+          matchesCategory = catLower === "bottoms" || catLower === "bottom";
         } else if (pLower === "accessories") {
-          matchesCategory = catLower === "accessories" || subLower === "bags" || subLower === "wallets";
-        } else {
-          matchesCategory = catLower.includes(pLower) || subLower.includes(pLower);
+          matchesCategory = catLower === "accessories";
+        } else if (pLower === "special") {
+          matchesCategory = catLower === "special";
+        }
+        // 12. Generic / Custom subcategories or categories
+        else {
+          matchesCategory =
+            subLower === pLower ||
+            subLower.includes(pLower) ||
+            pLower.includes(subLower) ||
+            catLower === pLower ||
+            nameLower.includes(pLower);
         }
       }
 
@@ -223,12 +334,12 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
       {/* Horizontal Scrollable Category Filter Pills (Exact Screenshot 4 Style) */}
       <div className="flex gap-2 overflow-x-auto pb-4 pt-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
         {filterPills.map((pill) => {
-          const isActive = selectedPill === pill;
+          const isActive = selectedPill.toLowerCase() === pill.toLowerCase();
           return (
             <button
               key={pill}
               type="button"
-              onClick={() => setSelectedPill(pill)}
+              onClick={() => handlePillClick(pill)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-inter transition-all duration-200 whitespace-nowrap active:scale-95 ${
                 isActive
                   ? "bg-white text-black font-semibold border border-neutral-900 shadow-xs"

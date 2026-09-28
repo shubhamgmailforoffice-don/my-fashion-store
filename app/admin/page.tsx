@@ -1208,7 +1208,7 @@ function AdminContent() {
 
                       {/* Product Name & Category */}
                       <td className="py-3 px-4">
-                        <p className="font-black text-black uppercase text-xs">{product.name}</p>
+                        <p className="font-bold text-black text-xs">{product.name}</p>
                         <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-500 uppercase">
                           <span className="text-[#E8262A] font-bold">{product.category}</span>
                           <span>•</span>
@@ -1557,7 +1557,7 @@ function AdminContent() {
                     required
                     value={editingProduct.name}
                     onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
-                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
                   />
                 </div>
 
@@ -1881,10 +1881,10 @@ function AdminContent() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. TACTICAL V2 CARGO PANTS"
+                    placeholder="e.g. Tactical V2 Cargo Pants"
                     value={newProductForm.name}
                     onChange={(e) => setNewProductForm({ ...newProductForm, name: e.target.value })}
-                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
                   />
                 </div>
 
