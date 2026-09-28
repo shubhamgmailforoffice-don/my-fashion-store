@@ -37,23 +37,6 @@ export interface StoreLocation {
 
 export const products: Product[] = [
   {
-    id: "101",
-    name: "Purple Dragonfly Navy T-Shirt",
-    price: 4700,
-    images: [
-      "/images/streetwear-dragonfly.jpg",
-      "/images/streetwear-dragonfly.jpg",
-    ],
-    category: "Tops",
-    subCategory: "T-Shirts",
-    colors: ["Purple", "Navy"],
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    isNew: true,
-    inStock: true,
-    collectionSlug: "winter-collection",
-    description: "Deep violet pigment wash heavyweight tee featuring high-density chenille dragonfly embroidery with metallic accents.",
-  },
-  {
     id: "102",
     name: "Black Tiger Bonsai T-Shirt",
     price: 8900,
@@ -104,6 +87,23 @@ export const products: Product[] = [
     inStock: true,
     collectionSlug: "winter-collection",
     description: "Knit ribbed collar polo with multi-layer crimson betta fin embroidery cascading across the shoulder and chest.",
+  },
+  {
+    id: "101",
+    name: "Purple Dragonfly Navy T-Shirt",
+    price: 4700,
+    images: [
+      "/images/streetwear-dragonfly.jpg",
+      "/images/streetwear-dragonfly.jpg",
+    ],
+    category: "Tops",
+    subCategory: "T-Shirts",
+    colors: ["Purple", "Navy"],
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    isNew: true,
+    inStock: true,
+    collectionSlug: "winter-collection",
+    description: "Deep violet pigment wash heavyweight tee featuring high-density chenille dragonfly embroidery with metallic accents.",
   },
   {
     id: "105",

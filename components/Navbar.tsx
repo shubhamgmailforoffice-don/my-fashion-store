@@ -1259,23 +1259,23 @@ export default function Navbar() {
       )}
 
 
-      {/* Mobile Floating Bottom Navigation Dock (Exact replica of Screenshots 1, 2, 3, 4) */}
+      {/* Mobile Floating Bottom Navigation Dock (Exact replica of Screenshot 4 - NO BLACK) */}
       <nav
         className="lg:hidden fixed bottom-4 inset-x-0 z-40 flex items-center justify-center gap-2.5 px-3 pointer-events-none select-none"
         aria-label="Mobile Navigation Dock"
       >
-        {/* 1st (Far Left): Reel Type Circular Button - Lookbook / Reels Feature */}
+        {/* 1st (Far Left): Blue Circular Button - Lookbook / Reels Feature (Screenshot 4) */}
         <button
           type="button"
           onClick={() => setIsReelsOpen(true)}
-          className="w-12 h-12 rounded-full bg-white text-[#E8262A] shadow-[0_8px_25px_rgba(232,38,42,0.35)] border-2 border-[#E8262A] ring-2 ring-[#E8262A]/30 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-[0_8px_25px_rgba(37,99,235,0.4)] border-2 border-white/80 ring-2 ring-blue-500/20 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
           aria-label="Open DRIIVN Lookbook Reels"
           title="DRIIVN Lookbook Reels"
         >
           <div className="relative flex items-center justify-center">
             {/* Film / Reel Icon */}
             <svg
-              className="w-6 h-6 text-[#E8262A] group-hover:scale-110 transition-transform"
+              className="w-5 h-5 text-white group-hover:scale-110 transition-transform"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -1287,18 +1287,20 @@ export default function Navbar() {
                 d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
               />
             </svg>
-            <span className="w-2 h-2 rounded-full bg-[#E8262A] absolute -top-1 -right-1 animate-ping" />
-            <span className="w-2 h-2 rounded-full bg-[#E8262A] absolute -top-1 -right-1" />
+            <span className="w-2 h-2 rounded-full bg-white absolute -top-1 -right-1 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-white absolute -top-1 -right-1" />
           </div>
         </button>
 
-        {/* 2nd (Center): Frosted Glass Capsule Dock */}
-        <div className="bg-neutral-900/85 backdrop-blur-2xl border border-white/20 rounded-full px-5 py-2.5 flex items-center gap-5 sm:gap-6 shadow-[0_12px_35px_rgba(0,0,0,0.55)] pointer-events-auto">
-          {/* Option: Explore / All Products (Screenshot 4) */}
+        {/* 2nd (Center): Frosted Glass Capsule Dock - LIGHT TRANSLUCENT (NO BLACK) */}
+        <div className="bg-white/80 backdrop-blur-2xl border border-white/70 rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.12)] pointer-events-auto">
+          {/* Option: Explore / All Products (Screenshot 4 - Active White Pill) */}
           <Link
             href="/shop"
-            className={`p-1.5 transition-colors relative ${
-              pathname === "/shop" ? "text-white" : "text-neutral-400 hover:text-white"
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+              pathname === "/shop"
+                ? "bg-white text-black shadow-md border border-neutral-200/80"
+                : "text-neutral-500 hover:text-black"
             }`}
             aria-label="Explore All Products"
             title="Explore All Products"
@@ -1307,29 +1309,15 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.5 9.5l-5 2 2 5 3-7z" />
             </svg>
-            {pathname === "/shop" && (
-              <span className="w-1.5 h-1.5 rounded-full bg-white absolute -bottom-1 left-1/2 -translate-x-1/2" />
-            )}
           </Link>
-
-          {/* Option: Search (Removed from upper side, lives here) */}
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className="p-1.5 text-neutral-400 hover:text-white transition-colors"
-            aria-label="Search Drops"
-            title="Search Drops"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
 
           {/* Option: Account Portal */}
           <Link
             href="/account"
-            className={`p-1.5 transition-colors relative ${
-              pathname === "/account" ? "text-white" : "text-neutral-400 hover:text-white"
+            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all relative ${
+              pathname === "/account"
+                ? "bg-white text-black shadow-md border border-neutral-200/80"
+                : "text-neutral-500 hover:text-black"
             }`}
             aria-label="Account Portal"
             title="Account Portal"
@@ -1339,19 +1327,16 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
               {currentUser && (
-                <span className="w-2 h-2 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5 ring-2 ring-neutral-900" />
+                <span className="w-2 h-2 rounded-full bg-emerald-500 absolute -top-0.5 -right-0.5 ring-2 ring-white" />
               )}
             </div>
-            {pathname === "/account" && (
-              <span className="w-1.5 h-1.5 rounded-full bg-white absolute -bottom-1 left-1/2 -translate-x-1/2" />
-            )}
           </Link>
 
           {/* Option: Bag (Removed from upper side, lives here with live counter) */}
           <button
             type="button"
             onClick={() => setIsCartOpen(true)}
-            className="p-1.5 text-neutral-400 hover:text-white transition-colors relative"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black transition-all relative"
             aria-label="Shopping Bag"
             title="Shopping Bag"
           >
@@ -1366,18 +1351,31 @@ export default function Navbar() {
               )}
             </div>
           </button>
+
+          {/* Option: Search */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black transition-all"
+            aria-label="Search Drops"
+            title="Search Drops"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
         </div>
 
-        {/* 3rd (Far Right): Circular Chat Button - Direct Concierge Live Support */}
+        {/* 3rd (Far Right): Dark Circular Chat Button with 3-Line Speech Bubble (Screenshot 4) */}
         <button
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent("open-support"))}
-          className="w-12 h-12 rounded-full bg-black text-white shadow-[0_8px_25px_rgba(0,0,0,0.5)] border border-neutral-700 ring-2 ring-white/10 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          className="w-12 h-12 rounded-full bg-neutral-900 hover:bg-black text-white shadow-[0_8px_25px_rgba(0,0,0,0.25)] border border-neutral-700/60 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
           aria-label="Open Live Chat Concierge"
           title="Live Chat Support"
         >
           <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
           </svg>
         </button>
       </nav>

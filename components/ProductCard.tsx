@@ -48,32 +48,14 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
               }`}
             />
 
-            {/* Badges on Top Left */}
-            <div className="absolute left-2.5 top-2.5 flex flex-col gap-1 z-10 pointer-events-none">
-              {isOutOfStock ? (
+            {/* Badges on Top Left - Only show Sold Out to keep image clean like Screenshot 4 */}
+            {isOutOfStock && (
+              <div className="absolute left-2.5 top-2.5 z-10 pointer-events-none">
                 <span className="bg-white/95 text-black px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded-full shadow-xs backdrop-blur-xs">
                   Sold Out
                 </span>
-              ) : (
-                <>
-                  {product.isNew && (
-                    <span className="bg-black/90 text-white px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase rounded-full backdrop-blur-xs">
-                      New
-                    </span>
-                  )}
-                  {product.isSale && (
-                    <span className="bg-[#E8262A] text-white px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase rounded-full">
-                      Sale
-                    </span>
-                  )}
-                  {product.isBlindBox && (
-                    <span className="bg-blue-600 text-white px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase rounded-full">
-                      Blind Box
-                    </span>
-                  )}
-                </>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Pagination Dots at Bottom Center (Screenshot 2 & 4 style) */}
             <div className="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1 z-10 pointer-events-none">
@@ -87,15 +69,15 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
         {/* Product Details & Plus Button Row */}
         <div className="mt-2.5 flex items-start justify-between gap-1.5 px-0.5">
           <Link href={`/product/${product.id}`} className="min-w-0 flex-1 block">
-            <h3 className="text-xs sm:text-sm font-semibold tracking-tight text-neutral-900 truncate leading-snug">
+            <h3 className="font-inter font-medium text-xs sm:text-[13px] tracking-normal text-neutral-900 truncate leading-snug">
               {product.name}
             </h3>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-xs font-bold text-neutral-700">
+              <p className="font-inter text-xs font-normal text-neutral-600">
                 RS. {product.price.toLocaleString()}
               </p>
               {product.originalPrice && (
-                <p className="text-[10px] text-neutral-400 line-through">
+                <p className="font-inter text-[10px] text-neutral-400 line-through">
                   RS. {product.originalPrice.toLocaleString()}
                 </p>
               )}
@@ -107,15 +89,15 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
             type="button"
             onClick={handlePlusClick}
             disabled={isOutOfStock}
-            className={`w-7 h-7 flex-shrink-0 flex items-center justify-center rounded-full transition-all leading-none ${
+            className={`w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full transition-all leading-none ${
               isOutOfStock
                 ? "text-neutral-300 cursor-not-allowed"
-                : "text-neutral-600 hover:text-black hover:bg-neutral-100 active:scale-90"
+                : "text-neutral-400 hover:text-black hover:bg-neutral-100 active:scale-90"
             }`}
             aria-label={`Quick add ${product.name} to bag`}
             title={isOutOfStock ? "Out of stock" : "Quick Add to Bag"}
           >
-            <span className="text-xl font-light -mt-0.5">+</span>
+            <span className="text-xl font-light leading-none">+</span>
           </button>
         </div>
       </div>

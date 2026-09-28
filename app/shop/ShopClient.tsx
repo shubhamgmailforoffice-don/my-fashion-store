@@ -109,30 +109,25 @@ function ShopContent({ initialProducts }: ShopClientProps) {
   return (
     <div className="bg-white min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Top Header Row with "All Products" and "Advance Filters" (Screenshot 4) */}
-      <div className="flex items-center justify-between pt-2 pb-4">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900">
-            All Products
-          </h1>
-          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">
-            {sortedProducts.length} Pieces Available
-          </p>
-        </div>
+      <div className="flex items-center justify-between pt-2 pb-3">
+        <h1 className="font-inter font-medium text-base sm:text-lg text-neutral-900">
+          All Products
+        </h1>
 
         {/* Advance Filters Button (Screenshot 4 Style with toggle/flashlight icon) */}
         <button
           type="button"
           onClick={() => setIsFiltersOpen(true)}
-          className="flex items-center gap-2 text-xs font-bold text-neutral-800 hover:text-black bg-neutral-100 hover:bg-neutral-200 border border-neutral-200/80 px-3.5 py-1.5 rounded-full transition-colors active:scale-95 shadow-2xs"
+          className="flex items-center gap-1.5 text-xs font-medium text-neutral-700 hover:text-black bg-white hover:bg-neutral-50 border border-neutral-200/90 px-3 py-1.5 rounded-full transition-colors active:scale-95 shadow-2xs"
           aria-label="Open advance filters"
         >
-          {/* Flashlight / Toggle Filter Icon */}
-          <svg className="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Filter / Flashlight Icon */}
+          <svg className="w-3.5 h-3.5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
           </svg>
-          <span className="text-[11px] font-bold tracking-tight">Advance Filters</span>
+          <span className="text-[11px] font-medium tracking-tight">Advance Filters</span>
           {(selectedColor !== "All" || sortBy !== "default" || inStockOnly) && (
-            <span className="w-1.5 h-1.5 rounded-full bg-orange-600" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A]" />
           )}
         </button>
       </div>
@@ -146,10 +141,10 @@ function ShopContent({ initialProducts }: ShopClientProps) {
               key={pill}
               type="button"
               onClick={() => setSelectedPill(pill)}
-              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap active:scale-95 ${
+              className={`rounded-full px-3.5 py-1.5 text-xs font-inter transition-all duration-200 whitespace-nowrap active:scale-95 ${
                 isActive
-                  ? "bg-black text-white shadow-xs"
-                  : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 border border-neutral-200/70"
+                  ? "bg-white text-black font-semibold border border-neutral-900 shadow-xs"
+                  : "bg-white text-neutral-600 hover:text-black hover:border-neutral-300 border border-neutral-200/80 shadow-2xs"
               }`}
             >
               {pill}

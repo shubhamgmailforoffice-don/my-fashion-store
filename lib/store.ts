@@ -257,6 +257,16 @@ export async function getAsyncProducts(): Promise<Product[]> {
         orderBy: { createdAt: "desc" },
       });
       if (records && records.length > 0) {
+        // Guarantee top 4 flagship streetwear garments (Black Tiger, Silent Rage, Crimson Betta, Purple Dragonfly)
+        const priorityIds = ["102", "103", "104", "101"];
+        const priorityMap = new Map(priorityIds.map((id, idx) => [id, idx]));
+        records.sort((a, b) => {
+          const aPrio = priorityMap.has(a.id) ? priorityMap.get(a.id)! : 999;
+          const bPrio = priorityMap.has(b.id) ? priorityMap.get(b.id)! : 999;
+          if (aPrio !== bPrio) return aPrio - bPrio;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
         return records.map((p) => ({
           id: p.id,
           name: p.name,
