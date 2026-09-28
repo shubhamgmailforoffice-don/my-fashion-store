@@ -1064,6 +1064,14 @@ function AdminContent() {
                   {cat.name}
                 </button>
               ))}
+              <button
+                type="button"
+                onClick={() => setActiveTab("categories")}
+                className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 rounded-xl transition-colors flex items-center gap-1.5"
+                title="Configure Coming Soon Drop Pages"
+              >
+                <span>🚧 Coming Soon Pages &rarr;</span>
+              </button>
             </div>
           </div>
 
@@ -1207,7 +1215,7 @@ function AdminContent() {
       {/* TAB 5: CATEGORIES & DRAWER MENU ARCHITECTURE */}
       {/* ========================================================================= */}
       {activeTab === "categories" && (
-        <CategoryManager />
+        <CategoryManager products={productsList} />
       )}
 
       {/* ========================================================================= */}

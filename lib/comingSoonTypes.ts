@@ -1,0 +1,75 @@
+export interface ComingSoonCategoryConfig {
+  id: string; // e.g. "Tops", "Bottoms", "Accessories", "Special"
+  name: string;
+  enabled: boolean; // manual toggle
+  autoWhenEmpty: boolean; // auto-enable if category has 0 products
+  title: string;
+  subtitle: string;
+  description: string;
+  releaseDate: string;
+  bannerImage: string;
+  badge?: string;
+}
+
+export interface ComingSoonSubscriber {
+  id: string;
+  category: string;
+  contact: string;
+  createdAt: string;
+}
+
+export interface ComingSoonData {
+  categories: Record<string, ComingSoonCategoryConfig>;
+  subscribers: ComingSoonSubscriber[];
+}
+
+export const defaultComingSoonConfigs: Record<string, ComingSoonCategoryConfig> = {
+  Tops: {
+    id: "Tops",
+    name: "Tops & Hoodies",
+    enabled: false,
+    autoWhenEmpty: true,
+    title: "NEW CAPSULE DROP IN PRODUCTION",
+    subtitle: "HEAVYWEIGHT 380GSM HOODIES & OVERSIZED TEES",
+    description: "Our design atelier is currently milling custom heavyweight fabrics for the upcoming seasonal drop. Enter your email or phone below for 2-hour VIP early access before the public release.",
+    releaseDate: "DROPPING SHORTLY",
+    bannerImage: "/images/products/oversized-tshirt.jpg",
+    badge: "PRODUCTION IN PROGRESS",
+  },
+  Bottoms: {
+    id: "Bottoms",
+    name: "Bottoms & Pants",
+    enabled: false,
+    autoWhenEmpty: true,
+    title: "TACTICAL & UTILITY BOTTOMS DROP",
+    subtitle: "PARACHUTE CARGOS, JOGGERS & ARCHIVE DENIM",
+    description: "Engineered with reinforced knee gussets and weatherproof tech nylon. Limited release batch. VIP notification subscribers get priority reserve.",
+    releaseDate: "COMING SOON",
+    bannerImage: "/images/products/tactical-cargo-pants.jpg",
+    badge: "ARCHIVE ATELIER",
+  },
+  Accessories: {
+    id: "Accessories",
+    name: "Accessories & Utility",
+    enabled: false,
+    autoWhenEmpty: true,
+    title: "ARCHITECTURAL LEATHER & ACCESSORIES",
+    subtitle: "CROSSBODY BAGS, WALLETS & UTILITY CAPS",
+    description: "Crafted in small-batch runs using vegetable-tanned architectural leather and custom matte black zinc hardware. Zero restocks once dropped.",
+    releaseDate: "DROPPING SOON",
+    bannerImage: "/images/leather-bag.jpg",
+    badge: "LIMITED SERIES",
+  },
+  Special: {
+    id: "Special",
+    name: "Special / Limited Drops",
+    enabled: false,
+    autoWhenEmpty: true,
+    title: "VIP ARCHIVE & MYSTERY BOX DROP",
+    subtitle: "NUMBERED EDITIONS • NEVER RESTOCKED",
+    description: "Rare collector editions, sample garments, and unreleased atelier prototypes. Access is strictly limited to registered VIP members.",
+    releaseDate: "SPECIAL ARCHIVE RELEASE",
+    bannerImage: "/images/hero-streetwear.jpg",
+    badge: "EXCLUSIVE DROP",
+  },
+};

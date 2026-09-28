@@ -4,22 +4,38 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { colors, Product } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import { ComingSoonData, ComingSoonCategoryConfig, defaultComingSoonConfigs } from "@/lib/comingSoonTypes";
+import ComingSoonView from "@/components/ComingSoonView";
 
 interface ShopClientProps {
   initialProducts: Product[];
+  initialComingSoon?: ComingSoonData;
 }
 
-function ShopContent({ initialProducts }: ShopClientProps) {
+function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "View all";
   const initialColor = searchParams.get("color") || "All";
 
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
+  const [comingSoonData, setComingSoonData] = useState<ComingSoonData>(
+    initialComingSoon || { categories: defaultComingSoonConfigs, subscribers: [] }
+  );
   const [selectedPill, setSelectedPill] = useState(initialCategory);
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [sortBy, setSortBy] = useState("default");
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+  // Sync coming soon data from live backend
+  useEffect(() => {
+    fetch("/api/coming-soon", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => {
+        if (d && d.categories) setComingSoonData(d);
+      })
+      .catch(() => {});
+  }, []);
 
   // Sync with live backend database
   useEffect(() => {
@@ -105,6 +121,44 @@ function ShopContent({ initialProducts }: ShopClientProps) {
       return 0; // default order
     });
   }, [filteredProducts, sortBy]);
+
+  // Check if active category has Coming Soon enabled or 0 products with autoWhenEmpty
+  const activeComingSoonConfig = useMemo<ComingSoonCategoryConfig | null>(() => {
+    if (selectedPill === "View all") return null;
+
+    const pLower = selectedPill.toLowerCase();
+    const categoriesList = Object.values(comingSoonData?.categories || defaultComingSoonConfigs);
+
+    // Direct match by ID or Name
+    let matched = categoriesList.find(
+      (c) => c.id.toLowerCase() === pLower || c.name.toLowerCase() === pLower
+    );
+
+    // Fallback mapping based on typical subcategories
+    if (!matched) {
+      if (["t-shirts", "hoodies", "sweatshirt", "jackets", "shirts", "polos", "top", "tops"].includes(pLower)) {
+        matched = categoriesList.find((c) => c.id.toLowerCase() === "tops" || c.name.toLowerCase().includes("top"));
+      } else if (["bottoms", "bottom", "cargos", "jeans", "pants", "shorts", "trackpants", "joggers"].includes(pLower)) {
+        matched = categoriesList.find((c) => c.id.toLowerCase() === "bottoms" || c.name.toLowerCase().includes("bottom"));
+      } else if (["accessories", "bags", "wallets", "caps", "socks"].includes(pLower)) {
+        matched = categoriesList.find((c) => c.id.toLowerCase() === "accessories" || c.name.toLowerCase().includes("accessories"));
+      } else if (["special", "archive", "drops"].includes(pLower)) {
+        matched = categoriesList.find((c) => c.id.toLowerCase() === "special");
+      }
+    }
+
+    if (!matched) return null;
+
+    // 1. Manually enabled by admin
+    if (matched.enabled) return matched;
+
+    // 2. Auto-enabled when empty and there are 0 products in this category
+    if (matched.autoWhenEmpty && filteredProducts.length === 0) {
+      return matched;
+    }
+
+    return null;
+  }, [selectedPill, comingSoonData, filteredProducts]);
 
   return (
     <div className="bg-white min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -197,8 +251,17 @@ function ShopContent({ initialProducts }: ShopClientProps) {
         </div>
       )}
 
-      {/* Product Grid: 2-column mobile layout matching Screenshot 2 & 4 */}
-      {sortedProducts.length === 0 ? (
+      {/* Product Grid or Coming Soon Showcase */}
+      {activeComingSoonConfig ? (
+        <ComingSoonView
+          config={activeComingSoonConfig}
+          onExploreAll={() => {
+            setSelectedPill("View all");
+            setSelectedColor("All");
+            setInStockOnly(false);
+          }}
+        />
+      ) : sortedProducts.length === 0 ? (
         <div className="text-center py-20 border border-dashed border-neutral-300 rounded-3xl mt-4 space-y-3">
           <p className="text-3xl">🔍</p>
           <h3 className="text-sm font-black uppercase tracking-wider text-black">
@@ -363,7 +426,7 @@ function ShopContent({ initialProducts }: ShopClientProps) {
   );
 }
 
-export default function ShopClient({ initialProducts }: ShopClientProps) {
+export default function ShopClient({ initialProducts, initialComingSoon }: ShopClientProps) {
   return (
     <Suspense
       fallback={
@@ -372,7 +435,7 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
         </div>
       }
     >
-      <ShopContent initialProducts={initialProducts} />
+      <ShopContent initialProducts={initialProducts} initialComingSoon={initialComingSoon} />
     </Suspense>
   );
 }
