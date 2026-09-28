@@ -6,6 +6,8 @@ import { useState, useMemo, useEffect, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { products, Product } from "@/lib/data";
 import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
+import ReelsModal from "./ReelsModal";
+import WishlistDrawer from "./WishlistDrawer";
 
 export interface CartItem {
   id: string;
@@ -59,7 +61,21 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isReelsOpen, setIsReelsOpen] = useState(false);
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [productsList, setProductsList] = useState<Product[]>(products);
+
+  // Allow other components to trigger reels or cart via window event
+  useEffect(() => {
+    const handleOpenReels = () => setIsReelsOpen(true);
+    const handleOpenCart = () => setIsCartOpen(true);
+    window.addEventListener("open-reels", handleOpenReels);
+    window.addEventListener("open-cart", handleOpenCart);
+    return () => {
+      window.removeEventListener("open-reels", handleOpenReels);
+      window.removeEventListener("open-cart", handleOpenCart);
+    };
+  }, []);
 
   // User session state
   const sessionRaw = useSyncExternalStore(
@@ -318,18 +334,19 @@ export default function Navbar() {
       <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
         <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
           
-          {/* Left Column: Hamburger (mobile) or Navigation (desktop) */}
+          {/* Left Column: Mobile Pill (+ DRIIVN) or Desktop Navigation */}
           <div className="flex items-center justify-start">
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Brand Pill (Screenshot 1 & 4 style: + BLUORNG / + DRIIVN) */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="p-2 -ml-2 text-black hover:text-orange-600 focus:outline-none lg:hidden"
+              className="lg:hidden flex items-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300/80 px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-xs"
               aria-label="Open navigation menu"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <span className="text-sm font-light text-neutral-800 leading-none">+</span>
+              <span className="text-[11px] font-black tracking-widest text-black uppercase font-mono">
+                DRIIVN
+              </span>
             </button>
 
             {/* Desktop Left Navigation with collision-free responsive labels */}
@@ -386,17 +403,18 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right Column: Actions (Collision-Free on Mobile) */}
+          {/* Right Column: Actions (Search & Bag removed from mobile upper bar as requested, moved to bottom bar) */}
           <div className="flex items-center justify-end gap-x-2 sm:gap-x-4 xl:gap-x-5">
+            {/* Desktop-Only Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap p-1"
+              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap p-1"
               aria-label="Search catalogue"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span className="hidden sm:inline">Search</span>
+              <span>Search</span>
             </button>
 
             <Link
@@ -406,27 +424,25 @@ export default function Navbar() {
               Stores
             </Link>
 
+            {/* Desktop-Only Account */}
             <Link
               href="/account"
-              className="text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase flex items-center gap-1.5 whitespace-nowrap"
+              className="hidden lg:flex text-xs font-bold tracking-wider text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
               title={currentUser ? `Signed in as ${currentUser.name}` : "Member Portal"}
             >
               {currentUser ? (
                 <div className="flex items-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 py-1 px-2 rounded-full transition-colors">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                  <span className="hidden sm:inline max-w-[80px] xl:max-w-[120px] truncate text-[11px] font-bold">
+                  <span className="max-w-[120px] truncate text-[11px] font-bold">
                     {currentUser.name.split(" ")[0]}
-                  </span>
-                  <span className="sm:hidden text-[10px] font-black">
-                    {currentUser.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
               ) : (
-                <span className="hidden sm:inline text-xs font-bold">Account</span>
+                <span className="text-xs font-bold">Account</span>
               )}
             </Link>
 
-            {/* Desktop-Only Bag Button (Hidden on Mobile as requested, permanently in bottom bar) */}
+            {/* Desktop-Only Bag Button */}
             <button
               onClick={() => setIsCartOpen(true)}
               className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-orange-600 transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
@@ -436,6 +452,19 @@ export default function Navbar() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
               <span>Bag ({cartCount})</span>
+            </button>
+
+            {/* Mobile Bookmark / Wishlist Icon (Screenshot 1, 2, 4 style) */}
+            <button
+              type="button"
+              onClick={() => setIsWishlistOpen(true)}
+              className="lg:hidden p-2 text-neutral-800 hover:text-black transition-colors"
+              aria-label="Saved Items"
+              title="Saved Items"
+            >
+              <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
             </button>
           </div>
         </div>
@@ -1230,74 +1259,141 @@ export default function Navbar() {
       )}
 
 
-      {/* Mobile Bottom Navigation Bar (Permanent Luxury Frosted Glass Dock) */}
-      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/80 backdrop-blur-xl border-t border-neutral-200/80 py-2 px-3 flex items-center justify-around shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
-        <Link
-          href="/shop"
-          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Explore</span>
-        </Link>
-
+      {/* Mobile Floating Bottom Navigation Dock (Exact replica of Screenshots 1, 2, 3, 4) */}
+      <nav
+        className="lg:hidden fixed bottom-4 inset-x-0 z-40 flex items-center justify-center gap-2.5 px-3 pointer-events-none select-none"
+        aria-label="Mobile Navigation Dock"
+      >
+        {/* 1st (Far Left): Reel Type Circular Button - Lookbook / Reels Feature */}
         <button
           type="button"
-          onClick={() => setIsSearchOpen(true)}
-          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
+          onClick={() => setIsReelsOpen(true)}
+          className="w-12 h-12 rounded-full bg-white text-blue-600 shadow-[0_8px_25px_rgba(37,99,235,0.35)] border-2 border-blue-500 ring-2 ring-blue-400/30 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          aria-label="Open DRIIVN Lookbook Reels"
+          title="DRIIVN Lookbook Reels"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Search</span>
+          <div className="relative flex items-center justify-center">
+            {/* Film / Reel Icon */}
+            <svg
+              className="w-6 h-6 text-blue-600 group-hover:scale-110 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            <span className="w-2 h-2 rounded-full bg-blue-500 absolute -top-1 -right-1 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-blue-500 absolute -top-1 -right-1" />
+          </div>
         </button>
 
-        <Link
-          href="/collections"
-          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Drops</span>
-        </Link>
-
-        <Link
-          href="/account"
-          className="flex flex-col items-center text-gray-700 hover:text-black py-1 px-2"
-        >
-          <div className="relative">
+        {/* 2nd (Center): Frosted Glass Capsule Dock */}
+        <div className="bg-neutral-900/85 backdrop-blur-2xl border border-white/20 rounded-full px-5 py-2.5 flex items-center gap-5 sm:gap-6 shadow-[0_12px_35px_rgba(0,0,0,0.55)] pointer-events-auto">
+          {/* Option: Explore / All Products (Screenshot 4) */}
+          <Link
+            href="/shop"
+            className={`p-1.5 transition-colors relative ${
+              pathname === "/shop" ? "text-white" : "text-neutral-400 hover:text-white"
+            }`}
+            aria-label="Explore All Products"
+            title="Explore All Products"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 21a9 9 0 100-18 9 9 0 000 18z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.5 9.5l-5 2 2 5 3-7z" />
             </svg>
-            {currentUser && (
-              <span className="w-2 h-2 rounded-full bg-emerald-500 absolute -top-0.5 -right-0.5 ring-2 ring-white" />
+            {pathname === "/shop" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-white absolute -bottom-1 left-1/2 -translate-x-1/2" />
             )}
-          </div>
-          <span className="text-[8px] font-black tracking-widest uppercase mt-1">
-            {currentUser ? "Account" : "Sign In"}
-          </span>
-        </Link>
+          </Link>
 
+          {/* Option: Search (Removed from upper side, lives here) */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="p-1.5 text-neutral-400 hover:text-white transition-colors"
+            aria-label="Search Drops"
+            title="Search Drops"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+
+          {/* Option: Account Portal */}
+          <Link
+            href="/account"
+            className={`p-1.5 transition-colors relative ${
+              pathname === "/account" ? "text-white" : "text-neutral-400 hover:text-white"
+            }`}
+            aria-label="Account Portal"
+            title="Account Portal"
+          >
+            <div className="relative">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              {currentUser && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 absolute -top-0.5 -right-0.5 ring-2 ring-neutral-900" />
+              )}
+            </div>
+            {pathname === "/account" && (
+              <span className="w-1.5 h-1.5 rounded-full bg-white absolute -bottom-1 left-1/2 -translate-x-1/2" />
+            )}
+          </Link>
+
+          {/* Option: Bag (Removed from upper side, lives here with live counter) */}
+          <button
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            className="p-1.5 text-neutral-400 hover:text-white transition-colors relative"
+            aria-label="Shopping Bag"
+            title="Shopping Bag"
+          >
+            <div className="relative">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-orange-500 text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+          </button>
+        </div>
+
+        {/* 3rd (Far Right): Circular Chat Button - Direct Concierge Live Support */}
         <button
           type="button"
-          onClick={() => setIsCartOpen(true)}
-          className="flex flex-col items-center text-gray-900 hover:text-orange-600 relative py-1 px-2"
+          onClick={() => window.dispatchEvent(new CustomEvent("open-support"))}
+          className="w-12 h-12 rounded-full bg-black text-white shadow-[0_8px_25px_rgba(0,0,0,0.5)] border border-neutral-700 ring-2 ring-white/10 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          aria-label="Open Live Chat Concierge"
+          title="Live Chat Support"
         >
-          <div className="relative">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-            </svg>
-            {cartCount > 0 && (
-              <span className="absolute -top-1.5 -right-2 bg-orange-600 text-white rounded-full text-[8px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
-                {cartCount}
-              </span>
-            )}
-          </div>
-          <span className="text-[8px] font-black tracking-widest uppercase mt-1">Bag</span>
+          <svg className="w-5 h-5 text-white group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+          </svg>
         </button>
       </nav>
+
+      {/* Streetwear Reels & Lookbook Modal */}
+      <ReelsModal
+        isOpen={isReelsOpen}
+        onClose={() => setIsReelsOpen(false)}
+      />
+
+      {/* Wishlist / Saved Items Drawer */}
+      <WishlistDrawer
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
+        onOpenCart={() => setIsCartOpen(true)}
+      />
     </>
   );
 }

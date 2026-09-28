@@ -1,33 +1,220 @@
 {
   "products": [
     {
-      "id": "1790062221555",
-      "name": "test over check",
-      "price": 3999,
+      "id": "101",
+      "name": "Purple Dragonfly Navy T-Shirt",
+      "price": 4700,
       "images": [
-        "/images/products/assassins-creed-mirage-2023-games-playstation-4-playstation-3840x2160-8712_1790062216270.jpg"
+        "/images/streetwear-dragonfly.jpg",
+        "/images/streetwear-dragonfly.jpg"
       ],
       "category": "Tops",
       "subCategory": "T-Shirts",
       "colors": [
-        "Black"
+        "Purple",
+        "Navy"
       ],
-      "isNew": true,
-      "isSale": false,
-      "isBlindBox": false,
-      "collectionSlug": "essentials",
-      "description": "Premium heavyweight streetwear garment designed with dropped shoulders and boxy silhouette.",
       "sizes": [
         "S",
         "M",
         "L",
+        "XL",
         "XXL"
       ],
-      "inStock": true
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "winter-collection",
+      "description": "Deep violet pigment wash heavyweight tee featuring high-density chenille dragonfly embroidery with metallic accents."
+    },
+    {
+      "id": "102",
+      "name": "Black Tiger Bonsai T-Shirt",
+      "price": 8900,
+      "originalPrice": 9900,
+      "images": [
+        "/images/streetwear-tiger.jpg",
+        "/images/streetwear-tiger.jpg"
+      ],
+      "category": "Tops",
+      "subCategory": "T-Shirts",
+      "colors": [
+        "Black",
+        "Orange"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "racing-club",
+      "description": "Architectural bonsai branch and prowling tiger back embroidery with metallic Japanese gold threading on 300 GSM cotton."
+    },
+    {
+      "id": "103",
+      "name": "Silent Rage T-Shirt",
+      "price": 4900,
+      "images": [
+        "/images/streetwear-tee-1.jpg",
+        "/images/streetwear-tee-1.jpg"
+      ],
+      "category": "Tops",
+      "subCategory": "T-Shirts",
+      "colors": [
+        "Black",
+        "Red"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "racing-club",
+      "description": "Subversive tactile screen print with distressed velvet flocking and oversized dropped shoulder silhouette."
+    },
+    {
+      "id": "104",
+      "name": "Crimson Betta Polo T-Shirt",
+      "price": 9000,
+      "images": [
+        "/images/streetwear-betta.jpg",
+        "/images/streetwear-betta.jpg"
+      ],
+      "category": "Tops",
+      "subCategory": "T-Shirts",
+      "colors": [
+        "Black",
+        "Red"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "winter-collection",
+      "description": "Knit ribbed collar polo with multi-layer crimson betta fin embroidery cascading across the shoulder and chest."
+    },
+    {
+      "id": "105",
+      "name": "Azura Aquila T-Shirt",
+      "price": 5800,
+      "images": [
+        "/images/streetwear-tee-2.jpg",
+        "/images/streetwear-tee-2.jpg"
+      ],
+      "category": "Tops",
+      "subCategory": "T-Shirts",
+      "colors": [
+        "Blue"
+      ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "isNew": false,
+      "inStock": true,
+      "collectionSlug": "racing-club",
+      "description": "Royal cobalt blue base with soaring Aquila wings embroidery rendered in contrasting vermilion script."
+    },
+    {
+      "id": "106",
+      "name": "Forest Aquila T-Shirt",
+      "price": 5800,
+      "images": [
+        "/images/streetwear-model-cap.jpg",
+        "/images/streetwear-model-cap.jpg"
+      ],
+      "category": "Tops",
+      "subCategory": "T-Shirts",
+      "colors": [
+        "Green"
+      ],
+      "sizes": [
+        "M",
+        "L",
+        "XL"
+      ],
+      "isNew": false,
+      "inStock": true,
+      "collectionSlug": "racing-club",
+      "description": "Emerald forest green vintage wash with high-octane bird of prey graphic and tactile raised puff lettering."
+    },
+    {
+      "id": "107",
+      "name": "Jacquard Card Case",
+      "price": 7000,
+      "images": [
+        "/images/jacquard-wallet.jpg",
+        "/images/jacquard-wallet.jpg"
+      ],
+      "category": "Accessories",
+      "subCategory": "Wallets",
+      "colors": [
+        "Black"
+      ],
+      "sizes": [
+        "One Size"
+      ],
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "essentials",
+      "description": "Full-grain textured jacquard weave calfskin cardholder with matte black metal DRIIVN atelier hardware."
+    },
+    {
+      "id": "108",
+      "name": "Nocturnal Leather Messenger Bag",
+      "price": 14500,
+      "images": [
+        "/images/leather-bag.jpg",
+        "/images/leather-bag.jpg"
+      ],
+      "category": "Accessories",
+      "subCategory": "Bags",
+      "colors": [
+        "Black"
+      ],
+      "sizes": [
+        "One Size"
+      ],
+      "isNew": false,
+      "inStock": false,
+      "collectionSlug": "essentials",
+      "description": "Handcrafted pebble-grain leather utility bag with modular straps and multi-pocket compartmentalization."
+    },
+    {
+      "id": "109",
+      "name": "Tactical Leather Backpack",
+      "price": 18900,
+      "images": [
+        "/images/leather-backpack.jpg",
+        "/images/leather-backpack.jpg"
+      ],
+      "category": "Accessories",
+      "subCategory": "Bags",
+      "colors": [
+        "Black"
+      ],
+      "sizes": [
+        "One Size"
+      ],
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "essentials",
+      "description": "Architectural bucket backpack engineered with drum-dyed full-grain leather, polished nickel buckles, and reinforced base."
     },
     {
       "id": "1",
-      "name": "RACING CLUB OVERSIZED T-SHIRT",
+      "name": "Racing Club Oversized T-Shirt",
       "price": 4499,
       "originalPrice": 5499,
       "images": [
@@ -40,20 +227,21 @@
         "Black",
         "Orange"
       ],
-      "isNew": true,
-      "isSale": false,
-      "collectionSlug": "racing-club",
-      "description": "High-octane vintage motorsport inspired graphic oversized tee crafted in 280 GSM heavyweight combed cotton.",
       "sizes": [
+        "S",
         "M",
         "L",
+        "XL",
         "XXL"
       ],
-      "inStock": true
+      "isNew": true,
+      "inStock": true,
+      "collectionSlug": "racing-club",
+      "description": "High-octane vintage motorsport inspired graphic oversized tee crafted in 280 GSM heavyweight combed cotton."
     },
     {
       "id": "2",
-      "name": "BLACK NOCTURNAL HOODIE",
+      "name": "Black Nocturnal Hoodie",
       "price": 6999,
       "originalPrice": 7999,
       "images": [
@@ -65,14 +253,20 @@
       "colors": [
         "Black"
       ],
+      "sizes": [
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
       "isNew": true,
-      "isSale": false,
+      "inStock": true,
       "collectionSlug": "winter-collection",
       "description": "Signature 420 GSM French Terry heavyweight boxy hoodie with tonal high-density embossed branding."
     },
     {
       "id": "3",
-      "name": "TACTICAL INDUSTRIAL CARGO PANTS",
+      "name": "Tactical Industrial Cargo Pants",
       "price": 5999,
       "originalPrice": 6999,
       "images": [
@@ -85,14 +279,20 @@
         "Grey",
         "Black"
       ],
+      "sizes": [
+        "30",
+        "32",
+        "34",
+        "36"
+      ],
       "isNew": true,
-      "isSale": false,
+      "inStock": true,
       "collectionSlug": "essentials",
       "description": "Military ripstop relaxed-fit cargos with modular buckle straps, deep utility pockets, and adjustable ankle toggles."
     },
     {
       "id": "4",
-      "name": "STAR STUDDED BROWN HOODIE",
+      "name": "Star Studded Brown Hoodie",
       "price": 7499,
       "originalPrice": 8499,
       "images": [
@@ -105,48 +305,17 @@
         "Brown",
         "Orange"
       ],
+      "sizes": [
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
       "isNew": true,
       "isSale": true,
+      "inStock": true,
       "collectionSlug": "winter-collection",
       "description": "Rich chocolate brown fleece hoodie featuring premium multi-layer chenille star embroidery and tactile puff prints."
-    },
-    {
-      "id": "5",
-      "name": "BLIND BOX 26 - EXCLUSIVE DROP",
-      "price": 3999,
-      "originalPrice": 5999,
-      "images": [
-        "/images/products/black-nocturnal-hoodie.jpg",
-        "/images/products/oversized-tshirt.jpg"
-      ],
-      "category": "Special",
-      "subCategory": "Mystery Box",
-      "colors": [
-        "Mixed"
-      ],
-      "isBlindBox": true,
-      "collectionSlug": "blind-box",
-      "description": "Serialized mystery release containing limited sample garments, collectible accessories, and unreleased prints."
-    },
-    {
-      "id": "6",
-      "name": "HEAVYWEIGHT RAW CUT CARGOS",
-      "price": 6499,
-      "originalPrice": 7499,
-      "images": [
-        "/images/products/tactical-cargo-pants.jpg",
-        "/images/products/tactical-cargo-pants.jpg"
-      ],
-      "category": "Bottoms",
-      "subCategory": "Cargo Pants",
-      "colors": [
-        "Black",
-        "Grey"
-      ],
-      "isNew": false,
-      "isSale": true,
-      "collectionSlug": "essentials",
-      "description": "Heavy cotton canvas workwear silhouette with articulated knees, reinforced seams, and custom branded metal rivets."
     }
   ],
   "orders": [

@@ -43,10 +43,11 @@ export default function SupportWidget() {
   const SUPPORT_EMAIL = "support@driivnstore.in";
   const SUPPORT_PHONE = "+91 99999 99999";
 
-  // Hide widget inside Admin Control Center
-  if (pathname?.startsWith("/admin")) {
-    return null;
-  }
+  useEffect(() => {
+    const handleOpen = () => setIsOpen(true);
+    window.addEventListener("open-support", handleOpen);
+    return () => window.removeEventListener("open-support", handleOpen);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,6 +58,11 @@ export default function SupportWidget() {
       scrollToBottom();
     }
   }, [messages, isOpen, isTyping]);
+
+  // Hide widget inside Admin Control Center
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const handleSendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -170,8 +176,8 @@ export default function SupportWidget() {
 
   return (
     <>
-      {/* Floating Concierge Pill / Button */}
-      <div className="fixed bottom-20 lg:bottom-6 right-4 lg:right-6 z-40">
+      {/* Floating Concierge Pill / Button (Desktop Only; Mobile uses Floating Bottom Bar Chat Button) */}
+      <div className="hidden lg:block fixed bottom-6 right-6 z-40">
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
@@ -199,7 +205,7 @@ export default function SupportWidget() {
 
       {/* Floating Concierge Drawer / Card */}
       {isOpen && (
-        <div className="fixed bottom-20 lg:bottom-6 right-3 lg:right-6 z-50 w-[calc(100vw-24px)] sm:w-[380px] bg-white border border-neutral-300 shadow-2xl rounded-lg overflow-hidden flex flex-col h-[520px] max-h-[80vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[380px] bg-white border border-neutral-300 shadow-2xl rounded-2xl sm:rounded-lg overflow-hidden flex flex-col h-[520px] max-h-[80vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
           <div className="bg-black text-white p-4 flex items-center justify-between border-b border-neutral-800">
             <div className="flex items-center gap-3">

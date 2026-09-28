@@ -11,13 +11,15 @@ interface ShopClientProps {
 
 function ShopContent({ initialProducts }: ShopClientProps) {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "All";
+  const initialCategory = searchParams.get("category") || "View all";
   const initialColor = searchParams.get("color") || "All";
 
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+  const [selectedPill, setSelectedPill] = useState(initialCategory);
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [sortBy, setSortBy] = useState("default");
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Sync with live backend database
   useEffect(() => {
@@ -36,24 +38,57 @@ function ShopContent({ initialProducts }: ShopClientProps) {
     };
   }, []);
 
-  const categories = ["All", "Tops", "Bottoms", "Special"];
+  // Category filter pills matching Screenshot 4:
+  // "View all", "T-shirts", "Jackets", "Shirts", "Sweatshirt", "Hoodies", "Bottoms", "Accessories"
+  const filterPills = [
+    "View all",
+    "T-shirts",
+    "Jackets",
+    "Shirts",
+    "Sweatshirt",
+    "Hoodies",
+    "Bottoms",
+    "Accessories",
+  ];
 
   // Filter products
   const filteredProducts = useMemo(() => {
     return productsList.filter((product) => {
-      const matchesCategory =
-        selectedCategory === "All" ||
-        product.category.toLowerCase() === selectedCategory.toLowerCase();
+      // Category / SubCategory matching
+      let matchesCategory = true;
+      if (selectedPill !== "View all") {
+        const pLower = selectedPill.toLowerCase();
+        const catLower = product.category.toLowerCase();
+        const subLower = (product.subCategory || "").toLowerCase();
 
+        if (pLower === "t-shirts") {
+          matchesCategory = subLower.includes("t-shirt") || catLower === "tops";
+        } else if (pLower === "hoodies") {
+          matchesCategory = subLower.includes("hoodie");
+        } else if (pLower === "sweatshirt") {
+          matchesCategory = subLower.includes("hoodie") || catLower === "tops";
+        } else if (pLower === "bottoms") {
+          matchesCategory = catLower === "bottoms" || subLower.includes("cargo");
+        } else if (pLower === "accessories") {
+          matchesCategory = catLower === "accessories" || subLower === "bags" || subLower === "wallets";
+        } else {
+          matchesCategory = catLower.includes(pLower) || subLower.includes(pLower);
+        }
+      }
+
+      // Color matching
       const matchesColor =
         selectedColor === "All" ||
         product.colors.some(
           (c) => c.toLowerCase() === selectedColor.toLowerCase()
         );
 
-      return matchesCategory && matchesColor;
+      // In stock only filter
+      const matchesStock = inStockOnly ? product.inStock !== false : true;
+
+      return matchesCategory && matchesColor && matchesStock;
     });
-  }, [productsList, selectedCategory, selectedColor]);
+  }, [productsList, selectedPill, selectedColor, inStockOnly]);
 
   // Sort products
   const sortedProducts = useMemo(() => {
@@ -64,134 +99,268 @@ function ShopContent({ initialProducts }: ShopClientProps) {
       if (sortBy === "price-desc") {
         return b.price - a.price;
       }
+      if (sortBy === "newest") {
+        return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+      }
       return 0; // default order
     });
   }, [filteredProducts, sortBy]);
 
   return (
-    <div className="bg-white min-h-screen py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Page Header */}
-      <div className="border-b border-gray-100 pb-8 mb-10 text-center">
-        <p className="text-[10px] font-bold tracking-[0.3em] text-orange-500 uppercase mb-3">
-          MY FASHION STORE CATALOGUE
-        </p>
-        <h1 className="text-4xl md:text-5xl font-black tracking-widest text-black uppercase">
-          Shop All
-        </h1>
-        <p className="text-xs text-gray-500 tracking-widest uppercase mt-2">
-          Explore our seasonal drops, heavyweight essentials, and limited concepts.
-        </p>
-      </div>
-
-      {/* Interactive Controls Panel */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-100 pb-6 mb-10 gap-6">
-        {/* Left Side: Filters */}
-        <div className="flex flex-wrap items-center gap-6">
-          {/* Category Filter */}
-          <div className="space-y-2">
-            <span className="text-[9px] font-bold tracking-[0.2em] text-zinc-400 uppercase block">
-              Category
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 border transition-all ${
-                    selectedCategory.toLowerCase() === cat.toLowerCase()
-                      ? "border-black bg-black text-white"
-                      : "border-gray-200 hover:border-black text-gray-600 bg-white"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Color Filter */}
-          <div className="space-y-2">
-            <span className="text-[9px] font-bold tracking-[0.2em] text-zinc-400 uppercase block">
-              Color
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              <button
-                onClick={() => setSelectedColor("All")}
-                className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 border transition-all ${
-                  selectedColor === "All"
-                    ? "border-black bg-black text-white"
-                    : "border-gray-200 hover:border-black text-gray-600 bg-white"
-                }`}
-              >
-                All
-              </button>
-              {colors.map((c) => (
-                <button
-                  key={c.name}
-                  onClick={() => setSelectedColor(c.name)}
-                  className={`text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 border transition-all flex items-center gap-1.5 ${
-                    selectedColor.toLowerCase() === c.name.toLowerCase()
-                      ? "border-black bg-black text-white"
-                      : "border-gray-200 hover:border-black text-gray-600 bg-white"
-                  }`}
-                >
-                  <span
-                    className="inline-block w-2.5 h-2.5 rounded-full border border-gray-300"
-                    style={{ backgroundColor: c.hex }}
-                  />
-                  {c.name}
-                </button>
-              ))}
-            </div>
-          </div>
+    <div className="bg-white min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* Top Header Row with "All Products" and "Advance Filters" (Screenshot 4) */}
+      <div className="flex items-center justify-between pt-2 pb-4">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-black tracking-tight text-neutral-900">
+            All Products
+          </h1>
+          <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest mt-0.5">
+            {sortedProducts.length} Pieces Available
+          </p>
         </div>
 
-        {/* Right Side: Sort Selection */}
-        <div className="space-y-2 self-start md:self-end">
-          <span className="text-[9px] font-bold tracking-[0.2em] text-zinc-400 uppercase block">
-            Sort By
+        {/* Advance Filters Button (Screenshot 4 Style with toggle/flashlight icon) */}
+        <button
+          type="button"
+          onClick={() => setIsFiltersOpen(true)}
+          className="flex items-center gap-2 text-xs font-bold text-neutral-800 hover:text-black bg-neutral-100 hover:bg-neutral-200 border border-neutral-200/80 px-3.5 py-1.5 rounded-full transition-colors active:scale-95 shadow-2xs"
+          aria-label="Open advance filters"
+        >
+          {/* Flashlight / Toggle Filter Icon */}
+          <svg className="w-4 h-4 text-neutral-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+          </svg>
+          <span className="text-[11px] font-bold tracking-tight">Advance Filters</span>
+          {(selectedColor !== "All" || sortBy !== "default" || inStockOnly) && (
+            <span className="w-1.5 h-1.5 rounded-full bg-orange-600" />
+          )}
+        </button>
+      </div>
+
+      {/* Horizontal Scrollable Category Filter Pills (Exact Screenshot 4 Style) */}
+      <div className="flex gap-2 overflow-x-auto pb-4 pt-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
+        {filterPills.map((pill) => {
+          const isActive = selectedPill === pill;
+          return (
+            <button
+              key={pill}
+              type="button"
+              onClick={() => setSelectedPill(pill)}
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-200 whitespace-nowrap active:scale-95 ${
+                isActive
+                  ? "bg-black text-white shadow-xs"
+                  : "bg-neutral-100 text-neutral-800 hover:bg-neutral-200 border border-neutral-200/70"
+              }`}
+            >
+              {pill}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Active Filter Tags */}
+      {(selectedColor !== "All" || inStockOnly || sortBy !== "default") && (
+        <div className="flex flex-wrap items-center gap-2 pb-4 pt-1">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+            Active:
           </span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="text-[10px] font-bold tracking-widest uppercase border border-gray-200 px-3 py-2 bg-white text-gray-700 outline-none focus:border-black cursor-pointer"
+          {selectedColor !== "All" && (
+            <span className="text-[10px] font-bold uppercase bg-neutral-100 border border-neutral-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+              Color: {selectedColor}
+              <button onClick={() => setSelectedColor("All")} className="hover:text-red-600">
+                &times;
+              </button>
+            </span>
+          )}
+          {inStockOnly && (
+            <span className="text-[10px] font-bold uppercase bg-neutral-100 border border-neutral-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+              In Stock Only
+              <button onClick={() => setInStockOnly(false)} className="hover:text-red-600">
+                &times;
+              </button>
+            </span>
+          )}
+          {sortBy !== "default" && (
+            <span className="text-[10px] font-bold uppercase bg-neutral-100 border border-neutral-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+              Sorted: {sortBy}
+              <button onClick={() => setSortBy("default")} className="hover:text-red-600">
+                &times;
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => {
+              setSelectedColor("All");
+              setSortBy("default");
+              setInStockOnly(false);
+              setSelectedPill("View all");
+            }}
+            className="text-[10px] font-bold text-orange-600 underline uppercase ml-1"
           >
-            <option value="default">Featured / Default</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-          </select>
+            Clear All
+          </button>
         </div>
-      </div>
+      )}
 
-      {/* Products Grid */}
+      {/* Product Grid: 2-column mobile layout matching Screenshot 2 & 4 */}
       {sortedProducts.length === 0 ? (
-        <div className="text-center py-24 border border-dashed border-gray-200">
-          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase mb-4">
-            No products match the selected filters.
+        <div className="text-center py-20 border border-dashed border-neutral-300 rounded-3xl mt-4 space-y-3">
+          <p className="text-3xl">🔍</p>
+          <h3 className="text-sm font-black uppercase tracking-wider text-black">
+            No drops found in this filter
+          </h3>
+          <p className="text-xs text-neutral-500 max-w-sm mx-auto">
+            Try adjusting your category selection or resetting your advance filters to view our full collection.
           </p>
           <button
             onClick={() => {
-              setSelectedCategory("All");
+              setSelectedPill("View all");
               setSelectedColor("All");
-              setSortBy("default");
+              setInStockOnly(false);
             }}
-            className="bg-black text-white px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-orange-600 transition-colors"
+            className="mt-2 bg-black text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors"
           >
             Reset Filters
           </button>
         </div>
       ) : (
-        <div>
-          <div className="flex justify-between items-baseline mb-6">
-            <p className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">
-              Showing {sortedProducts.length} Product{sortedProducts.length > 1 ? "s" : ""}
-            </p>
-          </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3.5 gap-y-7 sm:gap-x-6 sm:gap-y-10 mt-2">
+          {sortedProducts.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12 sm:gap-x-8">
-            {sortedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+      {/* Advance Filters Drawer / Modal */}
+      {isFiltersOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setIsFiltersOpen(false)}
+          />
+
+          <div className="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 flex flex-col justify-between animate-in slide-in-from-right duration-200">
+            {/* Header */}
+            <div className="p-5 border-b border-neutral-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+                <h3 className="text-sm font-black uppercase tracking-wider text-black">
+                  Advance Filters
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsFiltersOpen(false)}
+                className="text-neutral-500 hover:text-black p-1 text-xl leading-none"
+                aria-label="Close filters"
+              >
+                &times;
+              </button>
+            </div>
+
+            {/* Filter Body */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-6">
+              {/* Sort By */}
+              <div>
+                <label className="text-[11px] font-black uppercase tracking-wider text-neutral-500 block mb-2">
+                  Sort By
+                </label>
+                <div className="grid grid-cols-1 gap-2">
+                  {[
+                    { label: "Featured / Default", val: "default" },
+                    { label: "Newest Drops", val: "newest" },
+                    { label: "Price: Low to High", val: "price-asc" },
+                    { label: "Price: High to Low", val: "price-desc" },
+                  ].map((s) => (
+                    <button
+                      key={s.val}
+                      onClick={() => setSortBy(s.val)}
+                      className={`text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors border ${
+                        sortBy === s.val
+                          ? "bg-black text-white border-black"
+                          : "bg-neutral-50 text-neutral-700 border-neutral-200 hover:bg-neutral-100"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Color Filter */}
+              <div>
+                <label className="text-[11px] font-black uppercase tracking-wider text-neutral-500 block mb-2">
+                  Color Palette
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    onClick={() => setSelectedColor("All")}
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border uppercase transition-colors ${
+                      selectedColor === "All"
+                        ? "bg-black text-white border-black"
+                        : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
+                    }`}
+                  >
+                    All Colors
+                  </button>
+                  {colors.map((c) => (
+                    <button
+                      key={c.name}
+                      onClick={() => setSelectedColor(c.name)}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-colors ${
+                        selectedColor === c.name
+                          ? "bg-neutral-900 text-white border-black"
+                          : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
+                      }`}
+                    >
+                      <span
+                        className="w-2.5 h-2.5 rounded-full border border-neutral-300"
+                        style={{ backgroundColor: c.hex }}
+                      />
+                      {c.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Availability Filter */}
+              <div className="border-t border-neutral-100 pt-5">
+                <label className="flex items-center justify-between cursor-pointer">
+                  <span className="text-xs font-bold text-neutral-800 uppercase tracking-wider">
+                    In Stock Drops Only
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => setInStockOnly(e.target.checked)}
+                    className="w-4 h-4 accent-black rounded cursor-pointer"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="p-5 border-t border-neutral-100 bg-neutral-50 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedColor("All");
+                  setSortBy("default");
+                  setInStockOnly(false);
+                }}
+                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-neutral-600 hover:text-black border border-neutral-300 rounded-xl bg-white transition-colors"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsFiltersOpen(false)}
+                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-white bg-black hover:bg-orange-600 rounded-xl transition-colors shadow-md"
+              >
+                Apply Filters
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -203,10 +372,8 @@ export default function ShopClient({ initialProducts }: ShopClientProps) {
   return (
     <Suspense
       fallback={
-        <div className="bg-white min-h-screen py-24 text-center">
-          <p className="text-xs font-bold tracking-widest text-gray-400 uppercase">
-            Loading Fashion Store Catalogue...
-          </p>
+        <div className="min-h-screen bg-white flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

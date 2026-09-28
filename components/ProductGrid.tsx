@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Product } from "@/lib/data";
 import ProductCard from "./ProductCard";
 
@@ -5,27 +6,53 @@ interface ProductGridProps {
   products: Product[];
   title?: string;
   subtitle?: string;
+  actionButton?: {
+    label: string;
+    href: string;
+    theme?: "light" | "dark";
+  };
 }
 
-export default function ProductGrid({ products, title, subtitle }: ProductGridProps) {
+export default function ProductGrid({
+  products,
+  title,
+  subtitle,
+  actionButton,
+}: ProductGridProps) {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {(title || subtitle) && (
-        <div className="mb-12">
-          {subtitle && (
-            <p className="text-[10px] font-bold tracking-[0.3em] text-gray-500 uppercase mb-2">
-              {subtitle}
-            </p>
-          )}
-          {title && (
-            <h2 className="text-4xl font-black tracking-tighter text-gray-900 uppercase">
-              {title}
-            </h2>
+    <section className="py-8 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {(title || subtitle || actionButton) && (
+        <div className="flex items-center justify-between pb-6 mb-2">
+          <div>
+            {subtitle && (
+              <p className="text-[10px] font-bold tracking-[0.25em] text-neutral-400 uppercase mb-1">
+                {subtitle}
+              </p>
+            )}
+            {title && (
+              <h2 className="text-xl sm:text-3xl font-black tracking-tight text-neutral-900">
+                {title}
+              </h2>
+            )}
+          </div>
+
+          {actionButton && (
+            <Link
+              href={actionButton.href}
+              className={`rounded-full px-4 py-1.5 text-[11px] font-bold tracking-tight transition-all active:scale-95 shadow-2xs whitespace-nowrap ${
+                actionButton.theme === "dark"
+                  ? "bg-black text-white hover:bg-neutral-800 border border-black"
+                  : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-200/90"
+              }`}
+            >
+              {actionButton.label}
+            </Link>
           )}
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12 sm:gap-x-8">
+      {/* 2-column mobile grid matching Screenshot 2 & 4 */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-3.5 gap-y-7 sm:gap-x-6 sm:gap-y-10">
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
