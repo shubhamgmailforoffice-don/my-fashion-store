@@ -60,11 +60,12 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
         body: JSON.stringify(listToSave),
       });
 
-      if (res.ok) {
+      const data = await res.json().catch(() => null);
+      if (res.ok && data?.success) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 2500);
       } else {
-        alert("Failed to save sections.");
+        alert("Failed to save sections: " + (data?.error || "Server response error"));
       }
     } catch (err) {
       alert("Error saving sections: " + String(err));

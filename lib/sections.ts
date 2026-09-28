@@ -100,3 +100,18 @@ export function getSections(): HomepageSection[] {
     return defaultSections;
   }
 }
+
+export async function getAsyncSections(): Promise<HomepageSection[]> {
+  try {
+    const { prisma } = await import("@/lib/prisma");
+    const record = await prisma.siteConfig.findUnique({
+      where: { key: "storefront_sections" },
+    });
+    if (record && Array.isArray(record.value)) {
+      return record.value as unknown as HomepageSection[];
+    }
+  } catch (err) {
+    console.error("Failed to query sections from database, using fallback:", err);
+  }
+  return getSections();
+}

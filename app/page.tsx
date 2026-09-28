@@ -1,6 +1,6 @@
-import { collections, stores, Product } from "@/lib/data";
+import { collections, Product } from "@/lib/data";
 import { getAsyncProducts } from "@/lib/store";
-import { getSections, HomepageSection } from "@/lib/sections";
+import { getAsyncSections, HomepageSection } from "@/lib/sections";
 import ProductGrid from "@/components/ProductGrid";
 import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export const revalidate = 0;
 
 export default async function Home() {
   const allProducts = await getAsyncProducts();
-  const sections = getSections();
+  const sections = await getAsyncSections();
 
   // Helper to resolve products for a section
   const getSectionProducts = (section: HomepageSection): Product[] => {
@@ -337,8 +337,8 @@ export default async function Home() {
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Combed Cotton</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-white font-anton">03</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Flagship Stores</p>
+                  <p className="text-2xl font-black text-white font-anton">PAN-INDIA</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Express Dispatch</p>
                 </div>
               </div>
             </div>
@@ -363,51 +363,6 @@ export default async function Home() {
                   Shop Pieces
                 </Link>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 6: Flagship Stores */}
-        <section className="bg-[#E8E6DF] py-16 sm:py-20 border-t border-neutral-300/60 pb-28 sm:pb-24">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row justify-between items-baseline mb-10 gap-3">
-              <div>
-                <p className="text-[10px] font-bold tracking-[0.3em] text-[#E8262A] uppercase mb-1">
-                  Physical Spaces
-                </p>
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-black uppercase font-anton">
-                  Flagship Retail Experience
-                </h2>
-              </div>
-              <Link
-                href="/stores"
-                className="text-xs font-black tracking-widest text-black hover:text-[#E8262A] uppercase border-b border-black hover:border-[#E8262A] pb-1 transition-all"
-              >
-                All Store Details &rarr;
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {stores.map((store) => (
-                <div
-                  key={store.name}
-                  className="border border-neutral-300/80 p-6 rounded-2xl bg-white shadow-xs hover:border-black transition-colors"
-                >
-                  <span className="text-[8px] font-black tracking-widest uppercase bg-black text-white px-2 py-0.5 rounded-xs">
-                    {store.status}
-                  </span>
-                  <h3 className="text-base font-black tracking-wider uppercase mt-4 mb-2 font-anton">
-                    {store.city}
-                  </h3>
-                  <p className="text-xs text-neutral-600 uppercase tracking-wider mb-4 leading-relaxed">
-                    {store.address}
-                  </p>
-                  <div className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest space-y-1">
-                    <p>Hours: {store.timing}</p>
-                    <p>Tel: {store.phone}</p>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>
