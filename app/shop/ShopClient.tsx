@@ -306,7 +306,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
   }, [selectedPill, comingSoonData, filteredProducts]);
 
   return (
-    <div className="bg-white min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       {/* Top Header Row with "All Products" and "Advance Filters" (Screenshot 4) */}
       <div className="flex items-center justify-between pt-2 pb-3">
         <h1 className="font-inter font-medium text-base sm:text-lg text-neutral-900">
@@ -317,7 +317,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
         <button
           type="button"
           onClick={() => setIsFiltersOpen(true)}
-          className="flex items-center gap-1.5 text-xs font-medium text-neutral-700 hover:text-black bg-white hover:bg-neutral-50 border border-neutral-200/90 px-3 py-1.5 rounded-full transition-colors active:scale-95 shadow-2xs"
+          className="flex items-center gap-1.5 text-xs font-medium text-neutral-800 hover:text-black bg-white/70 hover:bg-white border border-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
           aria-label="Open advance filters"
         >
           {/* Filter / Flashlight Icon */}
@@ -342,8 +342,8 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
               onClick={() => handlePillClick(pill)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-inter transition-all duration-200 whitespace-nowrap active:scale-95 ${
                 isActive
-                  ? "bg-white text-black font-semibold border border-neutral-900 shadow-xs"
-                  : "bg-white text-neutral-600 hover:text-black hover:border-neutral-300 border border-neutral-200/80 shadow-2xs"
+                  ? "bg-white/95 text-black font-semibold border border-neutral-900 shadow-xs backdrop-blur-md"
+                  : "bg-white/65 hover:bg-white text-neutral-700 hover:text-black border border-white/80 backdrop-blur-md shadow-2xs"
               }`}
             >
               {pill}
@@ -438,13 +438,13 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
       {isFiltersOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/45 backdrop-blur-sm transition-opacity"
             onClick={() => setIsFiltersOpen(false)}
           />
 
-          <div className="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 flex flex-col justify-between animate-in slide-in-from-right duration-200">
+          <div className="fixed inset-y-0 right-0 max-w-sm w-full bg-[#E8E6DF]/92 backdrop-blur-2xl border-l border-white/60 shadow-2xl z-50 flex flex-col justify-between animate-in slide-in-from-right duration-200">
             {/* Header */}
-            <div className="p-5 border-b border-neutral-100 flex items-center justify-between">
+            <div className="p-5 border-b border-black/5 bg-white/40 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-neutral-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -479,10 +479,10 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                     <button
                       key={s.val}
                       onClick={() => setSortBy(s.val)}
-                      className={`text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-colors border ${
+                      className={`text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                         sortBy === s.val
-                          ? "bg-black text-white border-black"
-                          : "bg-neutral-50 text-neutral-700 border-neutral-200 hover:bg-neutral-100"
+                          ? "bg-black text-white border-black shadow-md"
+                          : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                       }`}
                     >
                       {s.label}
@@ -499,10 +499,10 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setSelectedColor("All")}
-                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border uppercase transition-colors ${
+                    className={`px-3 py-1.5 text-xs font-bold rounded-lg border uppercase transition-all ${
                       selectedColor === "All"
-                        ? "bg-black text-white border-black"
-                        : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
+                        ? "bg-black text-white border-black shadow-md"
+                        : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                     }`}
                   >
                     All Colors
@@ -511,10 +511,10 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                     <button
                       key={c.name}
                       onClick={() => setSelectedColor(c.name)}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-colors ${
+                      className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${
                         selectedColor === c.name
-                          ? "bg-neutral-900 text-white border-black"
-                          : "bg-white text-neutral-700 border-neutral-200 hover:border-neutral-400"
+                          ? "bg-neutral-900 text-white border-black shadow-md"
+                          : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                       }`}
                     >
                       <span
@@ -528,7 +528,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
               </div>
 
               {/* Availability Filter */}
-              <div className="border-t border-neutral-100 pt-5">
+              <div className="border-t border-black/5 pt-5">
                 <label className="flex items-center justify-between cursor-pointer">
                   <span className="text-xs font-bold text-neutral-800 uppercase tracking-wider">
                     In Stock Drops Only
@@ -544,7 +544,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
             </div>
 
             {/* Footer Buttons */}
-            <div className="p-5 border-t border-neutral-100 bg-neutral-50 flex gap-3">
+            <div className="p-5 border-t border-black/5 bg-white/75 backdrop-blur-md flex gap-3">
               <button
                 type="button"
                 onClick={() => {
@@ -552,14 +552,14 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                   setSortBy("default");
                   setInStockOnly(false);
                 }}
-                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-neutral-600 hover:text-black border border-neutral-300 rounded-xl bg-white transition-colors"
+                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-neutral-600 hover:text-black border border-white/80 rounded-xl bg-white/70 backdrop-blur-sm transition-colors shadow-2xs"
               >
                 Reset
               </button>
               <button
                 type="button"
                 onClick={() => setIsFiltersOpen(false)}
-                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-white bg-black hover:bg-orange-600 rounded-xl transition-colors shadow-md"
+                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-white bg-black hover:bg-[#E8262A] rounded-xl transition-colors shadow-lg active:scale-98"
               >
                 Apply Filters
               </button>

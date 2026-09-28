@@ -39,10 +39,10 @@ export default function ProductGrid({
           {actionButton && (
             <Link
               href={actionButton.href}
-              className={`rounded-full px-4 py-1.5 text-[11px] font-bold tracking-tight transition-all active:scale-95 shadow-2xs whitespace-nowrap ${
+              className={`rounded-full px-4 py-1.5 text-[11px] font-bold tracking-tight transition-all active:scale-95 shadow-2xs whitespace-nowrap backdrop-blur-md ${
                 actionButton.theme === "dark"
-                  ? "bg-black text-white hover:bg-neutral-800 border border-black"
-                  : "bg-neutral-100 hover:bg-neutral-200 text-neutral-900 border border-neutral-200/90"
+                  ? "bg-black/90 text-white hover:bg-[#E8262A] border border-white/20"
+                  : "bg-white/70 hover:bg-white text-neutral-900 border border-white/80"
               }`}
             >
               {actionButton.label}

@@ -158,10 +158,10 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
   };
 
   return (
-    <div className="bg-white min-h-screen py-10">
+    <div className="min-h-screen py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
         {/* Breadcrumb Navigation */}
-        <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase mb-8">
+        <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest text-neutral-500 uppercase mb-8">
           <Link href="/" className="hover:text-black transition-colors">
             Home
           </Link>
@@ -170,7 +170,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
             Shop
           </Link>
           <span>/</span>
-          <span className="text-black">{product.name}</span>
+          <span className="text-black font-extrabold">{product.name}</span>
         </div>
 
         {/* Product Grid */}
@@ -178,7 +178,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
           {/* Column 1: Image Gallery (Takes 7 columns on large screens) */}
           <div className="lg:col-span-7 flex flex-col md:flex-row-reverse gap-4">
             {/* Main Active Image */}
-            <div className="relative aspect-[3/4] flex-1 bg-gray-50 overflow-hidden border border-gray-100">
+            <div className="relative aspect-[3/4] flex-1 bg-neutral-900 rounded-3xl overflow-hidden border border-white/80 shadow-md">
               <Image
                 src={activeImage}
                 alt={product.name}
@@ -187,26 +187,26 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 className="object-cover"
               />
 
-              {/* Floating Badges */}
+              {/* Floating Badges with Frosted Glass */}
               <div className="absolute left-4 top-4 flex flex-col gap-1.5 z-10">
                 {isOutOfStock ? (
-                  <span className="bg-red-600 px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase shadow-md">
+                  <span className="bg-white/85 text-black border border-white/70 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
                     Sold Out
                   </span>
                 ) : (
                   <>
                     {product.isNew && (
-                      <span className="bg-black px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase">
+                      <span className="bg-black/80 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
                         New Arrival
                       </span>
                     )}
                     {product.isSale && (
-                      <span className="bg-orange-600 px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase">
+                      <span className="bg-[#E8262A]/90 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
                         Sale Drop
                       </span>
                     )}
                     {product.isBlindBox && (
-                      <span className="bg-blue-600 px-3 py-1 text-[9px] font-black tracking-widest text-white uppercase">
+                      <span className="bg-blue-600/90 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
                         Mystery Box
                       </span>
                     )}
@@ -221,10 +221,10 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 <button
                   key={index}
                   onClick={() => setActiveImage(img)}
-                  className={`relative aspect-[3/4] w-20 md:w-full flex-shrink-0 overflow-hidden bg-gray-50 border transition-all ${
+                  className={`relative aspect-[3/4] w-20 md:w-full flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-900 border transition-all ${
                     activeImage === img
-                      ? "border-black ring-1 ring-black"
-                      : "border-gray-200 hover:border-gray-400"
+                      ? "border-black ring-2 ring-black shadow-md scale-102"
+                      : "border-white/80 hover:border-black shadow-2xs opacity-80 hover:opacity-100"
                   }`}
                 >
                   <Image
@@ -240,8 +240,8 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
 
           {/* Column 2: Details & Purchase Options (Takes 5 columns) */}
           <div className="lg:col-span-5 flex flex-col justify-start">
-            <div className="border-b border-gray-100 pb-6">
-              <span className="text-[10px] font-bold tracking-[0.3em] text-orange-500 uppercase block mb-1">
+            <div className="border-b border-black/5 pb-6">
+              <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase block mb-1">
                 DRIIVN COUTURE
               </span>
               <h1 className="text-2xl md:text-3xl font-black tracking-normal text-black leading-tight mb-3">
@@ -259,34 +259,34 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 )}
               </div>
               {product.stockQuantity !== undefined && product.stockQuantity > 0 && product.stockQuantity <= 5 && (
-                <div className="inline-flex items-center gap-2 bg-red-50 border border-red-200 px-3 py-1.5 rounded-full mt-2.5">
+                <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-full mt-2.5 backdrop-blur-xs">
                   <span className="w-2 h-2 rounded-full bg-[#E8262A] animate-ping" />
                   <span className="text-[11px] font-black text-[#E8262A] uppercase tracking-wider">
                     Hurry! Only {product.stockQuantity} left in stock
                   </span>
                 </div>
               )}
-              <p className="text-[9px] text-gray-400 tracking-wider mt-1 uppercase">
+              <p className="text-[9px] text-neutral-500 tracking-wider mt-1.5 uppercase font-medium">
                 INCLUSIVE OF ALL TAXES • COMPLIMENTARY EXPRESS SHIPPING
               </p>
             </div>
 
             {/* Selector Section */}
-            <div className="py-6 space-y-6 border-b border-gray-100">
+            <div className="py-6 space-y-6 border-b border-black/5">
               {/* Color Selection */}
               <div>
-                <h3 className="text-[10px] font-bold tracking-[0.25em] text-gray-900 uppercase mb-3">
-                  Select Color: <span className="font-medium text-gray-500">{selectedColor}</span>
+                <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase mb-3">
+                  Select Color: <span className="font-semibold text-black">{selectedColor}</span>
                 </h3>
                 <div className="flex gap-2">
                   {product.colors.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelectedColor(color)}
-                      className={`text-[10px] font-bold tracking-widest uppercase px-4 py-2 border transition-all ${
+                      className={`text-[10px] font-black tracking-widest uppercase px-4 py-2 rounded-xl transition-all ${
                         selectedColor === color
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 hover:border-black text-gray-600 bg-white"
+                          ? "border border-black bg-black text-white shadow-xs"
+                          : "border border-white/80 hover:border-black text-neutral-700 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
                       }`}
                     >
                       {color}
@@ -298,13 +298,13 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               {/* Size Selection */}
               <div>
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-gray-900 uppercase">
+                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase">
                     Select Size
                   </h3>
                   <button
                     type="button"
                     onClick={() => setIsSizeGuideOpen(true)}
-                    className="text-[9px] font-bold tracking-widest text-orange-500 hover:text-black uppercase underline transition-colors"
+                    className="text-[9px] font-black tracking-widest text-[#E8262A] hover:text-black uppercase underline transition-colors"
                   >
                     Sizing Guide
                   </button>
@@ -319,17 +319,17 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                         type="button"
                         disabled={!isAvailable}
                         onClick={() => isAvailable && setSelectedSize(size)}
-                        className={`relative h-11 flex items-center justify-center text-xs font-bold tracking-wider uppercase border transition-all ${
+                        className={`relative h-11 flex items-center justify-center text-xs font-black tracking-wider uppercase rounded-xl transition-all ${
                           !isAvailable
-                            ? "border-gray-200 bg-gray-100/70 text-gray-300 cursor-not-allowed line-through"
+                            ? "border border-black/5 bg-black/5 text-neutral-400 cursor-not-allowed line-through backdrop-blur-2xs"
                             : selectedSize === size
-                            ? "border-black bg-black text-white font-black"
-                            : "border-gray-200 hover:border-black text-gray-700 bg-white"
+                            ? "border border-black bg-black text-white shadow-xs scale-102"
+                            : "border border-white/80 hover:border-black text-neutral-800 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
                         }`}
                       >
                         <span>{size}</span>
                         {!isAvailable && (
-                          <span className="absolute -top-1.5 -right-1 bg-neutral-700 text-white text-[7px] font-bold px-1 rounded-xs uppercase">
+                          <span className="absolute -top-1.5 -right-1 bg-neutral-800 text-white text-[7px] font-bold px-1 rounded-xs uppercase">
                             Out
                           </span>
                         )}
@@ -338,12 +338,12 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                   })}
                 </div>
                 {selectedSize && !isOutOfStock && (
-                  <p className="text-[9px] text-zinc-500 font-medium tracking-widest mt-2 uppercase">
+                  <p className="text-[9px] text-neutral-500 font-medium tracking-widest mt-2.5 uppercase">
                     Selected size {selectedSize}: boxy streetwear fit, drop shoulder silhouette.
                   </p>
                 )}
                 {isOutOfStock && (
-                  <p className="text-[9px] text-red-600 font-bold tracking-widest mt-2 uppercase">
+                  <p className="text-[9px] text-[#E8262A] font-bold tracking-widest mt-2.5 uppercase">
                     Garment is sold out across all sizes.
                   </p>
                 )}
@@ -352,22 +352,22 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               {/* Quantity */}
               {!isOutOfStock && (
                 <div>
-                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-gray-900 uppercase mb-3">
+                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase mb-3">
                     Quantity
                   </h3>
-                  <div className="flex items-center w-28 border border-gray-200">
+                  <div className="flex items-center w-32 bg-white/70 backdrop-blur-md border border-white/80 rounded-xl overflow-hidden shadow-2xs">
                     <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-8 h-9 flex items-center justify-center text-sm font-bold text-gray-500 hover:text-black"
+                      className="w-10 h-10 flex items-center justify-center text-sm font-black text-neutral-600 hover:text-black hover:bg-white/80 transition-colors"
                     >
                       -
                     </button>
-                    <span className="flex-1 text-center text-xs font-bold tracking-widest">
+                    <span className="flex-1 text-center text-xs font-black tracking-widest text-black">
                       {quantity}
                     </span>
                     <button
                       onClick={() => setQuantity(quantity + 1)}
-                      className="w-8 h-9 flex items-center justify-center text-sm font-bold text-gray-500 hover:text-black"
+                      className="w-10 h-10 flex items-center justify-center text-sm font-black text-neutral-600 hover:text-black hover:bg-white/80 transition-colors"
                     >
                       +
                     </button>
@@ -377,18 +377,19 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
             </div>
 
             {/* Action Buttons */}
+            {/* Action Buttons */}
             <div className="py-6 space-y-3">
               <button
                 onClick={handleAddToCart}
                 disabled={isAdding || isOutOfStock}
-                className={`w-full py-4 text-xs font-black tracking-[0.2em] uppercase transition-all duration-300 flex items-center justify-center ${
+                className={`w-full py-4 text-xs font-black tracking-[0.2em] uppercase rounded-xl transition-all duration-300 flex items-center justify-center shadow-md ${
                   isOutOfStock
-                    ? "bg-gray-200 text-gray-400 cursor-not-allowed border border-gray-300"
+                    ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
                     : isAdding
-                    ? "bg-gray-400 text-white cursor-wait"
+                    ? "bg-neutral-400 text-white cursor-wait"
                     : addedToCart
-                    ? "bg-green-600 text-white"
-                    : "bg-black text-white hover:bg-orange-600"
+                    ? "bg-emerald-600 text-white"
+                    : "bg-black text-white hover:bg-[#E8262A] active:scale-[0.99]"
                 }`}
               >
                 {isOutOfStock
@@ -401,16 +402,16 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               </button>
 
               {isOutOfStock && (
-                <div className="bg-red-50 border border-red-200 p-3 text-center">
-                  <p className="text-[10px] font-bold tracking-widest text-red-700 uppercase">
+                <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-xs p-3.5 rounded-xl text-center">
+                  <p className="text-[10px] font-black tracking-widest text-[#E8262A] uppercase">
                     This garment is currently sold out. Check back soon for our next drop!
                   </p>
                 </div>
               )}
 
               {addedToCart && (
-                <div className="bg-green-50 border border-green-200 p-3 text-center">
-                  <p className="text-[10px] font-bold tracking-widest text-green-800 uppercase">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xs p-3.5 rounded-xl text-center">
+                  <p className="text-[10px] font-black tracking-widest text-emerald-800 uppercase">
                     Success! Product added to shopping bag.
                   </p>
                 </div>
@@ -418,47 +419,47 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
             </div>
 
             {/* Specifications */}
-            <div className="mt-4 space-y-4 border-t border-gray-100 pt-6">
+            <div className="mt-2 space-y-4 border border-white/80 bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-xs">
               <div>
-                <h4 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-2">
+                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-2">
                   Specifications
                 </h4>
-                <ul className="text-[11px] text-gray-500 space-y-1 tracking-wide uppercase font-medium">
+                <ul className="text-[11px] text-neutral-600 space-y-1.5 tracking-wide uppercase font-medium">
                   <li>
-                    <span className="font-bold text-gray-700">Fabric:</span>{" "}
+                    <span className="font-black text-neutral-800">Fabric:</span>{" "}
                     {specs.material}
                   </li>
                   <li>
-                    <span className="font-bold text-gray-700">Weight:</span>{" "}
+                    <span className="font-black text-neutral-800">Weight:</span>{" "}
                     {specs.weight}
                   </li>
                   <li>
-                    <span className="font-bold text-gray-700">Fit:</span>{" "}
+                    <span className="font-black text-neutral-800">Fit:</span>{" "}
                     {specs.fit}
                   </li>
                   <li>
-                    <span className="font-bold text-gray-700">Graphics:</span>{" "}
+                    <span className="font-black text-neutral-800">Graphics:</span>{" "}
                     {specs.print}
                   </li>
                 </ul>
               </div>
 
-              <div>
-                <h4 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-2">
+              <div className="border-t border-black/5 pt-4">
+                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-2">
                   Details
                 </h4>
-                <ul className="text-[11px] text-gray-500 list-disc pl-4 space-y-1 tracking-wide uppercase font-medium">
+                <ul className="text-[11px] text-neutral-600 list-disc pl-4 space-y-1.5 tracking-wide uppercase font-medium">
                   {specs.details.map((detail, index) => (
                     <li key={index}>{detail}</li>
                   ))}
                 </ul>
               </div>
 
-              <div>
-                <h4 className="text-[10px] font-bold tracking-[0.25em] text-black uppercase mb-1">
+              <div className="border-t border-black/5 pt-4">
+                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-1">
                   Care Guide
                 </h4>
-                <p className="text-[11px] text-gray-500 tracking-wide uppercase font-medium">
+                <p className="text-[11px] text-neutral-600 tracking-wide uppercase font-medium">
                   {specs.care}
                 </p>
               </div>
@@ -470,13 +471,13 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
         {isSizeGuideOpen && (
           <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4">
             <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity"
               onClick={() => setIsSizeGuideOpen(false)}
             />
-            <div className="relative bg-white max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl border border-gray-200 space-y-6">
-              <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+            <div className="relative bg-white/95 backdrop-blur-2xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl rounded-3xl border border-white/80 space-y-6">
+              <div className="flex justify-between items-center border-b border-black/5 pb-4">
                 <div>
-                  <span className="text-[9px] font-black tracking-widest text-orange-500 uppercase">
+                  <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                     DRIIVN MEASUREMENT TABLE
                   </span>
                   <h3 className="text-base font-black tracking-widest uppercase">
@@ -485,15 +486,15 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 </div>
                 <button
                   onClick={() => setIsSizeGuideOpen(false)}
-                  className="text-gray-400 hover:text-black text-xl font-bold"
+                  className="w-8 h-8 rounded-full bg-black/5 hover:bg-black hover:text-white flex items-center justify-center text-lg font-bold transition-colors"
                 >
                   &times;
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-[10px] uppercase font-bold tracking-wider text-left border border-gray-200">
-                  <thead className="bg-zinc-100 border-b border-gray-200 text-black">
+              <div className="overflow-x-auto rounded-xl border border-black/10">
+                <table className="w-full text-[10px] uppercase font-bold tracking-wider text-left">
+                  <thead className="bg-black/5 border-b border-black/10 text-black">
                     <tr>
                       <th className="py-2.5 px-3">Size</th>
                       <th className="py-2.5 px-3">Chest</th>
@@ -501,7 +502,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                       <th className="py-2.5 px-3">Shoulder</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-black/5">
                     <tr>
                       <td className="py-2.5 px-3 font-black">S</td>
                       <td className="py-2.5 px-3">44&quot;</td>
@@ -536,14 +537,14 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 </table>
               </div>
 
-              <p className="text-[9px] text-gray-500 uppercase tracking-widest">
+              <p className="text-[9px] text-neutral-500 uppercase tracking-widest font-medium">
                 *All garments are designed with a boxy silhouette and dropped shoulders. For a more fitted look, consider sizing down.
               </p>
 
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full bg-black text-white py-3 text-xs font-bold tracking-widest uppercase hover:bg-orange-600 transition-colors"
+                className="w-full bg-black text-white py-3.5 text-xs font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs"
               >
                 Got It
               </button>

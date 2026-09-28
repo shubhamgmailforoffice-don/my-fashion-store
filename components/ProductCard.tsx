@@ -51,17 +51,19 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
             {/* Badges on Top Left - Only show Sold Out to keep image clean like Screenshot 4 */}
             {isOutOfStock && (
               <div className="absolute left-2.5 top-2.5 z-10 pointer-events-none">
-                <span className="bg-white/95 text-black px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded-full shadow-xs backdrop-blur-xs">
+                <span className="bg-white/85 text-black px-2.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded-full border border-white/70 shadow-xs backdrop-blur-md">
                   Sold Out
                 </span>
               </div>
             )}
 
-            {/* Pagination Dots at Bottom Center (Screenshot 2 & 4 style) */}
-            <div className="absolute bottom-2.5 inset-x-0 flex items-center justify-center gap-1 z-10 pointer-events-none">
-              <span className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
-              <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
-              <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
+            {/* Pagination Dots at Bottom Center - Frosted Glass Capsule */}
+            <div className="absolute bottom-2.5 inset-x-0 flex items-center justify-center z-10 pointer-events-none">
+              <div className="flex items-center gap-1 bg-black/30 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20 shadow-xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
+              </div>
             </div>
           </div>
         </Link>
@@ -89,15 +91,15 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
             </div>
           </Link>
 
-          {/* Minimalist Plus Button (Screenshot 2 & 4 style) */}
+          {/* Minimalist Plus Button with Frosted Glass Styling */}
           <button
             type="button"
             onClick={handlePlusClick}
             disabled={isOutOfStock}
             className={`w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full transition-all leading-none ${
               isOutOfStock
-                ? "text-neutral-300 cursor-not-allowed"
-                : "text-neutral-400 hover:text-black hover:bg-neutral-100 active:scale-90"
+                ? "text-neutral-300 cursor-not-allowed border border-transparent"
+                : "text-neutral-600 hover:text-white bg-white/70 hover:bg-black border border-white/80 backdrop-blur-xs shadow-2xs active:scale-90"
             }`}
             aria-label={`Quick add ${product.name} to bag`}
             title={isOutOfStock ? "Out of stock" : "Quick Add to Bag"}

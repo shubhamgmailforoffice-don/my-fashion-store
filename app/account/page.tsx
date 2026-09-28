@@ -508,12 +508,12 @@ export default function AccountPage() {
   };
 
   return (
-    <div className="bg-white min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className={`${currentUser ? "max-w-4xl" : "max-w-lg"} mx-auto`}>
         
         {/* Editorial Top Brand Identifier */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[9px] font-black tracking-[0.35em] uppercase mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[9px] font-black tracking-[0.35em] uppercase mb-4 rounded-full shadow-xs">
             <span>DRIIVN</span>
             <span>•</span>
             <span>MEMBER CLUB</span>
@@ -521,7 +521,7 @@ export default function AccountPage() {
           <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-neutral-950 uppercase leading-none">
             {currentUser ? `Welcome, ${currentUser.name}` : "Member Portal"}
           </h1>
-          <p className="text-xs text-neutral-500 tracking-wider uppercase mt-2 max-w-sm mx-auto">
+          <p className="text-xs text-neutral-500 tracking-wider uppercase mt-2 max-w-sm mx-auto font-medium">
             {currentUser
               ? `Account: ${currentUser.role.toUpperCase()} • Direct Portal Access`
               : "Enter your Email or Mobile Number and Password to access your DRIIVN account."}
@@ -532,15 +532,15 @@ export default function AccountPage() {
         {currentUser ? (
           <div className="space-y-8">
             {/* VIP Status Banner */}
-            <div className="bg-neutral-950 text-white p-6 sm:p-8 relative overflow-hidden border border-neutral-800 shadow-xl">
-              <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 text-neutral-900/60 font-black text-7xl select-none pointer-events-none">
+            <div className="bg-neutral-950/90 backdrop-blur-2xl text-white p-6 sm:p-8 relative overflow-hidden border border-white/15 rounded-3xl shadow-xl">
+              <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 text-neutral-800/40 font-black text-7xl select-none pointer-events-none">
                 DRIIVN
               </div>
               <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] font-black tracking-[0.25em] text-orange-400 uppercase">
+                    <span className="text-[10px] font-black tracking-[0.25em] text-[#E8262A] uppercase">
                       {currentUser.role === "admin" ? "Staff Executive" : "VIP Tier 01 Active"}
                     </span>
                   </div>
@@ -556,14 +556,14 @@ export default function AccountPage() {
                   {currentUser.role === "admin" && (
                     <Link
                       href="/admin"
-                      className="bg-orange-500 hover:bg-orange-600 text-black px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors text-center"
+                      className="bg-[#E8262A] hover:bg-red-700 text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-colors text-center rounded-xl shadow-xs"
                     >
                       Admin Dashboard &rarr;
                     </Link>
                   )}
                   <button
                     onClick={handleSignOut}
-                    className="border border-neutral-700 hover:border-white text-neutral-300 hover:text-white px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors"
+                    className="border border-white/20 hover:border-white text-neutral-300 hover:text-white px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors rounded-xl backdrop-blur-xs"
                   >
                     Log Out
                   </button>
@@ -571,7 +571,7 @@ export default function AccountPage() {
               </div>
 
               {/* Quick Member Stats Bar */}
-              <div className="relative z-10 grid grid-cols-3 gap-4 pt-6 mt-6 border-t border-neutral-800/80">
+              <div className="relative z-10 grid grid-cols-3 gap-4 pt-6 mt-6 border-t border-white/10">
                 <div>
                   <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Total Orders</p>
                   <p className="text-xl font-black text-white mt-0.5">{myOrders.length}</p>
@@ -584,39 +584,39 @@ export default function AccountPage() {
                 </div>
                 <div>
                   <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-widest">Saved Addresses</p>
-                  <p className="text-xl font-black text-orange-400 mt-0.5">{savedAddresses.length}</p>
+                  <p className="text-xl font-black text-[#E8262A] mt-0.5">{savedAddresses.length}</p>
                 </div>
               </div>
             </div>
 
-            {/* Dashboard Tabs */}
-            <div className="flex border-b border-neutral-200 gap-x-2">
+            {/* Dashboard Tabs with Frosted Glass Pills */}
+            <div className="flex bg-white/70 backdrop-blur-md border border-white/80 p-1.5 rounded-2xl gap-1">
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "orders"
-                    ? "border-black text-black"
-                    : "border-transparent text-neutral-400 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
                 Orders ({myOrders.length})
               </button>
               <button
                 onClick={() => setActiveTab("addresses")}
-                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "addresses"
-                    ? "border-black text-black"
-                    : "border-transparent text-neutral-400 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
                 Saved Addresses ({savedAddresses.length})
               </button>
               <button
                 onClick={() => setActiveTab("perks")}
-                className={`py-3 px-5 text-xs font-black tracking-widest uppercase border-b-2 transition-colors ${
+                className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "perks"
-                    ? "border-black text-black"
-                    : "border-transparent text-neutral-400 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
                 VIP Privileges
@@ -1223,10 +1223,12 @@ export default function AccountPage() {
           /* ========================================================= */
           /* UNIFIED SINGLE OPTION FORM: EMAIL/MOBILE + COMPULSORY PASSWORD */
           /* ========================================================= */
-          <div className="border border-neutral-200 bg-white shadow-2xl p-6 sm:p-10 space-y-7">
+          /* UNIFIED SINGLE OPTION FORM: EMAIL/MOBILE + COMPULSORY PASSWORD */
+          /* ========================================================= */
+          <div className="border border-white/80 bg-white/85 backdrop-blur-2xl shadow-2xl rounded-3xl p-6 sm:p-10 space-y-7">
             
             {/* Mode Switcher: Sign In vs Create Account */}
-            <div className="flex border border-neutral-200 p-1 bg-neutral-50">
+            <div className="flex border border-white/80 p-1.5 bg-black/5 rounded-2xl backdrop-blur-xs">
               <button
                 type="button"
                 onClick={() => {
@@ -1234,10 +1236,10 @@ export default function AccountPage() {
                   setAuthError("");
                   setAuthSuccess("");
                 }}
-                className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase transition-all ${
+                className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   authMode === "signin"
-                    ? "bg-black text-white shadow-sm"
-                    : "text-neutral-500 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-neutral-600 hover:text-black hover:bg-white/50"
                 }`}
               >
                 Sign In
@@ -1249,10 +1251,10 @@ export default function AccountPage() {
                   setAuthError("");
                   setAuthSuccess("");
                 }}
-                className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase transition-all ${
+                className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   authMode === "signup"
-                    ? "bg-black text-white shadow-sm"
-                    : "text-neutral-500 hover:text-black"
+                    ? "bg-black text-white shadow-xs"
+                    : "text-neutral-600 hover:text-black hover:bg-white/50"
                 }`}
               >
                 Create Account
@@ -1261,12 +1263,12 @@ export default function AccountPage() {
 
             {/* Error Notification */}
             {authError && (
-              <div className="bg-red-50 border-l-4 border-red-600 text-red-700 p-3.5 text-xs font-bold uppercase tracking-wider flex items-center justify-between">
+              <div className="bg-red-500/10 border border-red-500/25 text-[#E8262A] p-3.5 text-xs font-black uppercase tracking-wider rounded-xl backdrop-blur-xs flex items-center justify-between">
                 <span>{authError}</span>
                 <button
                   type="button"
                   onClick={() => setAuthError("")}
-                  className="text-red-900 font-black text-sm"
+                  className="text-[#E8262A] font-black text-sm"
                 >
                   &times;
                 </button>
@@ -1275,7 +1277,7 @@ export default function AccountPage() {
 
             {/* Success Notification */}
             {authSuccess && (
-              <div className="bg-emerald-50 border-l-4 border-emerald-600 text-emerald-800 p-3.5 text-xs font-bold uppercase tracking-wider">
+              <div className="bg-emerald-500/10 border border-emerald-500/25 text-emerald-800 p-3.5 text-xs font-black uppercase tracking-wider rounded-xl backdrop-blur-xs">
                 {authSuccess}
               </div>
             )}
@@ -1294,7 +1296,7 @@ export default function AccountPage() {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"
+                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black focus:bg-white rounded-xl shadow-2xs transition-colors"
                   />
                 </div>
               )}
@@ -1309,7 +1311,7 @@ export default function AccountPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                  className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black focus:bg-white rounded-xl shadow-2xs transition-colors"
                 />
               </div>
 
@@ -1323,7 +1325,7 @@ export default function AccountPage() {
                     <button
                       type="button"
                       onClick={() => setForgotPasswordOpen(!forgotPasswordOpen)}
-                      className="text-[9px] font-bold uppercase text-neutral-500 hover:text-black underline"
+                      className="text-[9px] font-black uppercase text-[#E8262A] hover:text-black underline"
                     >
                       Forgot Password?
                     </button>
@@ -1336,7 +1338,7 @@ export default function AccountPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-neutral-300 px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black pr-16"
+                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black focus:bg-white pr-16 rounded-xl shadow-2xs transition-colors"
                   />
                   <button
                     type="button"
@@ -1350,7 +1352,7 @@ export default function AccountPage() {
 
               {/* Forgot Password Inline Message */}
               {forgotPasswordOpen && authMode === "signin" && (
-                <div className="bg-neutral-50 border border-neutral-200 p-3 space-y-2">
+                <div className="bg-white/60 border border-white/80 backdrop-blur-xs p-3.5 rounded-xl space-y-2">
                   <p className="text-[10px] font-bold text-neutral-600 uppercase">
                     Reset your password:
                   </p>
@@ -1361,7 +1363,7 @@ export default function AccountPage() {
                         setForgotSent(true);
                         setForgotPasswordOpen(false);
                       }}
-                      className="bg-black text-white px-3 py-1.5 text-[9px] font-black uppercase tracking-widest hover:bg-orange-500 hover:text-black transition-colors"
+                      className="bg-black text-white px-3 py-1.5 text-[9px] font-black uppercase tracking-widest hover:bg-[#E8262A] transition-colors rounded-lg shadow-xs"
                     >
                       Send Reset Instructions
                     </button>
@@ -1377,7 +1379,7 @@ export default function AccountPage() {
               )}
 
               {forgotSent && (
-                <div className="bg-neutral-100 p-3 text-[10px] font-bold uppercase tracking-wider text-neutral-700">
+                <div className="bg-white/60 border border-white/80 backdrop-blur-xs p-3.5 rounded-xl text-[10px] font-bold uppercase tracking-wider text-neutral-700">
                   ✓ Reset link sent to {identifier || "your email/mobile"}.
                 </div>
               )}
@@ -1401,7 +1403,7 @@ export default function AccountPage() {
               <button
                 type="submit"
                 disabled={loading || !identifier || !password}
-                className="w-full bg-black hover:bg-orange-500 text-white hover:text-black disabled:bg-neutral-200 disabled:text-neutral-400 py-4 text-xs font-black tracking-[0.25em] uppercase transition-all duration-300 flex items-center justify-center gap-2 mt-2"
+                className="w-full bg-black hover:bg-[#E8262A] text-white disabled:bg-neutral-200 disabled:text-neutral-400 py-4 text-xs font-black tracking-[0.25em] uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-xs active:scale-[0.99]"
               >
                 {loading ? (
                   <>
@@ -1428,7 +1430,7 @@ export default function AccountPage() {
                       setAuthError("");
                       setAuthSuccess("");
                     }}
-                    className="text-black font-black underline hover:text-orange-600"
+                    className="text-black font-black underline hover:text-[#E8262A] transition-colors"
                   >
                     Create an account
                   </button>
@@ -1443,7 +1445,7 @@ export default function AccountPage() {
                       setAuthError("");
                       setAuthSuccess("");
                     }}
-                    className="text-black font-black underline hover:text-orange-600"
+                    className="text-black font-black underline hover:text-[#E8262A] transition-colors"
                   >
                     Sign in here
                   </button>

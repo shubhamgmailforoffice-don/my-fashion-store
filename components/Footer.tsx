@@ -25,7 +25,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white border-t border-gray-200 text-black mb-14 lg:mb-0">
+    <footer className="bg-white/80 backdrop-blur-xl border-t border-white/80 text-black mb-14 lg:mb-0">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
           
@@ -121,11 +121,11 @@ export default function Footer() {
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="ENTER EMAIL ADDRESS"
-                className="w-full border-b border-black py-2 text-xs focus:outline-none placeholder:text-gray-400 tracking-widest uppercase"
+                className="w-full bg-white/70 border border-white/80 backdrop-blur-xs rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-black focus:bg-white placeholder:text-gray-400 tracking-widest uppercase transition-colors shadow-2xs"
               />
               <button
                 type="submit"
-                className="w-full bg-black text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors"
+                className="w-full bg-black text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs"
               >
                 {subscribed ? "✓ You Are On The List" : "Subscribe"}
               </button>

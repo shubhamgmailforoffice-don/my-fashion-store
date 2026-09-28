@@ -86,7 +86,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-0 sm:p-4 select-none animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-0 sm:p-4 select-none animate-in fade-in duration-150"
       role="dialog"
       aria-modal="true"
     >
@@ -98,12 +98,12 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
       />
 
       {/* Reel Card Container */}
-      <div className="relative z-20 w-full sm:max-w-md h-full sm:h-[88vh] sm:max-h-[820px] bg-black sm:rounded-3xl overflow-hidden shadow-2xl flex flex-col justify-between">
+      <div className="relative z-20 w-full sm:max-w-md h-full sm:h-[88vh] sm:max-h-[820px] bg-black sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/20 flex flex-col justify-between">
         
         {/* Top Control Bar with Highly Visible Close Button */}
         <div className="absolute top-4 inset-x-0 z-50 px-4 flex items-center justify-between pointer-events-auto">
           {/* Reel Indicator Dots */}
-          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/25 shadow-lg">
             {REELS_DATA.map((_, idx) => (
               <span
                 key={idx}
@@ -122,7 +122,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
               e.stopPropagation();
               onClose();
             }}
-            className="w-11 h-11 rounded-full bg-black/80 hover:bg-[#E8262A] text-white border-2 border-white/40 hover:border-[#E8262A] shadow-2xl flex items-center justify-center text-xl font-bold transition-all active:scale-90 cursor-pointer"
+            className="w-11 h-11 rounded-full bg-black/80 hover:bg-[#E8262A] backdrop-blur-md text-white border-2 border-white/50 hover:border-[#E8262A] shadow-2xl flex items-center justify-center text-xl font-bold transition-all active:scale-90 cursor-pointer"
             aria-label="Close Reels"
             title="Close"
           >
@@ -147,7 +147,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
         <button
           type="button"
           onClick={handlePrev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center text-lg active:scale-95 transition-all"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
           aria-label="Previous reel"
         >
           &#8249;
@@ -155,7 +155,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
         <button
           type="button"
           onClick={handleNext}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 text-white border border-white/20 flex items-center justify-center text-lg active:scale-95 transition-all"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
           aria-label="Next reel"
         >
           &#8250;
@@ -178,7 +178,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
             <Link
               href={`/product/${currentReel.productId}`}
               onClick={onClose}
-              className="block w-full text-center py-3.5 px-6 rounded-2xl bg-[#E8262A] hover:bg-[#d01e22] text-white font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-98"
+              className="block w-full text-center py-3.5 px-6 rounded-2xl bg-[#E8262A] hover:bg-[#d01e22] text-white font-black text-xs uppercase tracking-widest transition-all shadow-xl active:scale-98 border border-white/20"
             >
               Shop Now &rarr;
             </Link>

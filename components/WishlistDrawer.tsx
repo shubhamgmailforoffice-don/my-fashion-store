@@ -104,12 +104,12 @@ export default function WishlistDrawer({
       aria-modal="true"
     >
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/45 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
-      <div className="fixed inset-y-0 right-0 max-w-sm w-full bg-white shadow-2xl z-50 flex flex-col justify-between">
-        <div className="p-5 border-b border-neutral-100 flex items-center justify-between">
+      <div className="fixed inset-y-0 right-0 max-w-sm w-full bg-[#E8E6DF]/92 backdrop-blur-2xl border-l border-white/60 shadow-2xl z-50 flex flex-col justify-between">
+        <div className="p-5 border-b border-black/5 bg-white/40 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 24 24">
               <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -130,7 +130,7 @@ export default function WishlistDrawer({
         {/* Items List */}
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
           {wishlist.length === 0 ? (
-            <div className="text-center py-16 space-y-3">
+            <div className="text-center py-16 space-y-3 bg-white/50 backdrop-blur-sm rounded-2xl border border-white/60 p-6">
               <p className="text-3xl">🔖</p>
               <h3 className="text-sm font-black uppercase tracking-wider text-black">
                 Your wishlist is empty
@@ -141,7 +141,7 @@ export default function WishlistDrawer({
               <Link
                 href="/shop"
                 onClick={onClose}
-                className="inline-block mt-3 bg-black text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full hover:bg-[#E8262A] transition-colors"
+                className="inline-block mt-3 bg-black text-white text-[11px] font-black uppercase tracking-widest px-5 py-2.5 rounded-full hover:bg-[#E8262A] transition-colors shadow-md"
               >
                 Explore Catalogue
               </Link>
@@ -150,9 +150,9 @@ export default function WishlistDrawer({
             wishlist.map((item) => (
               <div
                 key={item.id}
-                className="flex gap-3 pb-4 border-b border-neutral-100"
+                className="flex gap-3 p-3 bg-white/70 backdrop-blur-md rounded-2xl border border-white/80 shadow-2xs"
               >
-                <div className="relative w-18 h-22 rounded-xl overflow-hidden bg-neutral-100 flex-shrink-0 border border-neutral-200">
+                <div className="relative w-18 h-22 rounded-xl overflow-hidden bg-white/60 flex-shrink-0 border border-white/70">
                   <Image
                     src={item.images[0]}
                     alt={item.name}
@@ -172,7 +172,7 @@ export default function WishlistDrawer({
                   <div className="flex items-center gap-2 pt-2">
                     <button
                       onClick={() => moveToCart(item)}
-                      className="bg-black text-white hover:bg-[#E8262A] text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors"
+                      className="bg-black text-white hover:bg-[#E8262A] text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors shadow-xs"
                     >
                       Move to Bag
                     </button>

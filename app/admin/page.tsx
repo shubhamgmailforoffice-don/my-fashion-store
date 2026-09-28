@@ -536,7 +536,7 @@ function AdminContent() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-300 pb-6 font-inter">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xs font-inter">
         <div>
           <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase font-inter">
             Control Center • Real-time Operations
@@ -549,7 +549,7 @@ function AdminContent() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => refreshData()}
-            className="border border-neutral-300 bg-white hover:bg-neutral-100 text-neutral-800 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors rounded-xl shadow-xs"
+            className="border border-white/80 bg-white/70 hover:bg-white text-neutral-800 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm"
           >
             ↻ Refresh
           </button>
@@ -558,7 +558,7 @@ function AdminContent() {
               setActiveTab("products");
               setIsAddModalOpen(true);
             }}
-            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95"
+            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30"
           >
             <span>+ Add Product</span>
           </button>
@@ -567,32 +567,32 @@ function AdminContent() {
 
       {/* Top High-level Metric Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-inter">
-        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Revenue</p>
           <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">RS. {totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Orders</p>
           <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{ordersList.length}</p>
         </div>
-        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Live Catalog</p>
           <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{productsList.length} Items</p>
         </div>
-        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Registered Users</p>
           <p className="text-xl sm:text-2xl font-black text-[#E8262A] mt-1 font-anton">{usersList.length} Members</p>
         </div>
       </div>
 
       {/* FIVE DEDICATED TABS */}
-      <div className="flex border-b border-neutral-300 gap-x-2 overflow-x-auto no-scrollbar font-inter">
+      <div className="flex border-b border-black/5 gap-x-2 overflow-x-auto no-scrollbar font-inter">
         <button
           onClick={() => setActiveTab("orders")}
           className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === "orders"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
+              ? "border-[#E8262A] text-[#E8262A] bg-white/90 backdrop-blur-md rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black bg-white/40 hover:bg-white/70 backdrop-blur-xs rounded-t-xl"
           }`}
         >
           <span>1. Orders & Dispatch</span>
@@ -1430,8 +1430,8 @@ function AdminContent() {
       {/* MODAL: EDIT PRODUCT & MULTI-PHOTO MANAGER */}
       {/* ========================================================================= */}
       {editingProduct && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-inter">
-          <div className="bg-white border border-neutral-300 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-md font-inter">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
@@ -1756,8 +1756,8 @@ function AdminContent() {
       {/* MODAL: ADD NEW PRODUCT */}
       {/* ========================================================================= */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs font-inter">
-          <div className="bg-white border border-neutral-300 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-md font-inter">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
@@ -2095,8 +2095,8 @@ function AdminContent() {
 
       {/* Quick Add Subcategory Modal */}
       {quickAddSubOpen && (
-        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-5 border border-neutral-300 shadow-2xl animate-in zoom-in-95">
+        <div className="fixed inset-0 z-60 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl max-w-sm w-full p-6 border border-white/70 shadow-2xl animate-in zoom-in-95">
             <h4 className="text-sm font-black font-anton uppercase text-black mb-1">
               Add New Sub-Category
             </h4>

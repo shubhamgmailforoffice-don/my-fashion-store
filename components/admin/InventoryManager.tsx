@@ -436,7 +436,7 @@ export default function InventoryManager({
   return (
     <div className="space-y-6 font-inter">
       {/* Top Action Bar with Separate "Add to Inventory" Button */}
-      <div className="bg-white border border-neutral-300 p-6 rounded-2xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-6 rounded-3xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
             Catalogue & Stock Operations
@@ -453,7 +453,7 @@ export default function InventoryManager({
           <button
             type="button"
             onClick={() => onRefresh()}
-            className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-xl text-xs font-bold text-neutral-800 uppercase transition-all shadow-xs"
+            className="px-3.5 py-2 bg-white/70 hover:bg-white border border-white/80 rounded-xl text-xs font-bold text-neutral-800 uppercase transition-all shadow-2xs backdrop-blur-sm"
           >
             ↻ Refresh
           </button>
@@ -461,7 +461,7 @@ export default function InventoryManager({
             type="button"
             onClick={handleEmptyAllStock}
             disabled={isSaving || products.length === 0}
-            className="px-3 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-xs font-black text-amber-900 uppercase transition-all shadow-xs disabled:opacity-40"
+            className="px-3 py-2 bg-amber-50/80 hover:bg-amber-100 border border-amber-300/80 rounded-xl text-xs font-black text-amber-900 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
             title="Set stock quantity to 0 (Sold Out) for all products"
           >
             Set All Stock to 0
@@ -470,7 +470,7 @@ export default function InventoryManager({
             type="button"
             onClick={handleDeleteAllProducts}
             disabled={isSaving || products.length === 0}
-            className="px-3 py-2 bg-red-50 hover:bg-red-100 border border-red-300 rounded-xl text-xs font-black text-red-700 uppercase transition-all shadow-xs disabled:opacity-40"
+            className="px-3 py-2 bg-red-50/80 hover:bg-red-100 border border-red-300/80 rounded-xl text-xs font-black text-red-700 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
             title="Permanently delete all products to start completely fresh"
           >
             🗑️ Delete All Products
@@ -478,7 +478,7 @@ export default function InventoryManager({
           <button
             type="button"
             onClick={() => setIsAddDraftOpen(true)}
-            className="px-4 py-2 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5 border border-red-500/30"
           >
             <span>+ Add to Inventory</span>
           </button>
@@ -487,7 +487,7 @@ export default function InventoryManager({
 
       {/* Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
             Total Inventory Items
           </p>
@@ -499,7 +499,7 @@ export default function InventoryManager({
           </span>
         </div>
 
-        <div className="bg-white border border-emerald-300 p-5 rounded-2xl shadow-xs bg-emerald-50/20">
+        <div className="bg-white/75 backdrop-blur-xl border border-emerald-300/80 p-5 rounded-2xl shadow-xs bg-emerald-50/30 hover:shadow-md transition-all">
           <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800">
             Live on Storefront
           </p>
@@ -511,7 +511,7 @@ export default function InventoryManager({
           </span>
         </div>
 
-        <div className="bg-white border border-amber-300 p-5 rounded-2xl shadow-xs bg-amber-50/20">
+        <div className="bg-white/75 backdrop-blur-xl border border-amber-300/80 p-5 rounded-2xl shadow-xs bg-amber-50/30 hover:shadow-md transition-all">
           <p className="text-[10px] font-black uppercase tracking-widest text-amber-800">
             Inventory Drafts (Offline)
           </p>
@@ -523,7 +523,7 @@ export default function InventoryManager({
           </span>
         </div>
 
-        <div className="bg-white border border-red-300 p-5 rounded-2xl shadow-xs bg-red-50/20">
+        <div className="bg-white/75 backdrop-blur-xl border border-red-300/80 p-5 rounded-2xl shadow-xs bg-red-50/30 hover:shadow-md transition-all">
           <p className="text-[10px] font-black uppercase tracking-widest text-[#E8262A]">
             Low Stock Alerts (&le; 5 left)
           </p>
@@ -777,8 +777,8 @@ export default function InventoryManager({
 
       {/* MODAL 1: ADD DRAFT TO INVENTORY */}
       {isAddDraftOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-neutral-300 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">
@@ -1050,8 +1050,8 @@ export default function InventoryManager({
 
       {/* MODAL 2: PUBLISH DRAFT TO LIVE SITE */}
       {publishingProduct && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-neutral-300 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">
@@ -1206,8 +1206,8 @@ export default function InventoryManager({
 
       {/* MODAL 3: FULL PRODUCT MANAGEMENT (CLICKED PRODUCT) */}
       {activeManageProduct && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-neutral-300 rounded-3xl max-w-3xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-3xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">

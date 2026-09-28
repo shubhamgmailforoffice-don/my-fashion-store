@@ -65,14 +65,14 @@ export default function QuickAddModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150"
+      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in duration-150"
       role="dialog"
       aria-modal="true"
     >
       <div className="absolute inset-0 -z-10" onClick={onClose} />
 
-      <div className="w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl border border-neutral-200 animate-in slide-in-from-bottom duration-200 max-h-[85vh] overflow-y-auto">
-        <div className="flex items-center justify-between pb-3 border-b border-neutral-100">
+      <div className="w-full sm:max-w-md bg-white/92 backdrop-blur-2xl rounded-t-3xl sm:rounded-2xl p-5 shadow-2xl border border-white/70 animate-in slide-in-from-bottom duration-200 max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-black/5">
           <span className="text-[10px] font-black uppercase tracking-widest text-neutral-400">
             Quick Add to Bag
           </span>
@@ -86,7 +86,7 @@ export default function QuickAddModal({
         </div>
 
         <div className="flex gap-4 py-4">
-          <div className="relative w-20 h-24 rounded-xl overflow-hidden bg-neutral-100 flex-shrink-0 border border-neutral-200">
+          <div className="relative w-20 h-24 rounded-xl overflow-hidden bg-white/60 flex-shrink-0 border border-white/80 shadow-2xs">
             <Image
               src={product.images[0]}
               alt={product.name}
@@ -113,7 +113,7 @@ export default function QuickAddModal({
         </div>
 
         {/* Size Selection */}
-        <div className="space-y-2 py-3 border-t border-neutral-100">
+        <div className="space-y-2 py-3 border-t border-black/5">
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-neutral-700 uppercase tracking-wider">
               Select Size: <strong className="text-black">{selectedSize}</strong>
@@ -136,7 +136,7 @@ export default function QuickAddModal({
                 className={`py-2 text-xs font-black uppercase rounded-lg border transition-all ${
                   selectedSize === sz
                     ? "bg-black text-white border-black shadow-md scale-102"
-                    : "bg-white text-neutral-800 border-neutral-200 hover:border-neutral-400"
+                    : "bg-white/70 hover:bg-white text-neutral-800 border-white/80 backdrop-blur-sm shadow-2xs hover:border-neutral-400"
                 }`}
               >
                 {sz}

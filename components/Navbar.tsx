@@ -342,7 +342,7 @@ export default function Navbar() {
   return (
     <>
       {/* Main Sticky Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-black/5 bg-[#E8E6DF]/80 backdrop-blur-xl shadow-xs transition-colors">
         <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
           
           {/* Left Column: Mobile Pill (+ DRIIVN) or Desktop Navigation */}
@@ -351,7 +351,7 @@ export default function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300/80 px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-xs"
+              className="lg:hidden flex items-center gap-1.5 bg-white/60 hover:bg-white/90 border border-white/75 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
               aria-label="Open navigation menu"
             >
               <span className="text-sm font-light text-neutral-800 leading-none">+</span>
@@ -480,17 +480,17 @@ export default function Navbar() {
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 lg:hidden overflow-hidden" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
+            className="fixed inset-0 bg-black/45 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed inset-y-0 left-0 max-w-[340px] sm:max-w-sm w-full bg-[#f4f4f4] shadow-2xl z-50 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-250 select-none">
+          <div className="fixed inset-y-0 left-0 max-w-[340px] sm:max-w-sm w-full bg-[#E8E6DF]/90 backdrop-blur-2xl border-r border-white/60 shadow-2xl z-50 flex flex-col justify-between overflow-y-auto animate-in slide-in-from-left duration-250 select-none">
             {/* Drawer Top Header (Screenshot 7: x DRIIVN, bookmark, bag) */}
             <div className="p-5 pb-2 flex items-center justify-between">
               {/* Left Brand Pill with Close 'X' */}
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex items-center gap-1.5 bg-neutral-200/90 hover:bg-neutral-300 border border-neutral-300/80 px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
+                className="flex items-center gap-1.5 bg-white/70 hover:bg-white/95 border border-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
                 aria-label="Close navigation menu"
               >
                 <span className="text-xs font-bold text-neutral-800 leading-none">&times;</span>
@@ -739,13 +739,13 @@ export default function Navbar() {
       {isSearchOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/45 backdrop-blur-sm transition-opacity"
             onClick={() => {
               setIsSearchOpen(false);
               setSearchQuery("");
             }}
           />
-          <div className="fixed inset-x-0 top-0 bg-white shadow-2xl z-50 max-h-[85vh] flex flex-col animate-in slide-in-from-top duration-200">
+          <div className="fixed inset-x-0 top-0 bg-white/92 backdrop-blur-2xl border-b border-white/70 shadow-2xl z-50 max-h-[85vh] flex flex-col animate-in slide-in-from-top duration-200">
             <div className="max-w-4xl w-full mx-auto p-6 sm:p-8 flex-1 flex flex-col">
               <div className="flex items-center justify-between border-b-2 border-black pb-4">
                 <div className="flex items-center gap-3 flex-1">
@@ -758,7 +758,7 @@ export default function Navbar() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
-                    className="w-full text-sm sm:text-base font-bold tracking-widest text-black uppercase outline-none placeholder:text-gray-400"
+                    className="w-full text-sm sm:text-base font-bold tracking-widest text-black uppercase outline-none placeholder:text-gray-400 bg-transparent"
                   />
                 </div>
                 <button
@@ -784,7 +784,7 @@ export default function Navbar() {
                         <button
                           key={tag}
                           onClick={() => setSearchQuery(tag)}
-                          className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 border border-gray-200 hover:border-black transition-colors"
+                          className="text-[10px] font-bold tracking-widest uppercase px-3 py-1.5 bg-white/65 hover:bg-white border border-white/80 backdrop-blur-md rounded-full transition-colors shadow-2xs"
                         >
                           {tag}
                         </button>
@@ -813,7 +813,7 @@ export default function Navbar() {
                             setIsSearchOpen(false);
                             setSearchQuery("");
                           }}
-                          className="flex items-center gap-4 p-3 border border-gray-100 hover:border-black transition-all bg-zinc-50/60"
+                          className="flex items-center gap-4 p-3 border border-white/70 hover:border-black transition-all bg-white/60 backdrop-blur-md rounded-2xl shadow-2xs"
                         >
                           <div className="w-16 h-20 relative flex-shrink-0 bg-gray-100 overflow-hidden">
                             <Image
@@ -849,15 +849,15 @@ export default function Navbar() {
       {isCartOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true">
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity duration-300"
+            className="absolute inset-0 bg-black/45 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setIsCartOpen(false)}
           />
 
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-6 sm:pl-10">
-            <div className="pointer-events-auto w-screen max-w-md transform bg-white shadow-2xl transition-all duration-300 flex flex-col">
+            <div className="pointer-events-auto w-screen max-w-md transform bg-[#E8E6DF]/92 backdrop-blur-2xl border-l border-white/60 shadow-2xl transition-all duration-300 flex flex-col">
               
               {/* Drawer Header */}
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5">
+              <div className="flex items-center justify-between border-b border-black/5 px-6 py-5 bg-white/40">
                 <div>
                   <h2 className="text-sm font-black tracking-widest uppercase text-gray-900">
                     Shopping Bag ({cartCount})
@@ -875,7 +875,7 @@ export default function Navbar() {
               </div>
 
               {/* Free Shipping Progress Indicator */}
-              <div className="bg-zinc-50 border-b border-gray-100 px-6 py-3">
+              <div className="bg-white/60 backdrop-blur-md border-b border-black/5 px-6 py-3">
                 <div className="flex justify-between items-center text-[9px] font-black tracking-widest uppercase mb-1.5">
                   <span>
                     {remainingForFreeShipping === 0
@@ -980,7 +980,7 @@ export default function Navbar() {
 
               {/* Drawer Footer Summary */}
               {cartItems.length > 0 && (
-                <div className="border-t border-gray-100 py-6 px-6 bg-zinc-50 space-y-4">
+                <div className="border-t border-black/5 py-6 px-6 bg-white/75 backdrop-blur-xl space-y-4">
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-xs font-black tracking-widest text-gray-900 uppercase">
                       <p>Estimated Total</p>
@@ -998,7 +998,7 @@ export default function Navbar() {
                         setIsCheckoutOpen(true);
                         setCheckoutStep("details");
                       }}
-                      className="w-full bg-black text-white hover:bg-[#E8262A] py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-black text-white hover:bg-[#E8262A] py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2 shadow-lg"
                     >
                       <span>Proceed to Checkout</span>
                       <span>•</span>
@@ -1006,7 +1006,7 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => setIsCartOpen(false)}
-                      className="w-full bg-transparent hover:bg-white text-gray-700 hover:text-black border border-gray-200 py-3 text-[10px] font-bold tracking-widest uppercase transition-all"
+                      className="w-full bg-white/60 hover:bg-white text-gray-700 hover:text-black border border-white/80 py-3 text-[10px] font-bold tracking-widest uppercase transition-all backdrop-blur-sm"
                     >
                       Continue Shopping
                     </button>
@@ -1020,8 +1020,8 @@ export default function Navbar() {
 
       {/* DRIIVN SECURE UPI CHECKOUT MODAL */}
       {isCheckoutOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white max-w-xl w-full border border-neutral-200 shadow-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/55 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white/95 backdrop-blur-2xl max-w-xl w-full border border-white/70 shadow-2xl rounded-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
             {/* Modal Header */}
             <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-black text-white">
               <div>

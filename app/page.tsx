@@ -108,9 +108,10 @@ export default async function Home() {
         <div className="relative z-10 pb-12 sm:pb-16 text-center select-none">
           <Link
             href="/shop"
-            className="inline-block text-white text-sm sm:text-base font-bold tracking-widest uppercase border-b-2 border-white pb-1 hover:text-[#E8262A] hover:border-[#E8262A] transition-colors drop-shadow-md"
+            className="inline-flex items-center gap-2 bg-black/60 hover:bg-[#E8262A] text-white border border-white/30 backdrop-blur-md px-7 py-3 rounded-full text-xs sm:text-sm font-black tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95"
           >
-            Shop now
+            <span>Shop Now</span>
+            <span>&rarr;</span>
           </Link>
         </div>
       </section>
@@ -179,7 +180,7 @@ export default async function Home() {
                           className="object-cover group-hover:scale-105 transition-transform duration-700"
                         />
                         {bag.inStock === false && (
-                          <span className="absolute top-3 left-3 bg-white/95 text-black px-2.5 py-0.5 text-[9px] font-bold tracking-wider uppercase rounded-full shadow-xs">
+                          <span className="absolute top-3 left-3 bg-white/85 text-black border border-white/70 backdrop-blur-md px-2.5 py-0.5 text-[9px] font-black tracking-wider uppercase rounded-full shadow-xs">
                             Sold Out
                           </span>
                         )}
@@ -193,7 +194,7 @@ export default async function Home() {
                             RS. {bag.price.toLocaleString()}
                           </p>
                         </div>
-                        <span className="text-xl font-light text-neutral-500 group-hover:text-[#E8262A]">
+                        <span className="w-6 h-6 rounded-full bg-white/70 border border-white/80 backdrop-blur-xs flex items-center justify-center text-sm font-bold text-neutral-700 group-hover:bg-black group-hover:text-white transition-colors shadow-2xs">
                           +
                         </span>
                       </div>
@@ -318,27 +319,27 @@ export default async function Home() {
                 <Link
                   key={cat.id}
                   href={cat.href}
-                  className="relative group h-80 sm:h-96 bg-black rounded-2xl overflow-hidden flex flex-col justify-end p-6 border border-zinc-900 cursor-pointer block"
+                  className="relative group h-80 sm:h-96 bg-black rounded-3xl overflow-hidden flex flex-col justify-end p-5 border border-white/20 shadow-xl cursor-pointer block"
                 >
                   <Image
                     src={cat.image}
                     alt={cat.name}
                     fill
-                    className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
+                    className="object-cover opacity-60 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
 
-                  <div className="relative z-20 w-full space-y-1.5">
+                  <div className="relative z-20 w-full p-4 rounded-2xl bg-black/45 backdrop-blur-md border border-white/20 space-y-1.5 transition-all group-hover:bg-black/65 group-hover:border-white/35 shadow-lg">
                     <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block">
                       Category 0{index + 1} &bull; {cat.tag}
                     </span>
                     <h3 className="text-base sm:text-lg font-black tracking-wider text-white uppercase font-anton group-hover:text-[#E8262A] transition-colors">
                       {cat.name}
                     </h3>
-                    <p className="text-[10px] text-gray-300 line-clamp-2 uppercase">
+                    <p className="text-[10px] text-gray-200 line-clamp-2 uppercase font-medium">
                       {cat.subText}
                     </p>
-                    <span className="inline-block text-[10px] font-bold tracking-widest text-white group-hover:text-[#E8262A] uppercase pt-1 transition-colors">
+                    <span className="inline-block text-[10px] font-black tracking-widest text-white group-hover:text-[#E8262A] uppercase pt-1 transition-colors">
                       Explore {cat.name} &rarr;
                     </span>
                   </div>
@@ -349,7 +350,7 @@ export default async function Home() {
         </section>
 
         {/* Section 5: Brand Blueprint */}
-        <section className="bg-black text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-zinc-900">
+        <section className="bg-neutral-950 text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
               <span className="text-[10px] font-black tracking-[0.4em] text-[#E8262A] uppercase">
@@ -362,23 +363,23 @@ export default async function Home() {
               <p className="text-xs sm:text-sm text-gray-300 uppercase tracking-widest leading-relaxed">
                 DRIIVN was born out of a desire to create unapologetic, high-octane luxury streetwear. Every garment is cut from custom-milled French Terry and ripstop cotton, tested for drape and durability, and finished with meticulous tactile printing techniques.
               </p>
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-zinc-800">
-                <div>
+              <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/10">
+                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
                   <p className="text-2xl font-black text-white font-anton">420</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">GSM French Terry</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">GSM French Terry</p>
                 </div>
-                <div>
+                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
                   <p className="text-2xl font-black text-white font-anton">100%</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Combed Cotton</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Combed Cotton</p>
                 </div>
-                <div>
+                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
                   <p className="text-2xl font-black text-white font-anton">PAN-INDIA</p>
-                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Express Dispatch</p>
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Express Dispatch</p>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-6 relative aspect-[4/3] rounded-2xl bg-zinc-900 border border-zinc-800 overflow-hidden">
+            <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl bg-zinc-900 border border-white/15 overflow-hidden shadow-2xl">
               <Image
                 src="/images/hero-streetwear.jpg"
                 alt="DRIIVN Couture Process"
@@ -386,14 +387,14 @@ export default async function Home() {
                 className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
+              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/20">
                 <div>
                   <p className="text-[10px] font-bold tracking-widest text-[#E8262A] uppercase">Archive Series</p>
                   <p className="text-sm font-black tracking-widest text-white uppercase font-anton">Seasonal Drops</p>
                 </div>
                 <Link
                   href="/shop"
-                  className="bg-[#E8262A] hover:bg-white hover:text-black text-white px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors rounded-lg shadow-lg"
+                  className="bg-[#E8262A] hover:bg-white hover:text-black text-white px-4 py-2 text-[10px] font-black tracking-widest uppercase transition-colors rounded-xl shadow-lg"
                 >
                   Shop Pieces
                 </Link>

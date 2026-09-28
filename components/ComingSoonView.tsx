@@ -53,7 +53,7 @@ export default function ComingSoonView({
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden bg-black text-white border border-neutral-800 shadow-2xl my-6">
+    <div className="relative w-full rounded-3xl overflow-hidden bg-black/90 backdrop-blur-2xl text-white border border-white/15 shadow-2xl my-6">
       {/* Background Ambience & Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -70,7 +70,7 @@ export default function ComingSoonView({
       {/* Content Container */}
       <div className="relative z-10 max-w-4xl mx-auto px-6 py-16 sm:py-24 text-center flex flex-col items-center">
         {/* Pulsing Status Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/15 backdrop-blur-md mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-xl mb-6 shadow-xs">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E8262A] opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E8262A]" />
@@ -85,7 +85,7 @@ export default function ComingSoonView({
         </div>
 
         {/* Main Headline */}
-        <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-anton uppercase tracking-tight text-white leading-none max-w-3xl">
+        <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black font-anton uppercase tracking-tight text-white leading-none max-w-3xl drop-shadow-md">
           {config.title || `${config.name.toUpperCase()} DROP COMING SOON`}
         </h2>
 
@@ -103,7 +103,7 @@ export default function ComingSoonView({
         {/* VIP Early Access Form */}
         <div className="w-full max-w-md mt-8">
           {isSubmitted ? (
-            <div className="bg-emerald-950/80 border border-emerald-500/50 rounded-2xl p-5 text-center animate-in fade-in zoom-in-95 duration-200">
+            <div className="bg-emerald-950/80 backdrop-blur-xl border border-emerald-500/50 rounded-2xl p-5 text-center animate-in fade-in zoom-in-95 duration-200 shadow-xl">
               <span className="text-2xl block mb-1">⚡</span>
               <p className="text-xs font-black uppercase tracking-wider text-emerald-300">
                 You&apos;re On The VIP Priority List!
@@ -121,7 +121,7 @@ export default function ComingSoonView({
                   placeholder="Enter Email or WhatsApp Phone..."
                   value={contact}
                   onChange={(e) => setContact(e.target.value)}
-                  className="flex-1 bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/20 focus:border-[#E8262A] rounded-xl px-4 py-3 text-xs text-white placeholder:text-neutral-400 outline-none transition-all"
+                  className="flex-1 bg-white/10 hover:bg-white/15 focus:bg-white/20 border border-white/25 focus:border-[#E8262A] rounded-xl px-4 py-3 text-xs text-white placeholder:text-neutral-400 outline-none transition-all backdrop-blur-md"
                 />
                 <button
                   type="submit"
@@ -147,19 +147,19 @@ export default function ComingSoonView({
 
         {/* Feature Value Pillars */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full max-w-2xl mt-12 text-left">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-md shadow-xs">
             <span className="text-xs font-black text-[#E8262A] font-anton block mb-1">01 / EARLY ACCESS</span>
             <p className="text-[10px] text-neutral-300 leading-snug">
               VIP members receive checkout access 2 hours ahead of Instagram release.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-md shadow-xs">
             <span className="text-xs font-black text-[#E8262A] font-anton block mb-1">02 / LIMITED BATCH</span>
             <p className="text-[10px] text-neutral-300 leading-snug">
               Numbered units, strictly made-to-order silhouettes. Zero restocks.
             </p>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-xs">
+          <div className="bg-white/10 border border-white/20 rounded-2xl p-4 backdrop-blur-md shadow-xs">
             <span className="text-xs font-black text-[#E8262A] font-anton block mb-1">03 / ATELIER QUALITY</span>
             <p className="text-[10px] text-neutral-300 leading-snug">
               Custom-milled 380+ GSM heavyweight fabrics with bespoke hardware.

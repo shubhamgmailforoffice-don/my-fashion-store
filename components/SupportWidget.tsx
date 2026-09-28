@@ -181,7 +181,7 @@ export default function SupportWidget() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group bg-black hover:bg-[#E8262A] text-white shadow-2xl border border-neutral-800 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
+            className="group bg-black/85 hover:bg-[#E8262A] backdrop-blur-xl text-white shadow-2xl border border-white/20 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Open Concierge Support"
           >
             <div className="relative">
@@ -205,9 +205,9 @@ export default function SupportWidget() {
 
       {/* Floating Concierge Drawer / Card */}
       {isOpen && (
-        <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[380px] bg-white border border-neutral-300 shadow-2xl rounded-2xl sm:rounded-lg overflow-hidden flex flex-col h-[520px] max-h-[80vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[380px] bg-white/92 backdrop-blur-2xl border border-white/70 shadow-2xl rounded-2xl overflow-hidden flex flex-col h-[520px] max-h-[80vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
-          <div className="bg-black text-white p-4 flex items-center justify-between border-b border-neutral-800">
+          <div className="bg-black/90 backdrop-blur-md text-white p-4 flex items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
                 D
@@ -234,13 +234,13 @@ export default function SupportWidget() {
           </div>
 
           {/* Tab Navigation */}
-          <div className="grid grid-cols-2 border-b border-neutral-200 bg-neutral-50 text-[10px] font-black uppercase tracking-wider text-center">
+          <div className="grid grid-cols-2 border-b border-black/5 bg-white/50 backdrop-blur-sm text-[10px] font-black uppercase tracking-wider text-center">
             <button
               type="button"
               onClick={() => setActiveTab("chat")}
               className={`py-2.5 transition-colors ${
                 activeTab === "chat"
-                  ? "bg-white text-black border-b-2 border-black"
+                  ? "bg-white/80 text-black border-b-2 border-black backdrop-blur-md"
                   : "text-neutral-500 hover:text-black"
               }`}
             >
@@ -251,7 +251,7 @@ export default function SupportWidget() {
               onClick={() => setActiveTab("channels")}
               className={`py-2.5 transition-colors ${
                 activeTab === "channels"
-                  ? "bg-white text-black border-b-2 border-black"
+                  ? "bg-white/80 text-black border-b-2 border-black backdrop-blur-md"
                   : "text-neutral-500 hover:text-black"
               }`}
             >
@@ -340,19 +340,19 @@ export default function SupportWidget() {
                   e.preventDefault();
                   handleSendMessage(inputText);
                 }}
-                className="p-3 bg-white border-t border-neutral-200 flex gap-2"
+                className="p-3 bg-white/80 backdrop-blur-xl border-t border-black/5 flex gap-2"
               >
                 <input
                   type="text"
                   placeholder="Ask a question or enter Order ID..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="flex-1 border border-neutral-300 px-3 py-2 text-xs focus:outline-none focus:border-black uppercase placeholder:normal-case font-medium"
+                  className="flex-1 bg-white/70 border border-neutral-300 px-3 py-2 text-xs rounded-xl focus:outline-none focus:border-black uppercase placeholder:normal-case font-medium backdrop-blur-sm"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase transition-colors"
+                  className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase rounded-xl transition-colors shadow-xs"
                 >
                   &rarr;
                 </button>
@@ -362,7 +362,7 @@ export default function SupportWidget() {
 
           {/* TAB 2: DIRECT CHANNELS (WHATSAPP, EMAIL, PHONE) */}
           {activeTab === "channels" && (
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white text-xs">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 bg-white/50 backdrop-blur-md text-xs">
               {/* WhatsApp Priority Card */}
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -370,13 +370,13 @@ export default function SupportWidget() {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="block p-4 border border-emerald-200 bg-emerald-50/60 hover:bg-emerald-100/80 transition-colors group"
+                className="block p-4 border border-emerald-300/80 bg-emerald-50/80 hover:bg-emerald-100 backdrop-blur-sm rounded-2xl transition-colors group shadow-2xs"
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-emerald-800 flex items-center gap-1.5">
                     <span className="text-base">💬</span> WhatsApp Live Chat
                   </span>
-                  <span className="text-[9px] font-bold uppercase bg-emerald-600 text-white px-2 py-0.5 rounded-xs">
+                  <span className="text-[9px] font-bold uppercase bg-emerald-600 text-white px-2 py-0.5 rounded-full shadow-xs">
                     Fastest
                   </span>
                 </div>
@@ -395,7 +395,7 @@ export default function SupportWidget() {
                 )}&body=${encodeURIComponent(
                   "Hello DRIIVN Concierge,\n\nMy inquiry details:\n• Order ID (if applicable):\n• Description:\n\nThank you."
                 )}`}
-                className="block p-4 border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 transition-colors"
+                className="block p-4 border border-white/80 bg-white/70 hover:bg-white backdrop-blur-sm rounded-2xl transition-colors shadow-2xs"
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-neutral-800 flex items-center gap-1.5">
@@ -416,7 +416,7 @@ export default function SupportWidget() {
               {/* Phone Desk */}
               <a
                 href={`tel:${SUPPORT_PHONE.replace(/\s+/g, "")}`}
-                className="block p-4 border border-neutral-200 bg-neutral-50 hover:bg-neutral-100 transition-colors"
+                className="block p-4 border border-white/80 bg-white/70 hover:bg-white backdrop-blur-sm rounded-2xl transition-colors shadow-2xs"
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[10px] font-black uppercase tracking-widest text-neutral-800 flex items-center gap-1.5">
@@ -434,15 +434,11 @@ export default function SupportWidget() {
                 </p>
               </a>
 
-              {/* Flagship Stores Link */}
+              {/* Online Atelier Guarantee */}
               <div className="pt-2 text-center">
-                <Link
-                  href="/stores"
-                  onClick={() => setIsOpen(false)}
-                  className="text-[10px] font-bold text-[#E8262A] hover:underline uppercase tracking-wider"
-                >
-                  Visit Physical Flagship Stores (Delhi &bull; Mumbai &bull; Hyderabad) &rarr;
-                </Link>
+                <span className="text-[9px] font-black text-neutral-500 uppercase tracking-widest">
+                  DRIIVN ONLINE ATELIER &bull; 100% VERIFIED AUTHENTIC DISPATCH
+                </span>
               </div>
             </div>
           )}
