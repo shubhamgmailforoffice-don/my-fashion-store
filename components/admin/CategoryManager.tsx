@@ -28,9 +28,13 @@ interface CategoriesData {
 
 interface CategoryManagerProps {
   products?: Product[];
+  onCategoriesUpdated?: () => void;
 }
 
-export default function CategoryManager({ products = [] }: CategoryManagerProps) {
+export default function CategoryManager({
+  products = [],
+  onCategoriesUpdated,
+}: CategoryManagerProps) {
   const [data, setData] = useState<CategoriesData | null>(null);
   const [comingSoonData, setComingSoonData] = useState<ComingSoonData>({
     categories: defaultComingSoonConfigs,
@@ -235,6 +239,8 @@ export default function CategoryManager({ products = [] }: CategoryManagerProps)
         setNewSubCategoryInput((prev) => ({ ...prev, [accordionId]: "" }));
         setSaveMessage(`Added "${val}" to ${accordionId}`);
         setTimeout(() => setSaveMessage(""), 2000);
+        window.dispatchEvent(new CustomEvent("driivn_categories_updated", { detail: result.data }));
+        onCategoriesUpdated?.();
       }
     } catch (e) {
       alert("Error adding subcategory: " + String(e));
@@ -264,6 +270,8 @@ export default function CategoryManager({ products = [] }: CategoryManagerProps)
         setData(result.data);
         setSaveMessage(`Removed "${subCategory}"`);
         setTimeout(() => setSaveMessage(""), 2000);
+        window.dispatchEvent(new CustomEvent("driivn_categories_updated", { detail: result.data }));
+        onCategoriesUpdated?.();
       }
     } catch (e) {
       alert("Error removing subcategory: " + String(e));
@@ -293,6 +301,8 @@ export default function CategoryManager({ products = [] }: CategoryManagerProps)
         setNewCategoryName("");
         setSaveMessage(`Created category "${newCategoryName}"`);
         setTimeout(() => setSaveMessage(""), 2000);
+        window.dispatchEvent(new CustomEvent("driivn_categories_updated", { detail: result.data }));
+        onCategoriesUpdated?.();
       }
     } catch (e) {
       alert("Error creating category: " + String(e));

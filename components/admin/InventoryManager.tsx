@@ -1,28 +1,50 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/data";
+import { AdminCategory, DEFAULT_ADMIN_CATEGORIES, parseCategoriesData } from "@/lib/categories";
 
 interface InventoryManagerProps {
   products: Product[];
   onRefresh: () => void;
   onEditProduct?: (product: Product) => void;
+  categoriesList?: AdminCategory[];
 }
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
 
-const CATEGORIES_LIST = [
-  { id: "Tops", name: "Tops & Hoodies", subCategories: ["T-shirts", "Polos", "Shirts", "Sweatshirts", "Hoodies", "Jackets"] },
-  { id: "Bottoms", name: "Bottoms & Pants", subCategories: ["Cargos", "Jeans", "Pants", "Shorts"] },
-  { id: "Accessories", name: "Accessories", subCategories: ["Bags", "Wallets", "Caps", "Socks"] },
-  { id: "Special", name: "Special Collections", subCategories: ["New Arrivals", "Winter collection 2026", "Basics", "DRIIVN Racing Club", "Icons"] },
-];
+const CATEGORIES_LIST = DEFAULT_ADMIN_CATEGORIES;
 
 export default function InventoryManager({
   products,
   onRefresh,
+  categoriesList: initialCategoriesList,
 }: InventoryManagerProps) {
+  const [categoriesList, setCategoriesList] = useState<AdminCategory[]>(
+    initialCategoriesList || DEFAULT_ADMIN_CATEGORIES
+  );
+
+  useEffect(() => {
+    if (initialCategoriesList && initialCategoriesList.length > 0) {
+      setCategoriesList(initialCategoriesList);
+    }
+  }, [initialCategoriesList]);
+
+  useEffect(() => {
+    const handleCatsUpdated = (e: any) => {
+      if (e?.detail) {
+        setCategoriesList(parseCategoriesData(e.detail));
+      } else {
+        fetch("/api/categories", { cache: "no-store" })
+          .then((r) => r.json())
+          .then((json) => setCategoriesList(parseCategoriesData(json)))
+          .catch(() => {});
+      }
+    };
+    window.addEventListener("driivn_categories_updated", handleCatsUpdated);
+    return () => window.removeEventListener("driivn_categories_updated", handleCatsUpdated);
+  }, []);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "live" | "draft" | "low_stock" | "out_of_stock">("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -928,6 +950,68 @@ export default function InventoryManager({
                 </div>
               </div>
 
+              {/* Category & SubCategory */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    value={
+                      categoriesList.find(
+                        (c) => c.id.toLowerCase() === (draftForm.category || "").toLowerCase()
+                      )?.id || (categoriesList[0]?.id || "Tops")
+                    }
+                    onChange={(e) => {
+                      const sel = e.target.value;
+                      const matched = categoriesList.find((c) => c.id.toLowerCase() === sel.toLowerCase());
+                      setDraftForm({
+                        ...draftForm,
+                        category: matched ? matched.id : sel,
+                        subCategory: matched?.subCategories[0] || "",
+                      });
+                    }}
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                  >
+                    {categoriesList.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
+                    Sub-Category *
+                  </label>
+                  <select
+                    value={draftForm.subCategory || ""}
+                    onChange={(e) => setDraftForm({ ...draftForm, subCategory: e.target.value })}
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                  >
+                    {(() => {
+                      const matched =
+                        categoriesList.find(
+                          (c) => c.id.toLowerCase() === (draftForm.category || "").toLowerCase()
+                        ) || categoriesList[0];
+                      const subs = matched?.subCategories || [];
+                      return (
+                        <>
+                          {subs.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                          {draftForm.subCategory &&
+                            !subs.some((s) => s.toLowerCase() === draftForm.subCategory?.toLowerCase()) && (
+                              <option value={draftForm.subCategory}>{draftForm.subCategory}</option>
+                            )}
+                        </>
+                      );
+                    })()}
+                  </select>
+                </div>
+              </div>
+
               {/* Description */}
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
@@ -996,11 +1080,23 @@ export default function InventoryManager({
                   Target Category *
                 </label>
                 <select
-                  value={publishForm.category}
-                  onChange={(e) => setPublishForm({ ...publishForm, category: e.target.value })}
+                  value={
+                    categoriesList.find(
+                      (c) => c.id.toLowerCase() === (publishForm.category || "").toLowerCase()
+                    )?.id || (categoriesList[0]?.id || "Tops")
+                  }
+                  onChange={(e) => {
+                    const sel = e.target.value;
+                    const matched = categoriesList.find((c) => c.id.toLowerCase() === sel.toLowerCase());
+                    setPublishForm({
+                      ...publishForm,
+                      category: matched ? matched.id : sel,
+                      subCategory: matched?.subCategories[0] || "",
+                    });
+                  }}
                   className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
                 >
-                  {CATEGORIES_LIST.map((c) => (
+                  {categoriesList.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>
@@ -1013,14 +1109,30 @@ export default function InventoryManager({
                 <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
                   Sub-Category Pill *
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. T-shirts, Hoodies, Cargos..."
-                  value={publishForm.subCategory}
+                <select
+                  value={publishForm.subCategory || ""}
                   onChange={(e) => setPublishForm({ ...publishForm, subCategory: e.target.value })}
                   className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
-                />
+                >
+                  {(() => {
+                    const matched =
+                      categoriesList.find(
+                        (c) => c.id.toLowerCase() === (publishForm.category || "").toLowerCase()
+                      ) || categoriesList[0];
+                    const subs = matched?.subCategories || [];
+                    return (
+                      <>
+                        {subs.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                        {publishForm.subCategory &&
+                          !subs.some((s) => s.toLowerCase() === publishForm.subCategory?.toLowerCase()) && (
+                            <option value={publishForm.subCategory}>{publishForm.subCategory}</option>
+                          )}
+                      </>
+                    );
+                  })()}
+                </select>
               </div>
 
               {/* Available Sizes */}
@@ -1242,6 +1354,72 @@ export default function InventoryManager({
                     }
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
                   />
+                </div>
+              </div>
+
+              {/* Category & SubCategory */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
+                    Category *
+                  </label>
+                  <select
+                    value={
+                      categoriesList.find(
+                        (c) => c.id.toLowerCase() === (activeManageProduct.category || "").toLowerCase()
+                      )?.id || activeManageProduct.category
+                    }
+                    onChange={(e) => {
+                      const sel = e.target.value;
+                      const matched = categoriesList.find((c) => c.id.toLowerCase() === sel.toLowerCase());
+                      setActiveManageProduct({
+                        ...activeManageProduct,
+                        category: matched ? matched.id : sel,
+                        subCategory: matched?.subCategories[0] || "",
+                      });
+                    }}
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                  >
+                    {categoriesList.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-neutral-600 mb-1">
+                    Sub-Category *
+                  </label>
+                  <select
+                    value={activeManageProduct.subCategory || ""}
+                    onChange={(e) =>
+                      setActiveManageProduct({
+                        ...activeManageProduct,
+                        subCategory: e.target.value,
+                      })
+                    }
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                  >
+                    {(() => {
+                      const matched =
+                        categoriesList.find(
+                          (c) => c.id.toLowerCase() === (activeManageProduct.category || "").toLowerCase()
+                        ) || categoriesList[0];
+                      const subs = matched?.subCategories || [];
+                      return (
+                        <>
+                          {subs.map((s) => (
+                            <option key={s} value={s}>{s}</option>
+                          ))}
+                          {activeManageProduct.subCategory &&
+                            !subs.some((s) => s.toLowerCase() === activeManageProduct.subCategory?.toLowerCase()) && (
+                              <option value={activeManageProduct.subCategory}>{activeManageProduct.subCategory}</option>
+                            )}
+                        </>
+                      );
+                    })()}
+                  </select>
                 </div>
               </div>
 

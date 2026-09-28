@@ -14,7 +14,9 @@ interface ShopClientProps {
 
 function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "View all";
+  const paramCat = searchParams.get("category");
+  const paramSub = searchParams.get("subCategory");
+  const initialCategory = paramSub || paramCat || "View all";
   const initialColor = searchParams.get("color") || "All";
 
   const [productsList, setProductsList] = useState<Product[]>(initialProducts);
@@ -26,6 +28,51 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
   const [sortBy, setSortBy] = useState("default");
   const [inStockOnly, setInStockOnly] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [filterPills, setFilterPills] = useState<string[]>([
+    "View all",
+    "T-shirts",
+    "Jackets",
+    "Shirts",
+    "Sweatshirt",
+    "Hoodies",
+    "Bottoms",
+    "Accessories",
+  ]);
+
+  // Sync categories and subcategories from backend
+  useEffect(() => {
+    fetch("/api/categories", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && Array.isArray(data.accordions)) {
+          const pills = ["View all"];
+          const seen = new Set(["view all"]);
+          for (const acc of data.accordions) {
+            if (acc.subCategories && Array.isArray(acc.subCategories)) {
+              for (const sub of acc.subCategories) {
+                const s = sub.trim();
+                const sLower = s.toLowerCase();
+                if (!seen.has(sLower)) {
+                  seen.add(sLower);
+                  pills.push(s);
+                }
+              }
+            }
+          }
+          for (const acc of data.accordions) {
+            const accName = (acc.name || "").trim();
+            if (accName && !seen.has(accName.toLowerCase()) && acc.type !== "color" && !acc.links) {
+              seen.add(accName.toLowerCase());
+              pills.push(accName);
+            }
+          }
+          if (pills.length > 1) {
+            setFilterPills(pills);
+          }
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Sync coming soon data from live backend
   useEffect(() => {
@@ -53,19 +100,6 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
       isMounted = false;
     };
   }, []);
-
-  // Category filter pills matching Screenshot 4:
-  // "View all", "T-shirts", "Jackets", "Shirts", "Sweatshirt", "Hoodies", "Bottoms", "Accessories"
-  const filterPills = [
-    "View all",
-    "T-shirts",
-    "Jackets",
-    "Shirts",
-    "Sweatshirt",
-    "Hoodies",
-    "Bottoms",
-    "Accessories",
-  ];
 
   // Filter products
   const filteredProducts = useMemo(() => {

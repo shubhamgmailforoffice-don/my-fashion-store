@@ -75,24 +75,63 @@ export async function POST(request: Request) {
     const body = await request.json();
     const current = await getCategoriesData();
 
+    // Helper to find matching accordion flexibly
+    const findAccordion = (accId: string) => {
+      const target = (accId || "").trim().toLowerCase();
+      return current.accordions?.find((a: any) => {
+        const aId = (a.id || "").toLowerCase();
+        const aName = (a.name || "").toLowerCase();
+        return (
+          aId === target ||
+          aName === target ||
+          (target === "tops" && (aId === "top" || aName === "top")) ||
+          (target === "top" && (aId === "tops" || aName === "tops")) ||
+          (target === "bottoms" && (aId === "bottom" || aName === "bottom")) ||
+          (target === "bottom" && (aId === "bottoms" || aName === "bottoms")) ||
+          (target === "accessories" && (aId === "accessories" || aName === "accessories"))
+        );
+      });
+    };
+
     // Add subcategory to an accordion
     if (body.action === "add_subcategory") {
       const { accordionId, subCategory } = body;
-      const acc = current.accordions?.find((a: any) => a.id === accordionId);
-      if (acc && subCategory && !acc.subCategories?.includes(subCategory)) {
-        if (!acc.subCategories) acc.subCategories = [];
-        acc.subCategories.push(subCategory);
-        await saveCategoriesData(current);
-        return NextResponse.json({ success: true, data: current });
+      const trimmedSub = (subCategory || "").trim();
+      if (!trimmedSub) {
+        return NextResponse.json({ success: false, error: "Subcategory name required" }, { status: 400 });
       }
+
+      let acc = findAccordion(accordionId);
+      if (!acc) {
+        if (!current.accordions) current.accordions = [];
+        acc = {
+          id: (accordionId || trimmedSub).toLowerCase().replace(/\s+/g, "-"),
+          name: accordionId || trimmedSub,
+          subCategories: [],
+        };
+        current.accordions.push(acc);
+      }
+
+      if (!acc.subCategories) acc.subCategories = [];
+      const alreadyHas = acc.subCategories.some(
+        (s: string) => s.toLowerCase() === trimmedSub.toLowerCase()
+      );
+      if (!alreadyHas) {
+        acc.subCategories.push(trimmedSub);
+      }
+      await saveCategoriesData(current);
+      return NextResponse.json({ success: true, data: current });
     }
 
     // Remove subcategory
     if (body.action === "remove_subcategory") {
       const { accordionId, subCategory } = body;
-      const acc = current.accordions?.find((a: any) => a.id === accordionId);
-      if (acc && subCategory && acc.subCategories) {
-        acc.subCategories = acc.subCategories.filter((s: string) => s !== subCategory);
+      const targetSub = (subCategory || "").trim().toLowerCase();
+      const acc = findAccordion(accordionId);
+      if (acc && acc.subCategories) {
+        acc.subCategories = acc.subCategories.filter(
+          (s: string) => s.trim().toLowerCase() !== targetSub
+        );
         await saveCategoriesData(current);
         return NextResponse.json({ success: true, data: current });
       }
@@ -101,17 +140,19 @@ export async function POST(request: Request) {
     // Add new custom category / accordion
     if (body.action === "add_accordion") {
       const { name, id, subCategories } = body;
-      const newId = id || name.toLowerCase().replace(/\s+/g, "-");
+      const trimmedName = (name || "").trim();
+      const newId = id || trimmedName.toLowerCase().replace(/\s+/g, "-");
       if (!current.accordions) current.accordions = [];
-      if (!current.accordions.some((a: any) => a.id === newId)) {
+      const existing = findAccordion(newId) || findAccordion(trimmedName);
+      if (!existing && trimmedName) {
         current.accordions.push({
           id: newId,
-          name,
+          name: trimmedName,
           subCategories: subCategories || [],
         });
         await saveCategoriesData(current);
-        return NextResponse.json({ success: true, data: current });
       }
+      return NextResponse.json({ success: true, data: current });
     }
 
     // Update entire config

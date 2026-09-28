@@ -8,15 +8,12 @@ import { Order } from "@/lib/store";
 import InventoryManager from "@/components/admin/InventoryManager";
 import SectionsManager from "@/components/admin/SectionsManager";
 import CategoryManager from "@/components/admin/CategoryManager";
+import { AdminCategory, DEFAULT_ADMIN_CATEGORIES, parseCategoriesData } from "@/lib/categories";
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
 
-const CATEGORIES = [
-  { id: "Tops", name: "Tops & Hoodies", subCategories: ["T-Shirts", "Hoodies", "Sweatshirts", "Polos"] },
-  { id: "Bottoms", name: "Bottoms & Pants", subCategories: ["Cargo Pants", "Joggers", "Trackpants", "Shorts", "Denim"] },
-  { id: "Accessories", name: "Accessories", subCategories: ["Caps", "Bags", "Socks", "Wallets"] },
-  { id: "Special", name: "Special / Limited", subCategories: ["Mystery Box", "Archive Edition", "Speedway Drop"] },
-];
+// Default fallback categories
+const CATEGORIES = DEFAULT_ADMIN_CATEGORIES;
 
 interface RegisteredUser {
   id: string;
@@ -35,7 +32,14 @@ function AdminContent() {
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
   const [usersList, setUsersList] = useState<RegisteredUser[]>([]);
+  const [categoriesList, setCategoriesList] = useState<AdminCategory[]>(DEFAULT_ADMIN_CATEGORIES);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Quick Subcategory Adder modal state
+  const [quickAddSubOpen, setQuickAddSubOpen] = useState(false);
+  const [quickSubName, setQuickSubName] = useState("");
+  const [quickSubTargetCat, setQuickSubTargetCat] = useState<string>("Tops");
+  const [isAddingSubCategory, setIsAddingSubCategory] = useState(false);
 
   // Search & Filter States
   const [orderSearchQuery, setOrderSearchQuery] = useState("");
@@ -67,7 +71,7 @@ function AdminContent() {
     price: 3999,
     originalPrice: 4999,
     category: "Tops" as any,
-    subCategory: "T-Shirts" as any,
+    subCategory: "T-shirts" as any,
     collectionSlug: "essentials",
     colors: ["Black"],
     sizes: ["S", "M", "L", "XL", "XXL"],
@@ -77,6 +81,64 @@ function AdminContent() {
     images: ["/images/products/oversized-tshirt.jpg"],
     description: "",
   });
+
+  // Fetch live categories from database
+  const refreshCategories = async () => {
+    try {
+      const res = await fetch("/api/categories", { cache: "no-store" });
+      if (res.ok) {
+        const json = await res.json();
+        const parsed = parseCategoriesData(json);
+        setCategoriesList(parsed);
+      }
+    } catch (e) {
+      console.error("Failed to load categories:", e);
+    }
+  };
+
+  // Quick add subcategory handler that persists to database and selects it
+  const handleQuickAddSubCategory = async (targetCategory: string, subName: string) => {
+    const trimmed = subName.trim();
+    if (!trimmed) return;
+    setIsAddingSubCategory(true);
+    try {
+      const catObj = categoriesList.find(
+        (c) => c.id.toLowerCase() === targetCategory.toLowerCase()
+      );
+      const accordionId = catObj?.rawId || catObj?.id || targetCategory;
+
+      const res = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "add_subcategory",
+          accordionId,
+          subCategory: trimmed,
+        }),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        const updated = parseCategoriesData(result.data);
+        setCategoriesList(updated);
+        // Optimistically update whichever modal is open
+        if (isAddModalOpen) {
+          setNewProductForm((prev) => ({ ...prev, subCategory: trimmed }));
+        }
+        if (editingProduct) {
+          setEditingProduct((prev) => (prev ? { ...prev, subCategory: trimmed } : null));
+        }
+        setQuickSubName("");
+        setQuickAddSubOpen(false);
+      } else {
+        alert("Failed to save new subcategory.");
+      }
+    } catch (e) {
+      alert("Error adding subcategory: " + String(e));
+    } finally {
+      setIsAddingSubCategory(false);
+    }
+  };
 
   // Sync tab with URL parameter if it changes
   useEffect(() => {
@@ -89,15 +151,20 @@ function AdminContent() {
   // Load all operational data
   const refreshData = async () => {
     try {
-      const [resProd, resOrders, resUsers] = await Promise.all([
+      const [resProd, resOrders, resUsers, resCats] = await Promise.all([
         fetch("/api/products?all=true", { cache: "no-store" }),
         fetch("/api/orders", { cache: "no-store" }),
         fetch("/api/users", { cache: "no-store" }),
+        fetch("/api/categories", { cache: "no-store" }),
       ]);
 
       if (resProd.ok) setProductsList(await resProd.json());
       if (resOrders.ok) setOrdersList(await resOrders.json());
       if (resUsers.ok) setUsersList(await resUsers.json());
+      if (resCats.ok) {
+        const json = await resCats.json();
+        setCategoriesList(parseCategoriesData(json));
+      }
       setIsLoading(false);
     } catch (err) {
       console.error("Failed to load admin data:", err);
@@ -150,9 +217,19 @@ function AdminContent() {
     };
     window.addEventListener("focus", handleFocus);
 
+    const handleCatsSync = (e: any) => {
+      if (e?.detail) {
+        setCategoriesList(parseCategoriesData(e.detail));
+      } else {
+        refreshCategories();
+      }
+    };
+    window.addEventListener("driivn_categories_updated", handleCatsSync);
+
     return () => {
       window.removeEventListener("storage", handleStorageUpdate);
       window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("driivn_categories_updated", handleCatsSync);
       clearInterval(pollTimer);
       if (channel) {
         try {
@@ -1048,22 +1125,37 @@ function AdminContent() {
                     : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
                 }`}
               >
-                All Categories
+                All Categories ({productsList.length})
               </button>
-              {CATEGORIES.map((cat) => (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => setProductCategoryFilter(cat.id)}
-                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors rounded-xl ${
-                    productCategoryFilter === cat.id
-                      ? "bg-[#E8262A] text-white font-black shadow-xs"
-                      : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
-                  }`}
-                >
-                  {cat.name}
-                </button>
-              ))}
+              {categoriesList.map((cat) => {
+                const count = productsList.filter((p) => {
+                  const pCat = p.category.toLowerCase();
+                  const cId = cat.id.toLowerCase();
+                  return (
+                    pCat === cId ||
+                    pCat === cat.name.toLowerCase() ||
+                    (cId === "tops" && pCat === "top") ||
+                    (cId === "top" && pCat === "tops") ||
+                    (cId === "bottoms" && pCat === "bottom") ||
+                    (cId === "bottom" && pCat === "bottoms")
+                  );
+                }).length;
+
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setProductCategoryFilter(cat.id)}
+                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors rounded-xl ${
+                      productCategoryFilter.toLowerCase() === cat.id.toLowerCase()
+                        ? "bg-[#E8262A] text-white font-black shadow-xs"
+                        : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
+                    }`}
+                  >
+                    {cat.name} ({count})
+                  </button>
+                );
+              })}
               <button
                 type="button"
                 onClick={() => setActiveTab("categories")}
@@ -1201,6 +1293,7 @@ function AdminContent() {
           products={productsList}
           onRefresh={refreshData}
           onEditProduct={(prod) => setEditingProduct(prod)}
+          categoriesList={categoriesList}
         />
       )}
 
@@ -1215,7 +1308,10 @@ function AdminContent() {
       {/* TAB 5: CATEGORIES & DRAWER MENU ARCHITECTURE */}
       {/* ========================================================================= */}
       {activeTab === "categories" && (
-        <CategoryManager products={productsList} />
+        <CategoryManager
+          products={productsList}
+          onCategoriesUpdated={refreshCategories}
+        />
       )}
 
       {/* ========================================================================= */}
@@ -1470,19 +1566,25 @@ function AdminContent() {
                     Category *
                   </label>
                   <select
-                    value={editingProduct.category}
+                    value={
+                      categoriesList.find(
+                        (c) => c.id.toLowerCase() === (editingProduct.category || "").toLowerCase()
+                      )?.id || editingProduct.category
+                    }
                     onChange={(e) => {
-                      const selCat = e.target.value as any;
-                      const matched = CATEGORIES.find((c) => c.id === selCat);
+                      const selCat = e.target.value;
+                      const matched = categoriesList.find(
+                        (c) => c.id.toLowerCase() === selCat.toLowerCase()
+                      );
                       setEditingProduct({
                         ...editingProduct,
-                        category: selCat,
+                        category: matched ? matched.id : selCat,
                         subCategory: (matched?.subCategories[0] || "") as any,
                       });
                     }}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
                   >
-                    {CATEGORIES.map((cat) => (
+                    {categoriesList.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
@@ -1491,19 +1593,45 @@ function AdminContent() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    Sub-Category *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600">
+                      Sub-Category *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuickSubTargetCat(editingProduct.category || "Tops");
+                        setQuickAddSubOpen(true);
+                      }}
+                      className="text-[9px] font-bold uppercase text-[#E8262A] hover:underline"
+                    >
+                      + Add Sub-Category
+                    </button>
+                  </div>
                   <select
                     value={editingProduct.subCategory || ""}
                     onChange={(e) => setEditingProduct({ ...editingProduct, subCategory: e.target.value as any })}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
                   >
-                    {CATEGORIES.find((c) => c.id === editingProduct.category)?.subCategories.map((sub) => (
-                      <option key={sub} value={sub}>
-                        {sub}
-                      </option>
-                    ))}
+                    {(() => {
+                      const matchedCat = categoriesList.find(
+                        (c) => c.id.toLowerCase() === (editingProduct.category || "").toLowerCase()
+                      );
+                      const subs = matchedCat?.subCategories || [];
+                      return (
+                        <>
+                          {subs.map((sub) => (
+                            <option key={sub} value={sub}>
+                              {sub}
+                            </option>
+                          ))}
+                          {editingProduct.subCategory &&
+                            !subs.some((s) => s.toLowerCase() === editingProduct.subCategory?.toLowerCase()) && (
+                              <option value={editingProduct.subCategory}>{editingProduct.subCategory}</option>
+                            )}
+                        </>
+                      );
+                    })()}
                   </select>
                 </div>
 
@@ -1765,19 +1893,25 @@ function AdminContent() {
                     Category *
                   </label>
                   <select
-                    value={newProductForm.category}
+                    value={
+                      categoriesList.find(
+                        (c) => c.id.toLowerCase() === (newProductForm.category || "").toLowerCase()
+                      )?.id || (categoriesList[0]?.id || "Tops")
+                    }
                     onChange={(e) => {
-                      const selCat = e.target.value as any;
-                      const matched = CATEGORIES.find((c) => c.id === selCat);
+                      const selCat = e.target.value;
+                      const matched = categoriesList.find(
+                        (c) => c.id.toLowerCase() === selCat.toLowerCase()
+                      );
                       setNewProductForm({
                         ...newProductForm,
-                        category: selCat,
-                        subCategory: (matched?.subCategories[0] || "T-Shirts") as any,
+                        category: matched ? matched.id : selCat,
+                        subCategory: (matched?.subCategories[0] || "") as any,
                       });
                     }}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
                   >
-                    {CATEGORIES.map((cat) => (
+                    {categoriesList.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
                       </option>
@@ -1786,19 +1920,46 @@ function AdminContent() {
                 </div>
 
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    Sub-Category *
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600">
+                      Sub-Category *
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setQuickSubTargetCat(newProductForm.category || categoriesList[0]?.id || "Tops");
+                        setQuickAddSubOpen(true);
+                      }}
+                      className="text-[9px] font-bold uppercase text-[#E8262A] hover:underline"
+                    >
+                      + Add Sub-Category
+                    </button>
+                  </div>
                   <select
-                    value={newProductForm.subCategory}
+                    value={newProductForm.subCategory || ""}
                     onChange={(e) => setNewProductForm({ ...newProductForm, subCategory: e.target.value as any })}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
                   >
-                    {CATEGORIES.find((c) => c.id === newProductForm.category)?.subCategories.map((sub) => (
-                      <option key={sub} value={sub}>
-                        {sub}
-                      </option>
-                    ))}
+                    {(() => {
+                      const matchedCat =
+                        categoriesList.find(
+                          (c) => c.id.toLowerCase() === (newProductForm.category || "").toLowerCase()
+                        ) || categoriesList[0];
+                      const subs = matchedCat?.subCategories || [];
+                      return (
+                        <>
+                          {subs.map((sub) => (
+                            <option key={sub} value={sub}>
+                              {sub}
+                            </option>
+                          ))}
+                          {newProductForm.subCategory &&
+                            !subs.some((s) => s.toLowerCase() === newProductForm.subCategory?.toLowerCase()) && (
+                              <option value={newProductForm.subCategory}>{newProductForm.subCategory}</option>
+                            )}
+                        </>
+                      );
+                    })()}
                   </select>
                 </div>
 
@@ -1925,6 +2086,62 @@ function AdminContent() {
                   className="w-2/3 bg-[#E8262A] hover:bg-[#d01e22] text-white py-3 text-xs font-black uppercase rounded-xl transition-all shadow-md active:scale-98"
                 >
                   Publish New Product &rarr;
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Add Subcategory Modal */}
+      {quickAddSubOpen && (
+        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-5 border border-neutral-300 shadow-2xl animate-in zoom-in-95">
+            <h4 className="text-sm font-black font-anton uppercase text-black mb-1">
+              Add New Sub-Category
+            </h4>
+            <p className="text-xs text-neutral-500 mb-4">
+              Adding to <strong className="text-black">{quickSubTargetCat}</strong>. This will be immediately available in product forms and drawer menu.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleQuickAddSubCategory(quickSubTargetCat, quickSubName);
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                  Sub-Category Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Shirts, Oversized Tees, Joggers..."
+                  value={quickSubName}
+                  onChange={(e) => setQuickSubName(e.target.value)}
+                  autoFocus
+                  className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuickAddSubOpen(false);
+                    setQuickSubName("");
+                  }}
+                  className="flex-1 py-2 text-xs font-bold uppercase rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isAddingSubCategory || !quickSubName.trim()}
+                  className="flex-1 py-2 text-xs font-bold uppercase rounded-xl bg-[#E8262A] text-white hover:bg-red-700 disabled:opacity-50"
+                >
+                  {isAddingSubCategory ? "Saving..." : "Add & Select"}
                 </button>
               </div>
             </form>
