@@ -68,7 +68,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-[#E8E6DF] text-[#121212]">
       {/* Editorial Streetwear Hero Section (Screenshot 1 Style) */}
-      <section className="relative w-full h-[88vh] sm:h-[92vh] overflow-hidden bg-neutral-950 flex flex-col justify-between">
+      <section className="relative w-full h-[88vh] sm:h-[92vh] overflow-hidden bg-[#2C2A29] flex flex-col justify-between">
         {/* Background Editorial Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -79,19 +79,19 @@ export default async function Home() {
             className="object-cover object-top opacity-90 sm:opacity-85"
           />
           {/* Subtle gradient vignette */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/75" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#2C2A29]/40 via-transparent to-[#2C2A29]/80" />
         </div>
 
         {/* Top Spacer / Watermark */}
         <div className="relative z-10 p-6 flex justify-between items-start pointer-events-none">
-          <span className="hidden sm:inline text-[10px] font-black tracking-[0.35em] text-white/90 uppercase bg-[#121212]/70 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15">
+          <span className="hidden sm:inline text-[10px] font-black tracking-[0.35em] text-white/90 uppercase bg-[#2C2A29]/75 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 shadow-lg">
             AUTUMN - WINTER 2026 DROP &bull; <span className="text-[#E8262A]">DRIIVN ATELIER</span>
           </span>
         </div>
 
         {/* Center Floating Emblem Disc (Circular badge on model in Screenshot 1) */}
         <div className="relative z-10 flex items-center justify-center select-none pointer-events-none">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-black/85 backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center p-3 animate-[spin_20s_linear_infinite]">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-[#2C2A29]/85 backdrop-blur-2xl border border-white/25 shadow-2xl flex items-center justify-center p-3 animate-[spin_20s_linear_infinite]">
             <svg
               className="w-14 h-14 sm:w-20 sm:h-20 text-[#E8262A]"
               viewBox="0 0 100 100"
@@ -108,7 +108,7 @@ export default async function Home() {
         <div className="relative z-10 pb-12 sm:pb-16 text-center select-none">
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 bg-black/60 hover:bg-[#E8262A] text-white border border-white/30 backdrop-blur-md px-7 py-3 rounded-full text-xs sm:text-sm font-black tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95"
+            className="inline-flex items-center gap-2 bg-[#2C2A29]/80 hover:bg-[#E8262A] text-white border border-white/35 backdrop-blur-2xl px-8 py-3.5 rounded-full text-xs sm:text-sm font-black tracking-widest uppercase transition-all shadow-2xl hover:scale-105 active:scale-95"
           >
             <span>Shop Now</span>
             <span>&rarr;</span>
@@ -157,7 +157,7 @@ export default async function Home() {
                   {section.actionButton && (
                     <Link
                       href={section.actionButton.href}
-                      className="rounded-full px-4 py-1.5 text-[11px] font-bold tracking-tight bg-black hover:bg-[#E8262A] text-white transition-all active:scale-95 shadow-2xs whitespace-nowrap"
+                      className="rounded-full px-4 py-1.5 text-[11px] font-bold tracking-tight bg-[#2C2A29] hover:bg-[#E8262A] text-white transition-all active:scale-95 shadow-2xs whitespace-nowrap border border-white/20 backdrop-blur-md"
                     >
                       {section.actionButton.label}
                     </Link>
@@ -172,7 +172,7 @@ export default async function Home() {
                       href={`/product/${bag.id}`}
                       className="flex-shrink-0 w-64 sm:w-72 group block select-none"
                     >
-                      <div className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-300/70 shadow-xs">
+                      <div className="relative aspect-square rounded-2xl overflow-hidden bg-[#2C2A29] border border-white/20 shadow-md">
                         <Image
                           src={bag.images[0]}
                           alt={bag.name}
@@ -194,7 +194,7 @@ export default async function Home() {
                             RS. {bag.price.toLocaleString()}
                           </p>
                         </div>
-                        <span className="w-6 h-6 rounded-full bg-white/70 border border-white/80 backdrop-blur-xs flex items-center justify-center text-sm font-bold text-neutral-700 group-hover:bg-black group-hover:text-white transition-colors shadow-2xs">
+                        <span className="w-6 h-6 rounded-full bg-white/70 border border-white/80 backdrop-blur-xs flex items-center justify-center text-sm font-bold text-neutral-700 group-hover:bg-[#2C2A29] group-hover:text-white transition-colors shadow-2xs">
                           +
                         </span>
                       </div>
@@ -268,7 +268,7 @@ export default async function Home() {
                     <Link
                       key={idx}
                       href={item.link || "/shop"}
-                      className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-neutral-900 border border-neutral-300/70 shadow-xs group cursor-pointer block"
+                      className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#2C2A29] border border-white/20 shadow-md group cursor-pointer block"
                     >
                       <Image
                         src={item.image}
@@ -276,7 +276,7 @@ export default async function Home() {
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-4">
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29]/90 via-transparent to-transparent flex flex-col justify-end p-4">
                         <span className="text-[9px] font-bold text-[#E8262A] uppercase tracking-widest">
                           {item.tag || `Look 0${idx + 1}`}
                         </span>
@@ -308,7 +308,7 @@ export default async function Home() {
               </div>
               <Link
                 href="/shop"
-                className="text-xs font-black tracking-widest text-black hover:text-[#E8262A] uppercase border-b border-black hover:border-[#E8262A] pb-1 transition-all"
+                className="text-xs font-black tracking-widest text-black hover:text-[#E8262A] uppercase border-b border-[#2C2A29] hover:border-[#E8262A] pb-1 transition-all"
               >
                 View Full Catalog &rarr;
               </Link>
@@ -319,17 +319,17 @@ export default async function Home() {
                 <Link
                   key={cat.id}
                   href={cat.href}
-                  className="relative group h-80 sm:h-96 bg-black rounded-3xl overflow-hidden flex flex-col justify-end p-5 border border-white/20 shadow-xl cursor-pointer block"
+                  className="relative group h-80 sm:h-96 bg-[#2C2A29] rounded-3xl overflow-hidden flex flex-col justify-end p-5 border border-white/25 shadow-xl cursor-pointer block"
                 >
                   <Image
                     src={cat.image}
                     alt={cat.name}
                     fill
-                    className="object-cover opacity-60 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
+                    className="object-cover opacity-65 group-hover:opacity-85 group-hover:scale-105 transition-all duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent z-10" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29]/90 via-[#2C2A29]/30 to-transparent z-10" />
 
-                  <div className="relative z-20 w-full p-4 rounded-2xl bg-black/45 backdrop-blur-md border border-white/20 space-y-1.5 transition-all group-hover:bg-black/65 group-hover:border-white/35 shadow-lg">
+                  <div className="relative z-20 w-full p-4 rounded-2xl bg-[#2C2A29]/65 backdrop-blur-xl border border-white/25 space-y-1.5 transition-all group-hover:bg-[#2C2A29]/80 group-hover:border-white/40 shadow-lg">
                     <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block">
                       Category 0{index + 1} &bull; {cat.tag}
                     </span>
@@ -350,7 +350,7 @@ export default async function Home() {
         </section>
 
         {/* Section 5: Brand Blueprint */}
-        <section className="bg-neutral-950 text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-white/10">
+        <section className="bg-[#2C2A29] text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-white/15">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
               <span className="text-[10px] font-black tracking-[0.4em] text-[#E8262A] uppercase">
@@ -364,30 +364,30 @@ export default async function Home() {
                 DRIIVN was born out of a desire to create unapologetic, high-octane luxury streetwear. Every garment is cut from custom-milled French Terry and ripstop cotton, tested for drape and durability, and finished with meticulous tactile printing techniques.
               </p>
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/10">
-                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
+                <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
                   <p className="text-2xl font-black text-white font-anton">420</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">GSM French Terry</p>
                 </div>
-                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
+                <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
                   <p className="text-2xl font-black text-white font-anton">100%</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Combed Cotton</p>
                 </div>
-                <div className="bg-white/5 border border-white/10 backdrop-blur-md p-3.5 rounded-2xl">
+                <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
                   <p className="text-2xl font-black text-white font-anton">PAN-INDIA</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Express Dispatch</p>
                 </div>
               </div>
             </div>
 
-            <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl bg-zinc-900 border border-white/15 overflow-hidden shadow-2xl">
+            <div className="lg:col-span-6 relative aspect-[4/3] rounded-3xl bg-[#2C2A29] border border-white/20 overflow-hidden shadow-2xl">
               <Image
                 src="/images/hero-streetwear.jpg"
                 alt="DRIIVN Couture Process"
                 fill
                 className="object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end bg-black/60 backdrop-blur-md p-4 rounded-2xl border border-white/20">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29]/90 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end bg-[#2C2A29]/80 backdrop-blur-xl p-4 rounded-2xl border border-white/25 shadow-xl">
                 <div>
                   <p className="text-[10px] font-bold tracking-widest text-[#E8262A] uppercase">Archive Series</p>
                   <p className="text-sm font-black tracking-widest text-white uppercase font-anton">Seasonal Drops</p>

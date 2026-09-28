@@ -568,7 +568,7 @@ export default function InventoryManager({
               onClick={() => setFilterStatus(f.id as any)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold uppercase transition-all whitespace-nowrap ${
                 filterStatus === f.id
-                  ? "bg-black text-white shadow-xs"
+                  ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                   : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200 border border-neutral-300"
               }`}
             >
@@ -624,7 +624,7 @@ export default function InventoryManager({
                               className="object-cover group-hover:scale-105 transition-transform"
                             />
                             {p.images.length > 1 && (
-                              <span className="absolute bottom-0.5 right-0.5 bg-black/80 text-white text-[8px] font-mono font-bold px-1 rounded-xs">
+                              <span className="absolute bottom-0.5 right-0.5 bg-[#2C2A29]/85 text-white text-[8px] font-mono font-bold px-1 rounded-xs">
                                 {p.images.length}P
                               </span>
                             )}
@@ -721,7 +721,7 @@ export default function InventoryManager({
                                   stockQuantity: p.stockQuantity ?? 5,
                                 });
                               }}
-                              className="px-2.5 py-1 bg-black hover:bg-[#E8262A] text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
+                              className="px-2.5 py-1 bg-[#2C2A29] hover:bg-[#E8262A] text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
                             >
                               + Add to Site
                             </button>
@@ -835,7 +835,7 @@ export default function InventoryManager({
                             No Photo
                           </div>
                         )}
-                        <span className="absolute top-1 left-1 bg-black/70 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase">
+                        <span className="absolute top-1 left-1 bg-[#2C2A29]/75 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase">
                           {idx === 0 ? "Cover" : `Angle ${idx + 1}`}
                         </span>
                         {draftForm.images.length > 1 && (
@@ -1194,7 +1194,7 @@ export default function InventoryManager({
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="w-2/3 py-3 rounded-xl bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md"
+                  className="w-2/3 py-3 rounded-xl bg-[#2C2A29] hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md"
                 >
                   {isSaving ? "Publishing..." : "Make Live on Website &rarr;"}
                 </button>
@@ -1264,7 +1264,7 @@ export default function InventoryManager({
                             No Photo
                           </div>
                         )}
-                        <span className="absolute top-1 left-1 bg-black/70 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase">
+                        <span className="absolute top-1 left-1 bg-[#2C2A29]/75 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full uppercase">
                           {idx === 0 ? "Cover" : `Angle ${idx + 1}`}
                         </span>
                         {activeManageProduct.images.length > 1 && (
@@ -1554,7 +1554,7 @@ export default function InventoryManager({
                   <button
                     type="submit"
                     disabled={isSaving}
-                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-98"
+                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-[#2C2A29] hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-98"
                   >
                     {isSaving ? "Saving..." : "Save Product Changes ✓"}
                   </button>

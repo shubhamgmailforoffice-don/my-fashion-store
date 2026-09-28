@@ -89,7 +89,7 @@ export default function ReturnsPolicyPage() {
       <div className="mt-14 pt-8 border-t border-gray-200 text-center">
         <Link
           href="/account"
-          className="inline-block bg-black text-white hover:bg-orange-600 px-8 py-3.5 text-xs font-black tracking-widest uppercase transition-colors"
+          className="inline-block bg-[#2C2A29] text-white hover:bg-[#E8262A] px-8 py-3.5 text-xs font-black tracking-widest uppercase transition-colors rounded-xl shadow-xs border border-white/10"
         >
           Manage Orders in Dashboard &rarr;
         </Link>

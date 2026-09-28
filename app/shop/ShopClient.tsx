@@ -342,7 +342,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
               onClick={() => handlePillClick(pill)}
               className={`rounded-full px-3.5 py-1.5 text-xs font-inter transition-all duration-200 whitespace-nowrap active:scale-95 ${
                 isActive
-                  ? "bg-white/95 text-black font-semibold border border-neutral-900 shadow-xs backdrop-blur-md"
+                  ? "bg-white/95 text-black font-semibold border border-[#2C2A29] shadow-xs backdrop-blur-md"
                   : "bg-white/65 hover:bg-white text-neutral-700 hover:text-black border border-white/80 backdrop-blur-md shadow-2xs"
               }`}
             >
@@ -421,7 +421,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
               setSelectedColor("All");
               setInStockOnly(false);
             }}
-            className="mt-2 bg-black text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-orange-600 transition-colors"
+            className="mt-2 bg-[#2C2A29] text-white px-5 py-2.5 rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#E8262A] transition-colors border border-white/20"
           >
             Reset Filters
           </button>
@@ -481,7 +481,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                       onClick={() => setSortBy(s.val)}
                       className={`text-left px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                         sortBy === s.val
-                          ? "bg-black text-white border-black shadow-md"
+                          ? "bg-[#2C2A29] text-white border-[#2C2A29] shadow-md"
                           : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                       }`}
                     >
@@ -501,7 +501,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                     onClick={() => setSelectedColor("All")}
                     className={`px-3 py-1.5 text-xs font-bold rounded-lg border uppercase transition-all ${
                       selectedColor === "All"
-                        ? "bg-black text-white border-black shadow-md"
+                        ? "bg-[#2C2A29] text-white border-[#2C2A29] shadow-md"
                         : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                     }`}
                   >
@@ -513,7 +513,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
                       onClick={() => setSelectedColor(c.name)}
                       className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border transition-all ${
                         selectedColor === c.name
-                          ? "bg-neutral-900 text-white border-black shadow-md"
+                          ? "bg-[#2C2A29] text-white border-[#2C2A29] shadow-md"
                           : "bg-white/70 text-neutral-800 border-white/80 hover:bg-white backdrop-blur-sm shadow-2xs"
                       }`}
                     >
@@ -559,7 +559,7 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
               <button
                 type="button"
                 onClick={() => setIsFiltersOpen(false)}
-                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-white bg-black hover:bg-[#E8262A] rounded-xl transition-colors shadow-lg active:scale-98"
+                className="flex-1 py-3 text-xs font-black uppercase tracking-widest text-white bg-[#2C2A29] hover:bg-[#E8262A] rounded-xl transition-colors shadow-lg active:scale-98 border border-white/10"
               >
                 Apply Filters
               </button>
@@ -576,7 +576,7 @@ export default function ShopClient({ initialProducts, initialComingSoon }: ShopC
     <Suspense
       fallback={
         <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-black border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-[#2C2A29] border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

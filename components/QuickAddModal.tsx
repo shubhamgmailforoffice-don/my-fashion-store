@@ -135,7 +135,7 @@ export default function QuickAddModal({
                 onClick={() => setSelectedSize(sz)}
                 className={`py-2 text-xs font-black uppercase rounded-lg border transition-all ${
                   selectedSize === sz
-                    ? "bg-black text-white border-black shadow-md scale-102"
+                    ? "bg-[#2C2A29] text-white border-[#2C2A29] shadow-md scale-102"
                     : "bg-white/70 hover:bg-white text-neutral-800 border-white/80 backdrop-blur-sm shadow-2xs hover:border-neutral-400"
                 }`}
               >
@@ -154,7 +154,7 @@ export default function QuickAddModal({
             className={`w-full py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
               isSuccess
                 ? "bg-emerald-600 text-white"
-                : "bg-black text-white hover:bg-[#E8262A] active:scale-98 shadow-lg"
+                : "bg-[#2C2A29] text-white hover:bg-[#E8262A] active:scale-98 shadow-lg border border-white/10"
             }`}
           >
             {isSuccess ? "✓ Added to Bag!" : `Add to Bag • RS. ${product.price.toLocaleString()}`}

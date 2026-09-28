@@ -98,12 +98,12 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
       />
 
       {/* Reel Card Container */}
-      <div className="relative z-20 w-full sm:max-w-md h-full sm:h-[88vh] sm:max-h-[820px] bg-black sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.6)] border border-white/20 flex flex-col justify-between">
+      <div className="relative z-20 w-full sm:max-w-md h-full sm:h-[88vh] sm:max-h-[820px] bg-[#2C2A29] sm:rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(44,42,41,0.6)] border border-white/20 flex flex-col justify-between">
         
         {/* Top Control Bar with Highly Visible Close Button */}
         <div className="absolute top-4 inset-x-0 z-50 px-4 flex items-center justify-between pointer-events-auto">
           {/* Reel Indicator Dots */}
-          <div className="flex items-center gap-1.5 bg-black/60 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/25 shadow-lg">
+          <div className="flex items-center gap-1.5 bg-[#2C2A29]/75 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/25 shadow-lg">
             {REELS_DATA.map((_, idx) => (
               <span
                 key={idx}
@@ -122,7 +122,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
               e.stopPropagation();
               onClose();
             }}
-            className="w-11 h-11 rounded-full bg-black/80 hover:bg-[#E8262A] backdrop-blur-md text-white border-2 border-white/50 hover:border-[#E8262A] shadow-2xl flex items-center justify-center text-xl font-bold transition-all active:scale-90 cursor-pointer"
+            className="w-11 h-11 rounded-full bg-[#2C2A29]/80 hover:bg-[#E8262A] backdrop-blur-md text-white border-2 border-white/50 hover:border-[#E8262A] shadow-2xl flex items-center justify-center text-xl font-bold transition-all active:scale-90 cursor-pointer"
             aria-label="Close Reels"
             title="Close"
           >
@@ -140,14 +140,14 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
             priority
           />
           {/* Vignette Gradients for readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-black/60 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29] via-[#2C2A29]/30 to-[#2C2A29]/60 pointer-events-none" />
         </div>
 
         {/* Previous / Next Arrow Clickers on Left & Right */}
         <button
           type="button"
           onClick={handlePrev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
+          className="absolute left-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-[#2C2A29]/70 hover:bg-[#2C2A29] backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
           aria-label="Previous reel"
         >
           &#8249;
@@ -155,14 +155,14 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
         <button
           type="button"
           onClick={handleNext}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
+          className="absolute right-3 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-[#2C2A29]/70 hover:bg-[#2C2A29] backdrop-blur-xl text-white border border-white/30 shadow-xl flex items-center justify-center text-xl active:scale-95 transition-all"
           aria-label="Next reel"
         >
           &#8250;
         </button>
 
         {/* Bottom Section: Just Name, Price & Shop Now Button */}
-        <div className="relative z-30 mt-auto p-5 pb-8 space-y-3 bg-gradient-to-t from-black via-black/90 to-transparent">
+        <div className="relative z-30 mt-auto p-5 pb-8 space-y-3 bg-gradient-to-t from-[#2C2A29] via-[#2C2A29]/90 to-transparent">
           {/* Garment Name & Price */}
           <div className="space-y-1 text-left">
             <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-white font-anton drop-shadow">

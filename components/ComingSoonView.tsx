@@ -53,7 +53,7 @@ export default function ComingSoonView({
   };
 
   return (
-    <div className="relative w-full rounded-3xl overflow-hidden bg-black/90 backdrop-blur-2xl text-white border border-white/15 shadow-2xl my-6">
+    <div className="relative w-full rounded-3xl overflow-hidden bg-[#2C2A29]/92 backdrop-blur-2xl text-white border border-white/25 shadow-2xl my-6">
       {/* Background Ambience & Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -63,7 +63,7 @@ export default function ComingSoonView({
           priority
           className="object-cover opacity-25 filter grayscale contrast-125"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/85 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29] via-[#2C2A29]/85 to-[#2C2A29]/60" />
         <div className="absolute inset-0 bg-[radial-gradient(#E8262A_1px,transparent_1px)] [background-size:24px_24px] opacity-10" />
       </div>
 

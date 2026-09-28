@@ -986,7 +986,7 @@ function AdminContent() {
                                 type="button"
                                 disabled={savingTrackingId === order.id}
                                 onClick={() => handleSaveTracking(order.id, trackingInfo)}
-                                className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap rounded-lg"
+                                className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap rounded-lg"
                               >
                                 {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
                               </button>
@@ -1476,7 +1476,7 @@ function AdminContent() {
                         className="object-cover"
                       />
                       {idx === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-black text-white text-[8px] font-black uppercase px-1 rounded">
+                        <span className="absolute bottom-1 left-1 bg-[#2C2A29] text-white text-[8px] font-black uppercase px-1 rounded">
                           Cover
                         </span>
                       )}
@@ -1508,7 +1508,7 @@ function AdminContent() {
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, "edit")}
                       disabled={uploadingImage}
-                      className="w-full text-xs text-neutral-600 file:mr-2 file:py-1.5 file:px-3 file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-black file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
+                      className="w-full text-xs text-neutral-600 file:mr-2 file:py-1.5 file:px-3 file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#2C2A29] file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
                     />
                     {uploadingImage && <p className="text-xs text-[#E8262A] font-bold mt-1">Uploading photo...</p>}
                     {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
@@ -1537,7 +1537,7 @@ function AdminContent() {
                           });
                           setEditingImageUrlInput("");
                         }}
-                        className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-2.5 py-1 text-[10px] font-black uppercase rounded-lg transition-colors"
+                        className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-2.5 py-1 text-[10px] font-black uppercase rounded-lg transition-colors"
                       >
                         + Add
                       </button>
@@ -1802,7 +1802,7 @@ function AdminContent() {
                         className="object-cover"
                       />
                       {idx === 0 && (
-                        <span className="absolute bottom-1 left-1 bg-black text-white text-[8px] font-black uppercase px-1 rounded">
+                        <span className="absolute bottom-1 left-1 bg-[#2C2A29] text-white text-[8px] font-black uppercase px-1 rounded">
                           Cover
                         </span>
                       )}
@@ -1834,7 +1834,7 @@ function AdminContent() {
                       accept="image/*"
                       onChange={(e) => handleImageUpload(e, "new")}
                       disabled={uploadingImage}
-                      className="w-full text-xs text-neutral-600 file:mr-2 file:py-1.5 file:px-3 file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-black file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
+                      className="w-full text-xs text-neutral-600 file:mr-2 file:py-1.5 file:px-3 file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-[#2C2A29] file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
                     />
                     {uploadingImage && <p className="text-xs text-[#E8262A] font-bold mt-1">Uploading photo...</p>}
                     {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
@@ -1863,7 +1863,7 @@ function AdminContent() {
                           });
                           setNewImageUrlInput("");
                         }}
-                        className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-2.5 py-1 text-[10px] font-black uppercase rounded-lg transition-colors"
+                        className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-2.5 py-1 text-[10px] font-black uppercase rounded-lg transition-colors"
                       >
                         + Add
                       </button>

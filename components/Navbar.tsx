@@ -636,7 +636,7 @@ export default function Navbar() {
                               acc.id === "top" ? "Tops" : acc.id === "bottom" ? "Bottoms" : acc.name
                             )}`}
                             onClick={() => setIsMobileMenuOpen(false)}
-                            className="bg-black hover:bg-neutral-800 text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-2xs transition-all active:scale-95"
+                            className="bg-[#2C2A29] hover:bg-[#1f1d1c] text-white text-xs font-semibold px-3.5 py-1.5 rounded-full shadow-2xs transition-all active:scale-95 border border-white/20"
                           >
                             All {acc.name}
                           </Link>
@@ -760,7 +760,7 @@ export default function Navbar() {
           />
           <div className="fixed inset-x-0 top-0 bg-white/92 backdrop-blur-2xl border-b border-white/70 shadow-2xl z-50 max-h-[85vh] flex flex-col animate-in slide-in-from-top duration-200">
             <div className="max-w-4xl w-full mx-auto p-6 sm:p-8 flex-1 flex flex-col">
-              <div className="flex items-center justify-between border-b-2 border-black pb-4">
+              <div className="flex items-center justify-between border-b-2 border-[#2C2A29] pb-4">
                 <div className="flex items-center gap-3 flex-1">
                   <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -826,7 +826,7 @@ export default function Navbar() {
                             setIsSearchOpen(false);
                             setSearchQuery("");
                           }}
-                          className="flex items-center gap-4 p-3 border border-white/70 hover:border-black transition-all bg-white/60 backdrop-blur-md rounded-2xl shadow-2xs"
+                          className="flex items-center gap-4 p-3 border border-white/70 hover:border-[#2C2A29] transition-all bg-white/60 backdrop-blur-md rounded-2xl shadow-2xs"
                         >
                           <div className="w-16 h-20 relative flex-shrink-0 bg-gray-100 overflow-hidden">
                             <Image
@@ -899,7 +899,7 @@ export default function Navbar() {
                 </div>
                 <div className="w-full bg-gray-200 h-1.5 overflow-hidden">
                   <div
-                    className="bg-black h-full transition-all duration-500"
+                    className="bg-[#2C2A29] h-full transition-all duration-500"
                     style={{ width: `${shippingProgress}%` }}
                   />
                 </div>
@@ -925,7 +925,7 @@ export default function Navbar() {
                     <Link
                       href="/shop"
                       onClick={() => setIsCartOpen(false)}
-                      className="bg-black text-white text-xs font-black tracking-widest uppercase px-8 py-3.5 hover:bg-[#E8262A] transition-colors"
+                      className="bg-[#2C2A29] text-white text-xs font-black tracking-widest uppercase px-8 py-3.5 hover:bg-[#E8262A] transition-colors border border-white/15"
                     >
                       Shop New Drops
                     </Link>
@@ -1011,7 +1011,7 @@ export default function Navbar() {
                         setIsCheckoutOpen(true);
                         setCheckoutStep("details");
                       }}
-                      className="w-full bg-black text-white hover:bg-[#E8262A] py-4 text-xs font-black tracking-[0.2em] uppercase transition-colors flex items-center justify-center gap-2 shadow-lg"
+                      className="w-full bg-[#2C2A29] text-white hover:bg-[#E8262A] py-4 text-xs font-black tracking-[0.2em] uppercase transition-all flex items-center justify-center gap-2 shadow-xl rounded-xl border border-white/10"
                     >
                       <span>Proceed to Checkout</span>
                       <span>•</span>
@@ -1019,7 +1019,7 @@ export default function Navbar() {
                     </button>
                     <button
                       onClick={() => setIsCartOpen(false)}
-                      className="w-full bg-white/60 hover:bg-white text-gray-700 hover:text-black border border-white/80 py-3 text-[10px] font-bold tracking-widest uppercase transition-all backdrop-blur-sm"
+                      className="w-full bg-white/70 hover:bg-white text-gray-700 hover:text-black border border-white/80 py-3 text-[10px] font-bold tracking-widest uppercase transition-all backdrop-blur-md rounded-xl"
                     >
                       Continue Shopping
                     </button>
@@ -1033,10 +1033,10 @@ export default function Navbar() {
 
       {/* DRIIVN SECURE UPI CHECKOUT MODAL */}
       {isCheckoutOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/55 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
-          <div className="bg-white/95 backdrop-blur-2xl max-w-xl w-full border border-white/70 shadow-2xl rounded-2xl relative overflow-hidden flex flex-col max-h-[92vh]">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+          <div className="bg-white/95 backdrop-blur-2xl max-w-xl w-full border border-white/80 shadow-2xl rounded-3xl relative overflow-hidden flex flex-col max-h-[92vh]">
             {/* Modal Header */}
-            <div className="border-b border-gray-200 px-6 py-4 flex items-center justify-between bg-black text-white">
+            <div className="border-b border-white/10 px-6 py-4 flex items-center justify-between bg-[#2C2A29] text-white">
               <div>
                 <p className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase">
                   DRIIVN SECURE CHECKOUT
@@ -1148,7 +1148,7 @@ export default function Navbar() {
                             placeholder="Enter 10-digit WhatsApp number"
                             value={customWhatsApp}
                             onChange={(e) => setCustomWhatsApp(e.target.value.replace(/\D/g, ""))}
-                            className="w-full border border-gray-300 px-3 py-2.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black bg-white"
+                            className="w-full border border-gray-300 px-3 py-2.5 text-xs font-bold tracking-wider focus:outline-none focus:border-[#2C2A29] bg-white"
                           />
                         </div>
                         <p className="text-[9px] text-neutral-500 uppercase tracking-wider mt-1">
@@ -1167,7 +1167,7 @@ export default function Navbar() {
                       required
                       value={shippingAddress}
                       onChange={(e) => setShippingAddress(e.target.value)}
-                      className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                      className="w-full border border-gray-300 px-4 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-[#2C2A29]"
                     />
                   </div>
 
@@ -1180,7 +1180,7 @@ export default function Navbar() {
                       <select
                         value={shippingState}
                         onChange={(e) => handleShippingStateChange(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black cursor-pointer"
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-[#2C2A29] cursor-pointer"
                       >
                         {INDIAN_STATES.map((st) => (
                           <option key={st} value={st}>
@@ -1197,7 +1197,7 @@ export default function Navbar() {
                       <select
                         value={shippingCity}
                         onChange={(e) => setShippingCity(e.target.value)}
-                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black cursor-pointer"
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-[#2C2A29] cursor-pointer"
                       >
                         {(STATE_CITIES_MAP[shippingState] || ["Other"]).map((ct) => (
                           <option key={ct} value={ct}>
@@ -1217,7 +1217,7 @@ export default function Navbar() {
                         maxLength={6}
                         value={shippingPincode}
                         onChange={(e) => setShippingPincode(e.target.value.replace(/\D/g, ""))}
-                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-black"
+                        className="w-full border border-gray-300 px-3 py-3 text-xs font-bold tracking-wider focus:outline-none focus:border-[#2C2A29]"
                       />
                     </div>
                   </div>
@@ -1225,7 +1225,7 @@ export default function Navbar() {
                   <div className="pt-3">
                     <button
                       type="submit"
-                      className="w-full bg-black hover:bg-[#E8262A] text-white py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors"
+                      className="w-full bg-[#2C2A29] hover:bg-[#E8262A] text-white py-4 text-xs font-black tracking-[0.25em] uppercase transition-colors border border-white/10 shadow-lg"
                     >
                       Continue to Payment (RS. {subtotal.toLocaleString()}) &rarr;
                     </button>
@@ -1249,8 +1249,8 @@ export default function Navbar() {
                       onClick={() => setPaymentMethod("upi")}
                       className={`p-4 border text-left transition-all ${
                         paymentMethod === "upi"
-                          ? "border-black bg-black text-white shadow-md"
-                          : "border-gray-200 bg-white text-gray-700 hover:border-black"
+                          ? "border-[#2C2A29] bg-[#2C2A29] text-white shadow-md rounded-xl"
+                          : "border-gray-200 bg-white/70 text-gray-700 hover:border-[#2C2A29] rounded-xl"
                       }`}
                     >
                       <span className="text-base block mb-1">📱</span>
@@ -1269,8 +1269,8 @@ export default function Navbar() {
                       onClick={() => setPaymentMethod("cod")}
                       className={`p-4 border text-left transition-all ${
                         paymentMethod === "cod"
-                          ? "border-black bg-black text-white shadow-md"
-                          : "border-gray-200 bg-white text-gray-700 hover:border-black"
+                          ? "border-[#2C2A29] bg-[#2C2A29] text-white shadow-md rounded-xl"
+                          : "border-gray-200 bg-white/70 text-gray-700 hover:border-[#2C2A29] rounded-xl"
                       }`}
                     >
                       <span className="text-base block mb-1">💵</span>
@@ -1333,7 +1333,7 @@ export default function Navbar() {
                             setCopiedUpi(true);
                             setTimeout(() => setCopiedUpi(false), 2000);
                           }}
-                          className="bg-black text-white hover:bg-[#E8262A] hover:text-white px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors"
+                          className="bg-[#2C2A29] text-white hover:bg-[#E8262A] hover:text-white px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors rounded-lg shadow-xs"
                         >
                           {copiedUpi ? "COPIED ✓" : "COPY"}
                         </button>
@@ -1347,7 +1347,7 @@ export default function Navbar() {
                           type="text"
                           value={utrNumber}
                           onChange={(e) => setUtrNumber(e.target.value)}
-                          className="w-full border border-gray-300 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider focus:outline-none focus:border-black bg-white"
+                          className="w-full border border-gray-300 px-3 py-2.5 text-xs font-mono font-bold uppercase tracking-wider focus:outline-none focus:border-[#2C2A29] bg-white rounded-xl"
                         />
                       </div>
                     </div>
@@ -1355,7 +1355,7 @@ export default function Navbar() {
 
                   {/* COD Note */}
                   {paymentMethod === "cod" && (
-                    <div className="border border-gray-200 bg-zinc-50 p-6 space-y-2">
+                    <div className="border border-gray-200 bg-zinc-50 p-6 space-y-2 rounded-2xl">
                       <p className="text-xs font-black uppercase tracking-wider text-black">
                         Cash on Delivery Terms:
                       </p>
@@ -1408,7 +1408,7 @@ export default function Navbar() {
                     </p>
                   </div>
 
-                  <div className="bg-zinc-50 border border-gray-200 p-5 text-left text-xs uppercase space-y-2">
+                  <div className="bg-zinc-50 border border-gray-200 p-5 text-left text-xs uppercase space-y-2 rounded-2xl">
                     <p className="font-black text-black">Delivery Destination:</p>
                     <p className="text-gray-700 font-medium leading-relaxed">{placedOrder.address}</p>
                     <p className="text-gray-500 font-bold pt-1">
@@ -1420,14 +1420,14 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setIsCheckoutOpen(false)}
-                      className="flex-1 bg-black text-white hover:bg-[#E8262A] py-3.5 text-xs font-black tracking-widest uppercase transition-colors"
+                      className="flex-1 bg-[#2C2A29] text-white hover:bg-[#E8262A] py-3.5 text-xs font-black tracking-widest uppercase transition-colors rounded-xl shadow-md"
                     >
                       Continue Shopping
                     </button>
                     <Link
                       href="/account"
                       onClick={() => setIsCheckoutOpen(false)}
-                      className="flex-1 border border-black text-black hover:bg-black hover:text-white py-3.5 text-xs font-black tracking-widest uppercase transition-colors text-center inline-block"
+                      className="flex-1 border border-[#2C2A29] text-black hover:bg-[#2C2A29] hover:text-white py-3.5 text-xs font-black tracking-widest uppercase transition-colors text-center inline-block rounded-xl shadow-xs"
                     >
                       View in My Orders &rarr;
                     </Link>
@@ -1551,7 +1551,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => window.dispatchEvent(new CustomEvent("open-support"))}
-          className="w-12 h-12 rounded-full bg-neutral-900 hover:bg-black text-white shadow-[0_8px_25px_rgba(0,0,0,0.25)] border border-neutral-700/60 flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
+          className="w-12 h-12 rounded-full bg-[#2C2A29] hover:bg-[#1f1d1c] text-white shadow-[0_8px_25px_rgba(44,42,41,0.35)] border border-white/20 backdrop-blur-xl flex items-center justify-center pointer-events-auto hover:scale-105 active:scale-95 transition-all group"
           aria-label="Open Live Chat Concierge"
           title="Live Chat Support"
         >

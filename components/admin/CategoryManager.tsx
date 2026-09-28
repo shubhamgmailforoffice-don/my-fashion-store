@@ -446,7 +446,7 @@ export default function CategoryManager({
                   </div>
 
                   {/* Teaser Preview Box */}
-                  <div className="relative h-24 rounded-xl overflow-hidden bg-black border border-neutral-300">
+                  <div className="relative h-24 rounded-xl overflow-hidden bg-[#2C2A29] border border-neutral-300">
                     <Image
                       src={catConfig.bannerImage || "/images/hero-streetwear.jpg"}
                       alt={catConfig.name}
@@ -707,7 +707,7 @@ export default function CategoryManager({
               <button
                 type="submit"
                 disabled={isSaving || !newCategoryName.trim()}
-                className="w-full bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white font-black text-xs py-2.5 rounded-xl uppercase tracking-widest transition-all"
+                className="w-full bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white font-black text-xs py-2.5 rounded-xl uppercase tracking-widest transition-all"
               >
                 + Create Category
               </button>
@@ -817,7 +817,7 @@ export default function CategoryManager({
                 </label>
 
                 <div className="flex items-center gap-4">
-                  <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-black border border-neutral-300 shrink-0">
+                  <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#2C2A29] border border-neutral-300 shrink-0">
                     <Image
                       src={editingConfig.bannerImage || "/images/hero-streetwear.jpg"}
                       alt="Preview"
@@ -836,7 +836,7 @@ export default function CategoryManager({
                         accept="image/*"
                         onChange={handleImageUpload}
                         disabled={uploadingImage}
-                        className="text-xs text-neutral-600 file:mr-2 file:py-1 file:px-2.5 file:border-0 file:text-[9px] file:font-black file:uppercase file:bg-black file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
+                        className="text-xs text-neutral-600 file:mr-2 file:py-1 file:px-2.5 file:border-0 file:text-[9px] file:font-black file:uppercase file:bg-[#2C2A29] file:text-white hover:file:bg-[#E8262A] file:cursor-pointer file:rounded-lg"
                       />
                       {uploadingImage && <p className="text-[10px] text-[#E8262A] font-bold mt-1">Uploading...</p>}
                     </div>
@@ -966,7 +966,7 @@ export default function CategoryManager({
               <button
                 type="button"
                 onClick={() => setViewingLeadsCategory(null)}
-                className="px-5 py-2 bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase rounded-xl transition-colors"
+                className="px-5 py-2 bg-[#2C2A29] hover:bg-[#E8262A] text-white text-xs font-black uppercase rounded-xl transition-colors"
               >
                 Close
               </button>

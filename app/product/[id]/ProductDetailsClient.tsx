@@ -178,7 +178,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
           {/* Column 1: Image Gallery (Takes 7 columns on large screens) */}
           <div className="lg:col-span-7 flex flex-col md:flex-row-reverse gap-4">
             {/* Main Active Image */}
-            <div className="relative aspect-[3/4] flex-1 bg-neutral-900 rounded-3xl overflow-hidden border border-white/80 shadow-md">
+            <div className="relative aspect-[3/4] flex-1 bg-[#2C2A29] rounded-3xl overflow-hidden border border-white/80 shadow-md">
               <Image
                 src={activeImage}
                 alt={product.name}
@@ -196,7 +196,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 ) : (
                   <>
                     {product.isNew && (
-                      <span className="bg-black/80 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
+                      <span className="bg-[#2C2A29]/80 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
                         New Arrival
                       </span>
                     )}
@@ -221,10 +221,10 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 <button
                   key={index}
                   onClick={() => setActiveImage(img)}
-                  className={`relative aspect-[3/4] w-20 md:w-full flex-shrink-0 rounded-2xl overflow-hidden bg-neutral-900 border transition-all ${
+                  className={`relative aspect-[3/4] w-20 md:w-full flex-shrink-0 rounded-2xl overflow-hidden bg-[#2C2A29] border transition-all ${
                     activeImage === img
-                      ? "border-black ring-2 ring-black shadow-md scale-102"
-                      : "border-white/80 hover:border-black shadow-2xs opacity-80 hover:opacity-100"
+                      ? "border-[#2C2A29] ring-2 ring-[#2C2A29] shadow-md scale-102"
+                      : "border-white/80 hover:border-[#2C2A29] shadow-2xs opacity-80 hover:opacity-100"
                   }`}
                 >
                   <Image
@@ -285,8 +285,8 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                       onClick={() => setSelectedColor(color)}
                       className={`text-[10px] font-black tracking-widest uppercase px-4 py-2 rounded-xl transition-all ${
                         selectedColor === color
-                          ? "border border-black bg-black text-white shadow-xs"
-                          : "border border-white/80 hover:border-black text-neutral-700 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
+                          ? "border border-[#2C2A29] bg-[#2C2A29] text-white shadow-xs"
+                          : "border border-white/80 hover:border-[#2C2A29] text-neutral-700 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
                       }`}
                     >
                       {color}
@@ -323,8 +323,8 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                           !isAvailable
                             ? "border border-black/5 bg-black/5 text-neutral-400 cursor-not-allowed line-through backdrop-blur-2xs"
                             : selectedSize === size
-                            ? "border border-black bg-black text-white shadow-xs scale-102"
-                            : "border border-white/80 hover:border-black text-neutral-800 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
+                            ? "border border-[#2C2A29] bg-[#2C2A29] text-white shadow-xs scale-102"
+                            : "border border-white/80 hover:border-[#2C2A29] text-neutral-800 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
                         }`}
                       >
                         <span>{size}</span>
@@ -389,7 +389,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                     ? "bg-neutral-400 text-white cursor-wait"
                     : addedToCart
                     ? "bg-emerald-600 text-white"
-                    : "bg-black text-white hover:bg-[#E8262A] active:scale-[0.99]"
+                    : "bg-[#2C2A29] text-white hover:bg-[#E8262A] active:scale-[0.99] border border-white/10"
                 }`}
               >
                 {isOutOfStock
@@ -486,7 +486,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
                 </div>
                 <button
                   onClick={() => setIsSizeGuideOpen(false)}
-                  className="w-8 h-8 rounded-full bg-black/5 hover:bg-black hover:text-white flex items-center justify-center text-lg font-bold transition-colors"
+                  className="w-8 h-8 rounded-full bg-black/5 hover:bg-[#2C2A29] hover:text-white flex items-center justify-center text-lg font-bold transition-colors"
                 >
                   &times;
                 </button>
@@ -544,7 +544,7 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
               <button
                 type="button"
                 onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full bg-black text-white py-3.5 text-xs font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs"
+                className="w-full bg-[#2C2A29] text-white py-3.5 text-xs font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs border border-white/10"
               >
                 Got It
               </button>

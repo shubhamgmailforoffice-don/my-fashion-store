@@ -121,11 +121,11 @@ export default function Footer() {
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="ENTER EMAIL ADDRESS"
-                className="w-full bg-white/70 border border-white/80 backdrop-blur-xs rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-black focus:bg-white placeholder:text-gray-400 tracking-widest uppercase transition-colors shadow-2xs"
+                className="w-full bg-white/70 border border-white/80 backdrop-blur-xs rounded-xl px-3.5 py-2.5 text-xs focus:outline-none focus:border-[#2C2A29] focus:bg-white placeholder:text-gray-400 tracking-widest uppercase transition-colors shadow-2xs"
               />
               <button
                 type="submit"
-                className="w-full bg-black text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs"
+                className="w-full bg-[#2C2A29] text-white py-3 text-[10px] font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs border border-white/10"
               >
                 {subscribed ? "✓ You Are On The List" : "Subscribe"}
               </button>

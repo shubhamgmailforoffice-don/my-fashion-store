@@ -513,7 +513,7 @@ export default function AccountPage() {
         
         {/* Editorial Top Brand Identifier */}
         <div className="text-center mb-8 sm:mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-black text-white text-[9px] font-black tracking-[0.35em] uppercase mb-4 rounded-full shadow-xs">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#2C2A29] text-white text-[9px] font-black tracking-[0.35em] uppercase mb-4 rounded-full shadow-xs border border-white/20">
             <span>DRIIVN</span>
             <span>•</span>
             <span>MEMBER CLUB</span>
@@ -532,7 +532,7 @@ export default function AccountPage() {
         {currentUser ? (
           <div className="space-y-8">
             {/* VIP Status Banner */}
-            <div className="bg-neutral-950/90 backdrop-blur-2xl text-white p-6 sm:p-8 relative overflow-hidden border border-white/15 rounded-3xl shadow-xl">
+            <div className="bg-[#2C2A29]/95 backdrop-blur-2xl text-white p-6 sm:p-8 relative overflow-hidden border border-white/20 rounded-3xl shadow-2xl">
               <div className="absolute right-0 top-0 translate-x-4 -translate-y-4 text-neutral-800/40 font-black text-7xl select-none pointer-events-none">
                 DRIIVN
               </div>
@@ -595,7 +595,7 @@ export default function AccountPage() {
                 onClick={() => setActiveTab("orders")}
                 className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "orders"
-                    ? "bg-black text-white shadow-xs"
+                    ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                     : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
@@ -605,7 +605,7 @@ export default function AccountPage() {
                 onClick={() => setActiveTab("addresses")}
                 className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "addresses"
-                    ? "bg-black text-white shadow-xs"
+                    ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                     : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
@@ -615,7 +615,7 @@ export default function AccountPage() {
                 onClick={() => setActiveTab("perks")}
                 className={`py-2.5 px-5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   activeTab === "perks"
-                    ? "bg-black text-white shadow-xs"
+                    ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                     : "text-neutral-600 hover:text-black hover:bg-white/60"
                 }`}
               >
@@ -644,7 +644,7 @@ export default function AccountPage() {
                       value={linkOrderIdInput}
                       onChange={(e) => setLinkOrderIdInput(e.target.value)}
                       required
-                      className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-44"
+                      className="border border-neutral-300 px-3 py-2 text-xs font-mono font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-[#2C2A29] w-full sm:w-44"
                     />
                     <input
                       type="text"
@@ -652,12 +652,12 @@ export default function AccountPage() {
                       value={linkContactInput}
                       onChange={(e) => setLinkContactInput(e.target.value)}
                       title="Enter mobile or email used during guest checkout if different from current account"
-                      className="border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-black w-full sm:w-52"
+                      className="border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider bg-white focus:outline-none focus:border-[#2C2A29] w-full sm:w-52"
                     />
                     <button
                       type="submit"
                       disabled={linkLoading}
-                      className="bg-black hover:bg-orange-600 disabled:bg-neutral-400 text-white px-5 py-2 text-xs font-black tracking-widest uppercase whitespace-nowrap transition-colors flex items-center justify-center gap-1.5"
+                      className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-400 text-white px-5 py-2 text-xs font-black tracking-widest uppercase whitespace-nowrap transition-colors flex items-center justify-center gap-1.5 border border-white/10"
                     >
                       {linkLoading ? "VERIFYING..." : "LINK ORDER"}
                     </button>
@@ -683,7 +683,7 @@ export default function AccountPage() {
                     </p>
                     <Link
                       href="/shop"
-                      className="bg-black text-white px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-orange-500 transition-colors inline-block"
+                      className="bg-[#2C2A29] text-white px-6 py-3 text-xs font-bold tracking-widest uppercase hover:bg-[#E8262A] transition-colors inline-block border border-white/10"
                     >
                       Explore Seasonal Drops
                     </Link>
@@ -703,7 +703,7 @@ export default function AccountPage() {
                       return (
                         <div
                           key={order.id}
-                          className="border border-neutral-200 bg-white p-5 sm:p-6 space-y-4 hover:border-black transition-colors"
+                          className="border border-neutral-200 bg-white p-5 sm:p-6 space-y-4 hover:border-[#2C2A29] transition-colors"
                         >
                           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-neutral-100 pb-3">
                             <div>
@@ -799,7 +799,7 @@ export default function AccountPage() {
                                       <div
                                         className={`h-1.5 w-full transition-all ${
                                           isCompleted
-                                            ? "bg-black"
+                                            ? "bg-[#2C2A29]"
                                             : isCurrent
                                             ? "bg-orange-500 animate-pulse"
                                             : "bg-neutral-200"
@@ -839,7 +839,7 @@ export default function AccountPage() {
                                   href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="bg-black hover:bg-orange-600 text-white px-3.5 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors inline-block"
+                                  className="bg-[#2C2A29] hover:bg-[#E8262A] text-white px-3.5 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors inline-block border border-white/10"
                                 >
                                   Track Courier &rarr;
                                 </a>
@@ -869,7 +869,7 @@ export default function AccountPage() {
                   <button
                     type="button"
                     onClick={handleOpenAddAddress}
-                    className="bg-black hover:bg-orange-600 text-white px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors flex items-center gap-1.5"
+                    className="bg-[#2C2A29] hover:bg-[#E8262A] text-white px-4 py-2.5 text-xs font-black tracking-widest uppercase transition-colors flex items-center gap-1.5 border border-white/10"
                   >
                     <span>+ Add New Address</span>
                   </button>
@@ -883,7 +883,7 @@ export default function AccountPage() {
                     <button
                       type="button"
                       onClick={handleOpenAddAddress}
-                      className="bg-black hover:bg-orange-600 text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-colors"
+                      className="bg-[#2C2A29] hover:bg-[#E8262A] text-white px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-colors border border-white/10"
                     >
                       + Add Primary Address
                     </button>
@@ -895,7 +895,7 @@ export default function AccountPage() {
                         key={addr.id}
                         className={`border p-5 relative flex flex-col justify-between transition-colors ${
                           addr.isDefault
-                            ? "border-black bg-white shadow-xs"
+                            ? "border-[#2C2A29] bg-white shadow-xs"
                             : "border-neutral-200 bg-white hover:border-neutral-400"
                         }`}
                       >
@@ -1209,7 +1209,7 @@ export default function AccountPage() {
                       </button>
                       <button
                         type="submit"
-                        className="w-2/3 bg-black hover:bg-orange-600 text-white py-3 text-xs font-black uppercase tracking-wider transition-colors"
+                        className="w-2/3 bg-[#2C2A29] hover:bg-[#E8262A] text-white py-3 text-xs font-black uppercase tracking-wider transition-colors rounded-xl shadow-xs border border-white/10"
                       >
                         {editingAddressId ? "Update Address" : "Save Address"}
                       </button>
@@ -1238,7 +1238,7 @@ export default function AccountPage() {
                 }}
                 className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   authMode === "signin"
-                    ? "bg-black text-white shadow-xs"
+                    ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                     : "text-neutral-600 hover:text-black hover:bg-white/50"
                 }`}
               >
@@ -1253,7 +1253,7 @@ export default function AccountPage() {
                 }}
                 className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase rounded-xl transition-all ${
                   authMode === "signup"
-                    ? "bg-black text-white shadow-xs"
+                    ? "bg-[#2C2A29] text-white shadow-xs border border-white/10"
                     : "text-neutral-600 hover:text-black hover:bg-white/50"
                 }`}
               >
@@ -1296,7 +1296,7 @@ export default function AccountPage() {
                     required
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black focus:bg-white rounded-xl shadow-2xs transition-colors"
+                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-[#2C2A29] focus:bg-white rounded-xl shadow-2xs transition-colors"
                   />
                 </div>
               )}
@@ -1311,7 +1311,7 @@ export default function AccountPage() {
                   required
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
-                  className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black focus:bg-white rounded-xl shadow-2xs transition-colors"
+                  className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-[#2C2A29] focus:bg-white rounded-xl shadow-2xs transition-colors"
                 />
               </div>
 
@@ -1338,7 +1338,7 @@ export default function AccountPage() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-black focus:bg-white pr-16 rounded-xl shadow-2xs transition-colors"
+                    className="w-full border border-white/80 bg-white/70 backdrop-blur-xs px-4 py-3.5 text-xs font-bold tracking-wider focus:outline-none focus:border-[#2C2A29] focus:bg-white pr-16 rounded-xl shadow-2xs transition-colors"
                   />
                   <button
                     type="button"
@@ -1363,7 +1363,7 @@ export default function AccountPage() {
                         setForgotSent(true);
                         setForgotPasswordOpen(false);
                       }}
-                      className="bg-black text-white px-3 py-1.5 text-[9px] font-black uppercase tracking-widest hover:bg-[#E8262A] transition-colors rounded-lg shadow-xs"
+                      className="bg-[#2C2A29] text-white px-3 py-1.5 text-[9px] font-black uppercase tracking-widest hover:bg-[#E8262A] transition-colors rounded-lg shadow-xs border border-white/10"
                     >
                       Send Reset Instructions
                     </button>
@@ -1403,7 +1403,7 @@ export default function AccountPage() {
               <button
                 type="submit"
                 disabled={loading || !identifier || !password}
-                className="w-full bg-black hover:bg-[#E8262A] text-white disabled:bg-neutral-200 disabled:text-neutral-400 py-4 text-xs font-black tracking-[0.25em] uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-xs active:scale-[0.99]"
+                className="w-full bg-[#2C2A29] hover:bg-[#E8262A] text-white disabled:bg-neutral-200 disabled:text-neutral-400 py-4 text-xs font-black tracking-[0.25em] uppercase rounded-xl transition-all duration-300 flex items-center justify-center gap-2 mt-2 shadow-lg active:scale-[0.99] border border-white/10"
               >
                 {loading ? (
                   <>
@@ -1479,11 +1479,11 @@ export default function AccountPage() {
                     required
                     value={guestOrderId}
                     onChange={(e) => setGuestOrderId(e.target.value)}
-                    className="flex-1 border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-black"
+                    className="flex-1 border border-neutral-300 px-3 py-2 text-xs font-bold uppercase tracking-wider focus:outline-none focus:border-[#2C2A29]"
                   />
                   <button
                     type="submit"
-                    className="bg-black text-white px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-orange-500 transition-colors"
+                    className="bg-[#2C2A29] text-white px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:bg-[#E8262A] transition-colors border border-white/10"
                   >
                     Track
                   </button>

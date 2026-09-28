@@ -36,7 +36,7 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
       >
         <Link href={`/product/${product.id}`} className="block relative">
           {/* Card Media Container with Rounded Corners (Screenshot 2 & 4 style) */}
-          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-neutral-900 border border-neutral-100/60 shadow-xs">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#2C2A29] border border-white/40 shadow-xs backdrop-blur-md">
             <Image
               src={
                 isHovered && product.images[1] ? product.images[1] : product.images[0]
@@ -59,7 +59,7 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
 
             {/* Pagination Dots at Bottom Center - Frosted Glass Capsule */}
             <div className="absolute bottom-2.5 inset-x-0 flex items-center justify-center z-10 pointer-events-none">
-              <div className="flex items-center gap-1 bg-black/30 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/20 shadow-xs">
+              <div className="flex items-center gap-1 bg-[#2C2A29]/60 backdrop-blur-xl px-2 py-0.5 rounded-full border border-white/30 shadow-xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
                 <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
                 <span className="w-1.5 h-1.5 rounded-full bg-white/40 shadow-xs" />
@@ -99,7 +99,7 @@ export default function ProductCard({ product, onQuickAdd }: ProductCardProps) {
             className={`w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full transition-all leading-none ${
               isOutOfStock
                 ? "text-neutral-300 cursor-not-allowed border border-transparent"
-                : "text-neutral-600 hover:text-white bg-white/70 hover:bg-black border border-white/80 backdrop-blur-xs shadow-2xs active:scale-90"
+                : "text-neutral-600 hover:text-white bg-white/70 hover:bg-[#2C2A29] border border-white/80 backdrop-blur-xs shadow-2xs active:scale-90"
             }`}
             aria-label={`Quick add ${product.name} to bag`}
             title={isOutOfStock ? "Out of stock" : "Quick Add to Bag"}

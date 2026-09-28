@@ -56,10 +56,10 @@ export default function ShopByColorPage() {
             <button
               key={color.name}
               onClick={() => setSelectedColor(color.name)}
-              className={`relative h-32 flex flex-col justify-between p-4 border transition-all duration-300 text-left outline-none ${
+              className={`relative h-32 flex flex-col justify-between p-4 rounded-2xl border transition-all duration-300 text-left outline-none ${
                 isActive
-                  ? "border-black bg-zinc-50 ring-2 ring-black"
-                  : "border-gray-100 hover:border-gray-300 bg-white"
+                  ? "border-[#2C2A29] bg-white ring-2 ring-[#2C2A29] shadow-md"
+                  : "border-white/80 hover:border-[#2C2A29] bg-white/70 backdrop-blur-md shadow-2xs"
               }`}
             >
               {/* Color Dot Indicator */}

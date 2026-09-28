@@ -181,7 +181,7 @@ export default function SupportWidget() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group bg-black/85 hover:bg-[#E8262A] backdrop-blur-xl text-white shadow-2xl border border-white/20 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
+            className="group bg-[#2C2A29]/90 hover:bg-[#E8262A] backdrop-blur-2xl text-white shadow-[0_8px_30px_rgba(44,42,41,0.4)] border border-white/30 px-4 py-3 rounded-full flex items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95"
             aria-label="Open Concierge Support"
           >
             <div className="relative">
@@ -207,7 +207,7 @@ export default function SupportWidget() {
       {isOpen && (
         <div className="fixed bottom-20 sm:bottom-6 right-3 sm:right-6 z-50 w-[calc(100vw-24px)] sm:w-[380px] bg-white/92 backdrop-blur-2xl border border-white/70 shadow-2xl rounded-2xl overflow-hidden flex flex-col h-[520px] max-h-[80vh] animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
-          <div className="bg-black/90 backdrop-blur-md text-white p-4 flex items-center justify-between border-b border-white/10">
+          <div className="bg-[#2C2A29]/95 backdrop-blur-2xl text-white p-4 flex items-center justify-between border-b border-white/15">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
                 D
@@ -240,7 +240,7 @@ export default function SupportWidget() {
               onClick={() => setActiveTab("chat")}
               className={`py-2.5 transition-colors ${
                 activeTab === "chat"
-                  ? "bg-white/80 text-black border-b-2 border-black backdrop-blur-md"
+                  ? "bg-white/80 text-black border-b-2 border-[#2C2A29] backdrop-blur-md"
                   : "text-neutral-500 hover:text-black"
               }`}
             >
@@ -251,7 +251,7 @@ export default function SupportWidget() {
               onClick={() => setActiveTab("channels")}
               className={`py-2.5 transition-colors ${
                 activeTab === "channels"
-                  ? "bg-white/80 text-black border-b-2 border-black backdrop-blur-md"
+                  ? "bg-white/80 text-black border-b-2 border-[#2C2A29] backdrop-blur-md"
                   : "text-neutral-500 hover:text-black"
               }`}
             >
@@ -272,7 +272,7 @@ export default function SupportWidget() {
                     <div
                       className={`max-w-[85%] p-3 rounded-md leading-relaxed whitespace-pre-line ${
                         m.sender === "user"
-                          ? "bg-black text-white text-right"
+                          ? "bg-[#2C2A29] text-white text-right shadow-md border border-white/10"
                           : "bg-white border border-neutral-200 text-neutral-900 shadow-xs"
                       }`}
                     >
@@ -294,7 +294,7 @@ export default function SupportWidget() {
                             <Link
                               href={m.actionLink.url}
                               onClick={() => setIsOpen(false)}
-                              className="inline-block bg-black hover:bg-[#E8262A] text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors"
+                              className="inline-block bg-[#2C2A29] hover:bg-[#E8262A] text-white px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition-colors border border-white/15"
                             >
                               {m.actionLink.label} &rarr;
                             </Link>
@@ -311,7 +311,7 @@ export default function SupportWidget() {
                             key={opt}
                             type="button"
                             onClick={() => handleSendMessage(opt)}
-                            className="bg-white hover:bg-neutral-900 hover:text-white border border-neutral-300 text-neutral-800 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 transition-colors rounded-xs shadow-2xs"
+                            className="bg-white hover:bg-[#2C2A29] hover:text-white border border-neutral-300 text-neutral-800 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 transition-colors rounded-xs shadow-2xs"
                           >
                             {opt}
                           </button>
@@ -347,12 +347,12 @@ export default function SupportWidget() {
                   placeholder="Ask a question or enter Order ID..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
-                  className="flex-1 bg-white/70 border border-neutral-300 px-3 py-2 text-xs rounded-xl focus:outline-none focus:border-black uppercase placeholder:normal-case font-medium backdrop-blur-sm"
+                  className="flex-1 bg-white/70 border border-neutral-300 px-3 py-2 text-xs rounded-xl focus:outline-none focus:border-[#2C2A29] uppercase placeholder:normal-case font-medium backdrop-blur-sm"
                 />
                 <button
                   type="submit"
                   disabled={!inputText.trim()}
-                  className="bg-black hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase rounded-xl transition-colors shadow-xs"
+                  className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3.5 py-2 text-xs font-black uppercase rounded-xl transition-colors shadow-xs border border-white/10"
                 >
                   &rarr;
                 </button>
