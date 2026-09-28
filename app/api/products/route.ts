@@ -103,62 +103,112 @@ export async function PUT(request: Request) {
       );
     }
 
-    const db = getDB();
-    const index = db.products.findIndex((p) => p.id === body.id);
+    let updatedProduct: Product | null = null;
 
-    if (index === -1) {
-      return NextResponse.json(
-        { success: false, error: "Product not found" },
-        { status: 404 }
-      );
-    }
-
-    const updatedProduct: Product = {
-      ...db.products[index],
-      ...body,
-      inStock: body.inStock !== undefined ? body.inStock : db.products[index].inStock ?? true,
-      sizes: body.sizes !== undefined ? body.sizes : db.products[index].sizes ?? ["S", "M", "L", "XL", "XXL"],
-      images: body.images !== undefined ? body.images.filter(Boolean) : db.products[index].images,
-      price: Number(body.price ?? db.products[index].price),
-      originalPrice: body.originalPrice
-        ? Number(body.originalPrice)
-        : db.products[index].originalPrice,
-      stockQuantity: body.stockQuantity !== undefined ? Number(body.stockQuantity) : db.products[index].stockQuantity ?? 10,
-      visibleOnSite: body.visibleOnSite !== undefined ? Boolean(body.visibleOnSite) : db.products[index].visibleOnSite ?? true,
-    };
-
+    // 1. Primary: Update in Neon PostgreSQL via Prisma
     if (process.env.DATABASE_URL) {
       try {
         const { prisma } = await import("@/lib/prisma");
-        await prisma.product.update({
+        const existing = await prisma.product.findUnique({
           where: { id: body.id },
-          data: {
-            name: updatedProduct.name,
-            price: Math.round(updatedProduct.price),
-            originalPrice: updatedProduct.originalPrice ? Math.round(updatedProduct.originalPrice) : null,
-            images: updatedProduct.images,
-            category: updatedProduct.category,
-            subCategory: updatedProduct.subCategory || null,
-            colors: updatedProduct.colors,
-            sizes: updatedProduct.sizes || ["S", "M", "L", "XL", "XXL"],
-            inStock: updatedProduct.inStock ?? true,
-            isNew: updatedProduct.isNew ?? true,
-            isSale: updatedProduct.isSale ?? false,
-            isBlindBox: updatedProduct.isBlindBox ?? false,
-            collectionSlug: updatedProduct.collectionSlug || "essentials",
-            description: updatedProduct.description || null,
-            stockQuantity: updatedProduct.stockQuantity ?? 10,
-            visibleOnSite: updatedProduct.visibleOnSite ?? true,
-          },
         });
+
+        if (existing) {
+          const validImages = body.images !== undefined ? body.images.filter(Boolean) : existing.images;
+          const updated = await prisma.product.update({
+            where: { id: body.id },
+            data: {
+              name: body.name !== undefined ? body.name : existing.name,
+              price: body.price !== undefined ? Math.round(Number(body.price)) : existing.price,
+              originalPrice:
+                body.originalPrice !== undefined
+                  ? body.originalPrice
+                    ? Math.round(Number(body.originalPrice))
+                    : null
+                  : existing.originalPrice,
+              images: validImages.length > 0 ? validImages : existing.images,
+              category: body.category !== undefined ? body.category : existing.category,
+              subCategory: body.subCategory !== undefined ? body.subCategory : existing.subCategory,
+              colors: body.colors !== undefined ? body.colors : existing.colors,
+              sizes: body.sizes !== undefined ? body.sizes : existing.sizes,
+              inStock: body.inStock !== undefined ? body.inStock : existing.inStock,
+              isNew: body.isNew !== undefined ? body.isNew : existing.isNew,
+              isSale: body.isSale !== undefined ? body.isSale : existing.isSale,
+              isBlindBox: body.isBlindBox !== undefined ? body.isBlindBox : existing.isBlindBox,
+              collectionSlug: body.collectionSlug !== undefined ? body.collectionSlug : existing.collectionSlug,
+              description: body.description !== undefined ? body.description : existing.description,
+              stockQuantity:
+                body.stockQuantity !== undefined
+                  ? Number(body.stockQuantity)
+                  : existing.stockQuantity ?? 10,
+              visibleOnSite:
+                body.visibleOnSite !== undefined ? Boolean(body.visibleOnSite) : existing.visibleOnSite,
+            },
+          });
+
+          updatedProduct = {
+            id: updated.id,
+            name: updated.name,
+            price: updated.price,
+            originalPrice: updated.originalPrice ?? undefined,
+            images: updated.images,
+            category: updated.category as any,
+            subCategory: updated.subCategory as any,
+            colors: updated.colors,
+            sizes: updated.sizes,
+            inStock: updated.inStock,
+            isNew: updated.isNew,
+            isSale: updated.isSale,
+            isBlindBox: updated.isBlindBox,
+            collectionSlug: updated.collectionSlug,
+            description: updated.description ?? undefined,
+            stockQuantity: updated.stockQuantity ?? 10,
+            visibleOnSite: updated.visibleOnSite,
+          };
+        }
       } catch (err) {
         console.error("Prisma product update error:", err);
       }
     }
 
-    db.products[index] = updatedProduct;
-    saveDB(db);
-    return NextResponse.json({ success: true, product: db.products[index] });
+    // 2. Secondary: Synchronize local db.json if present
+    try {
+      const db = getDB();
+      const index = db.products.findIndex((p) => p.id === body.id);
+      if (index !== -1) {
+        const p = db.products[index];
+        const next: Product = {
+          ...p,
+          ...body,
+          inStock: body.inStock !== undefined ? body.inStock : p.inStock ?? true,
+          sizes: body.sizes !== undefined ? body.sizes : p.sizes ?? ["S", "M", "L", "XL", "XXL"],
+          images: body.images !== undefined ? body.images.filter(Boolean) : p.images,
+          price: Number(body.price ?? p.price),
+          originalPrice:
+            body.originalPrice !== undefined
+              ? body.originalPrice
+                ? Number(body.originalPrice)
+                : undefined
+              : p.originalPrice,
+          stockQuantity:
+            body.stockQuantity !== undefined ? Number(body.stockQuantity) : p.stockQuantity ?? 10,
+          visibleOnSite:
+            body.visibleOnSite !== undefined ? Boolean(body.visibleOnSite) : p.visibleOnSite ?? true,
+        };
+        db.products[index] = next;
+        saveDB(db);
+        if (!updatedProduct) updatedProduct = next;
+      }
+    } catch {}
+
+    if (updatedProduct) {
+      return NextResponse.json({ success: true, product: updatedProduct });
+    }
+
+    return NextResponse.json(
+      { success: false, error: "Product not found" },
+      { status: 404 }
+    );
   } catch (error) {
     return NextResponse.json(
       { success: false, error: String(error) },
@@ -179,10 +229,11 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // 1. Delete from PostgreSQL database via Prisma
     if (process.env.DATABASE_URL) {
       try {
         const { prisma } = await import("@/lib/prisma");
-        await prisma.product.delete({
+        await prisma.product.deleteMany({
           where: { id },
         });
       } catch (err) {
@@ -190,9 +241,12 @@ export async function DELETE(request: Request) {
       }
     }
 
-    const db = getDB();
-    db.products = db.products.filter((p) => p.id !== id);
-    saveDB(db);
+    // 2. Also remove from local db.json if present
+    try {
+      const db = getDB();
+      db.products = db.products.filter((p) => p.id !== id);
+      saveDB(db);
+    } catch {}
 
     return NextResponse.json({ success: true, message: "Product deleted" });
   } catch (error) {

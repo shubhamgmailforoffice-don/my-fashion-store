@@ -90,7 +90,7 @@ function AdminContent() {
   const refreshData = async () => {
     try {
       const [resProd, resOrders, resUsers] = await Promise.all([
-        fetch("/api/products", { cache: "no-store" }),
+        fetch("/api/products?all=true", { cache: "no-store" }),
         fetch("/api/orders", { cache: "no-store" }),
         fetch("/api/users", { cache: "no-store" }),
       ]);

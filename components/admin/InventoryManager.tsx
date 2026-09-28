@@ -134,6 +134,111 @@ export default function InventoryManager({
     }
   };
 
+  // Fast Empty Stock to 0
+  const handleEmptyProductStock = async (product: Product, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setUpdatingId(product.id);
+    try {
+      const res = await fetch("/api/products", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: product.id,
+          stockQuantity: 0,
+          inStock: false,
+        }),
+      });
+      if (res.ok) {
+        onRefresh();
+      }
+    } catch (err) {
+      alert("Error setting stock to 0: " + String(err));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Permanently Delete Product
+  const handleDeleteProduct = async (product: Product, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (!confirm(`Are you sure you want to permanently delete "${product.name}" from inventory?`)) {
+      return;
+    }
+    setUpdatingId(product.id);
+    try {
+      const res = await fetch(`/api/products?id=${product.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        if (activeManageProduct?.id === product.id) {
+          setActiveManageProduct(null);
+        }
+        onRefresh();
+      } else {
+        alert("Failed to delete product.");
+      }
+    } catch (err) {
+      alert("Error deleting product: " + String(err));
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  // Bulk: Empty stock of all products
+  const handleEmptyAllStock = async () => {
+    if (!confirm(`Are you sure you want to set stock quantity to 0 (Sold Out) for all ${products.length} products?`)) {
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await Promise.all(
+        products.map((p) =>
+          fetch("/api/products", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: p.id,
+              stockQuantity: 0,
+              inStock: false,
+            }),
+          })
+        )
+      );
+      onRefresh();
+    } catch (err) {
+      alert("Error: " + String(err));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Bulk: Delete all products completely
+  const handleDeleteAllProducts = async () => {
+    if (!confirm(`⚠️ DANGER: Are you sure you want to PERMANENTLY DELETE ALL ${products.length} products from the store? This will completely empty your inventory so you can start with a 100% clean catalog.`)) {
+      return;
+    }
+    const secondConfirm = prompt(`Type "DELETE ALL" to confirm permanent deletion:`);
+    if (secondConfirm !== "DELETE ALL") {
+      alert("Deletion cancelled.");
+      return;
+    }
+    setIsSaving(true);
+    try {
+      await Promise.all(
+        products.map((p) =>
+          fetch(`/api/products?id=${p.id}`, {
+            method: "DELETE",
+          })
+        )
+      );
+      onRefresh();
+    } catch (err) {
+      alert("Error deleting products: " + String(err));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   // Image Upload Handler
   const handleUploadImageFile = async (e: React.ChangeEvent<HTMLInputElement>, onUrl: (url: string) => void) => {
     const file = e.target.files?.[0];
@@ -322,20 +427,38 @@ export default function InventoryManager({
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             type="button"
             onClick={() => onRefresh()}
-            className="px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-xl text-xs font-bold text-neutral-800 uppercase transition-all shadow-xs"
+            className="px-3.5 py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 rounded-xl text-xs font-bold text-neutral-800 uppercase transition-all shadow-xs"
           >
-            ↻ Refresh Stock
+            ↻ Refresh
+          </button>
+          <button
+            type="button"
+            onClick={handleEmptyAllStock}
+            disabled={isSaving || products.length === 0}
+            className="px-3 py-2 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl text-xs font-black text-amber-900 uppercase transition-all shadow-xs disabled:opacity-40"
+            title="Set stock quantity to 0 (Sold Out) for all products"
+          >
+            Set All Stock to 0
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteAllProducts}
+            disabled={isSaving || products.length === 0}
+            className="px-3 py-2 bg-red-50 hover:bg-red-100 border border-red-300 rounded-xl text-xs font-black text-red-700 uppercase transition-all shadow-xs disabled:opacity-40"
+            title="Permanently delete all products to start completely fresh"
+          >
+            🗑️ Delete All Products
           </button>
           <button
             type="button"
             onClick={() => setIsAddDraftOpen(true)}
-            className="px-5 py-2.5 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5"
+            className="px-4 py-2 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5"
           >
-            <span>+ Add Draft to Inventory</span>
+            <span>+ Add to Inventory</span>
           </button>
         </div>
       </div>
@@ -563,7 +686,7 @@ export default function InventoryManager({
 
                       {/* Action Buttons */}
                       <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-2">
+                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
                           {isDraft ? (
                             <button
                               type="button"
@@ -576,16 +699,17 @@ export default function InventoryManager({
                                   stockQuantity: p.stockQuantity ?? 5,
                                 });
                               }}
-                              className="px-3 py-1.5 bg-black hover:bg-[#E8262A] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs"
+                              className="px-2.5 py-1 bg-black hover:bg-[#E8262A] text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-xs"
                             >
-                              + Add to Site &rarr;
+                              + Add to Site
                             </button>
                           ) : (
                             <button
                               type="button"
                               onClick={(e) => handleToggleVisibility(p, e)}
                               disabled={updatingId === p.id}
-                              className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-700 rounded-lg text-[10px] font-bold uppercase transition-colors"
+                              className="px-2 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-700 rounded-lg text-[10px] font-bold uppercase transition-colors"
+                              title="Hide from store into drafts"
                             >
                               Unpublish
                             </button>
@@ -593,10 +717,30 @@ export default function InventoryManager({
 
                           <button
                             type="button"
+                            onClick={(e) => handleEmptyProductStock(p, e)}
+                            disabled={updatingId === p.id || (p.stockQuantity === 0 && p.inStock === false)}
+                            className="px-2 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-800 rounded-lg text-[10px] font-bold uppercase transition-colors disabled:opacity-40"
+                            title="Set stock quantity to 0 (Mark as Sold Out)"
+                          >
+                            Qty: 0
+                          </button>
+
+                          <button
+                            type="button"
                             onClick={() => setActiveManageProduct({ ...p })}
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 rounded-xl text-xs font-bold uppercase transition-all"
+                            className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 rounded-lg text-[10px] font-bold uppercase transition-all"
                           >
                             Manage
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={(e) => handleDeleteProduct(p, e)}
+                            disabled={updatingId === p.id}
+                            className="px-2 py-1 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-lg text-[10px] font-bold uppercase transition-colors"
+                            title="Permanently delete this product"
+                          >
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -1212,21 +1356,31 @@ export default function InventoryManager({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-3 border-t border-neutral-200">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-neutral-200">
                 <button
                   type="button"
-                  onClick={() => setActiveManageProduct(null)}
-                  className="w-1/3 py-3 rounded-xl border border-neutral-300 text-xs font-bold uppercase text-neutral-700 hover:bg-neutral-100"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
+                  onClick={(e) => activeManageProduct && handleDeleteProduct(activeManageProduct, e)}
                   disabled={isSaving}
-                  className="w-2/3 py-3 rounded-xl bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-98"
+                  className="w-full sm:w-auto px-4 py-3 rounded-xl bg-red-50 hover:bg-red-100 border border-red-200 text-xs font-bold uppercase text-red-600 transition-colors"
                 >
-                  {isSaving ? "Saving..." : "Save Product Changes ✓"}
+                  🗑️ Delete Product
                 </button>
+                <div className="flex gap-2 w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={() => setActiveManageProduct(null)}
+                    className="flex-1 sm:flex-none px-4 py-3 rounded-xl border border-neutral-300 text-xs font-bold uppercase text-neutral-700 hover:bg-neutral-100"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSaving}
+                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest transition-all shadow-md active:scale-98"
+                  >
+                    {isSaving ? "Saving..." : "Save Product Changes ✓"}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

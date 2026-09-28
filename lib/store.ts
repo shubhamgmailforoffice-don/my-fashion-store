@@ -256,7 +256,11 @@ export async function getAsyncProducts(): Promise<Product[]> {
       const records = await prisma.product.findMany({
         orderBy: { createdAt: "desc" },
       });
-      if (records && records.length > 0) {
+      if (records) {
+        if (records.length === 0) {
+          return [];
+        }
+
         // Guarantee top 4 flagship streetwear garments (Black Tiger, Silent Rage, Crimson Betta, Purple Dragonfly)
         const priorityIds = ["102", "103", "104", "101"];
         const priorityMap = new Map(priorityIds.map((id, idx) => [id, idx]));
@@ -336,7 +340,10 @@ export async function getAsyncOrders(): Promise<Order[]> {
         include: { items: true },
         orderBy: { createdAt: "desc" },
       });
-      if (records && records.length > 0) {
+      if (records) {
+        if (records.length === 0) {
+          return [];
+        }
         return records.map((o) => ({
           id: o.id,
           customerName: o.customerName,
