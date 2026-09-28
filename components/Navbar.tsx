@@ -321,15 +321,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Top Announcement Bar */}
-      <div className="bg-black text-white text-[10px] font-bold tracking-[0.25em] py-2 px-4 text-center uppercase border-b border-neutral-800 flex items-center justify-center gap-4 select-none">
-        <span className="hidden sm:inline">COMPLIMENTARY SHIPPING ON ORDERS OVER RS. 5,000</span>
-        <span className="hidden sm:inline text-[#E8262A]">•</span>
-        <span>FALL-WINTER 2026 DROPS LIVE</span>
-        <span className="hidden md:inline text-[#E8262A]">•</span>
-        <span className="hidden md:inline">FLAGSHIP STORES: DELHI • MUMBAI • HYDERABAD</span>
-      </div>
-
       {/* Main Sticky Header */}
       <header className="sticky top-0 z-40 w-full border-b border-gray-100 bg-white/95 backdrop-blur-md">
         <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
