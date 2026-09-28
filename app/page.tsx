@@ -1,4 +1,4 @@
-import { collections, Product } from "@/lib/data";
+import { Product } from "@/lib/data";
 import { getAsyncProducts } from "@/lib/store";
 import { getAsyncSections, HomepageSection } from "@/lib/sections";
 import ProductGrid from "@/components/ProductGrid";
@@ -8,6 +8,41 @@ import Image from "next/image";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+const FEATURED_CATEGORIES = [
+  {
+    id: "Tops",
+    name: "Tops & Hoodies",
+    subText: "Oversized Tees, Hoodies, Polos & Sweatshirts",
+    href: "/shop?category=Tops",
+    image: "/images/products/oversized-tshirt.jpg",
+    tag: "Essential Fits",
+  },
+  {
+    id: "Bottoms",
+    name: "Bottoms & Pants",
+    subText: "Cargo Pants, Parachute Joggers, Shorts",
+    href: "/shop?category=Bottoms",
+    image: "/images/products/tactical-cargo-pants.jpg",
+    tag: "Tactical & Utility",
+  },
+  {
+    id: "Accessories",
+    name: "Accessories",
+    subText: "Caps, Bags, Wallets, Socks & Utility Gear",
+    href: "/shop?category=Accessories",
+    image: "/images/leather-bag.jpg",
+    tag: "Accent Pieces",
+  },
+  {
+    id: "Special",
+    name: "Special / Drops",
+    subText: "Mystery Box, Archive Edition, Limited Series",
+    href: "/shop?category=Special",
+    image: "/images/hero-streetwear.jpg",
+    tag: "Limited Release",
+  },
+];
 
 export default async function Home() {
   const allProducts = await getAsyncProducts();
@@ -258,53 +293,53 @@ export default async function Home() {
           return null;
         })}
 
-        {/* Section 4: Curated Drops & Concepts */}
+        {/* Section 4: Shop by Category */}
         <section className="bg-[#DFDDD6] py-16 sm:py-24 border-t border-neutral-300/60">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col md:flex-row justify-between items-baseline mb-10 gap-3">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.3em] text-neutral-500 uppercase mb-1">
-                  Curated Drops
+                <p className="text-[10px] font-bold tracking-[0.3em] text-[#E8262A] uppercase mb-1">
+                  Explore The Lineup
                 </p>
                 <h2 className="text-3xl font-black tracking-tight text-gray-900 font-anton uppercase">
-                  Featured Concepts
+                  Shop by Category
                 </h2>
               </div>
               <Link
-                href="/collections"
+                href="/shop"
                 className="text-xs font-black tracking-widest text-black hover:text-[#E8262A] uppercase border-b border-black hover:border-[#E8262A] pb-1 transition-all"
               >
-                View All Collections &rarr;
+                View Full Catalog &rarr;
               </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {collections.map((col, index) => (
+              {FEATURED_CATEGORIES.map((cat, index) => (
                 <Link
-                  key={col.slug}
-                  href={`/collections/${col.slug}`}
+                  key={cat.id}
+                  href={cat.href}
                   className="relative group h-80 sm:h-96 bg-black rounded-2xl overflow-hidden flex flex-col justify-end p-6 border border-zinc-900 cursor-pointer block"
                 >
                   <Image
-                    src={col.image}
-                    alt={col.name}
+                    src={cat.image}
+                    alt={cat.name}
                     fill
-                    className="object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
+                    className="object-cover opacity-60 group-hover:opacity-80 group-hover:scale-105 transition-all duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10" />
 
                   <div className="relative z-20 w-full space-y-1.5">
                     <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block">
-                      Concept 0{index + 1} &bull; {col.tag}
+                      Category 0{index + 1} &bull; {cat.tag}
                     </span>
                     <h3 className="text-base sm:text-lg font-black tracking-wider text-white uppercase font-anton group-hover:text-[#E8262A] transition-colors">
-                      {col.name}
+                      {cat.name}
                     </h3>
                     <p className="text-[10px] text-gray-300 line-clamp-2 uppercase">
-                      {col.description}
+                      {cat.subText}
                     </p>
                     <span className="inline-block text-[10px] font-bold tracking-widest text-white group-hover:text-[#E8262A] uppercase pt-1 transition-colors">
-                      Discover Drops &rarr;
+                      Explore {cat.name} &rarr;
                     </span>
                   </div>
                 </Link>
@@ -354,7 +389,7 @@ export default async function Home() {
               <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
                 <div>
                   <p className="text-[10px] font-bold tracking-widest text-[#E8262A] uppercase">Archive Series</p>
-                  <p className="text-sm font-black tracking-widest text-white uppercase font-anton">Nocturnal Collection</p>
+                  <p className="text-sm font-black tracking-widest text-white uppercase font-anton">Seasonal Drops</p>
                 </div>
                 <Link
                   href="/shop"

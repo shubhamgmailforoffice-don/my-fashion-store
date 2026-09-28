@@ -18,13 +18,6 @@ const CATEGORIES = [
   { id: "Special", name: "Special / Limited", subCategories: ["Mystery Box", "Archive Edition", "Speedway Drop"] },
 ];
 
-const COLLECTIONS = [
-  { slug: "essentials", name: "Core Essentials" },
-  { slug: "nocturnal", name: "Nocturnal Archive" },
-  { slug: "tactical", name: "Tactical Techwear" },
-  { slug: "speedway", name: "Speedway Racing" },
-];
-
 interface RegisteredUser {
   id: string;
   name: string;
@@ -440,8 +433,8 @@ function AdminContent() {
       const matchesSearch =
         !q ||
         p.name.toLowerCase().includes(q) ||
-        (p.subCategory && p.subCategory.toLowerCase().includes(q)) ||
-        p.collectionSlug.toLowerCase().includes(q);
+        (p.category && p.category.toLowerCase().includes(q)) ||
+        (p.subCategory && p.subCategory.toLowerCase().includes(q));
 
       return matchesCategory && matchesSearch;
     });
@@ -1120,8 +1113,6 @@ function AdminContent() {
                           <span className="text-[#E8262A] font-bold">{product.category}</span>
                           <span>•</span>
                           <span>{product.subCategory || "Streetwear"}</span>
-                          <span>•</span>
-                          <span className="text-neutral-400">{product.collectionSlug}</span>
                         </div>
                       </td>
 
@@ -1472,17 +1463,37 @@ function AdminContent() {
                   </label>
                   <select
                     value={editingProduct.category}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const selCat = e.target.value as any;
+                      const matched = CATEGORIES.find((c) => c.id === selCat);
                       setEditingProduct({
                         ...editingProduct,
-                        category: e.target.value as any,
-                      })
-                    }
+                        category: selCat,
+                        subCategory: (matched?.subCategories[0] || "") as any,
+                      });
+                    }}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
                   >
                     {CATEGORIES.map((cat) => (
                       <option key={cat.id} value={cat.id}>
                         {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                    Sub-Category *
+                  </label>
+                  <select
+                    value={editingProduct.subCategory || ""}
+                    onChange={(e) => setEditingProduct({ ...editingProduct, subCategory: e.target.value as any })}
+                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
+                  >
+                    {CATEGORIES.find((c) => c.id === editingProduct.category)?.subCategories.map((sub) => (
+                      <option key={sub} value={sub}>
+                        {sub}
                       </option>
                     ))}
                   </select>
@@ -1499,23 +1510,6 @@ function AdminContent() {
                     onChange={(e) => setEditingProduct({ ...editingProduct, price: Number(e.target.value) })}
                     className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    Collection *
-                  </label>
-                  <select
-                    value={editingProduct.collectionSlug}
-                    onChange={(e) => setEditingProduct({ ...editingProduct, collectionSlug: e.target.value })}
-                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
-                  >
-                    {COLLECTIONS.map((col) => (
-                      <option key={col.slug} value={col.slug}>
-                        {col.name}
-                      </option>
-                    ))}
-                  </select>
                 </div>
 
                 <div>
@@ -1795,23 +1789,6 @@ function AdminContent() {
                     {CATEGORIES.find((c) => c.id === newProductForm.category)?.subCategories.map((sub) => (
                       <option key={sub} value={sub}>
                         {sub}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
-                    Collection *
-                  </label>
-                  <select
-                    value={newProductForm.collectionSlug}
-                    onChange={(e) => setNewProductForm({ ...newProductForm, collectionSlug: e.target.value })}
-                    className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs font-bold uppercase text-black focus:outline-none focus:border-[#E8262A]"
-                  >
-                    {COLLECTIONS.map((col) => (
-                      <option key={col.slug} value={col.slug}>
-                        {col.name}
                       </option>
                     ))}
                   </select>
