@@ -3,60 +3,50 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { defaultReels, ReelItem } from "@/lib/reelsTypes";
 
-export interface ReelItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  productId: string;
-}
-
-const REELS_DATA: ReelItem[] = [
-  {
-    id: "reel-1",
-    name: "BLACK NOCTURNAL HOODIE",
-    price: 6999,
-    image: "/images/hero-streetwear.jpg",
-    productId: "2",
-  },
-  {
-    id: "reel-2",
-    name: "BLACK TIGER BONSAI T-SHIRT",
-    price: 8900,
-    image: "/images/streetwear-tiger.jpg",
-    productId: "102",
-  },
-  {
-    id: "reel-3",
-    name: "PURPLE DRAGONFLY NAVY T-SHIRT",
-    price: 4700,
-    image: "/images/streetwear-dragonfly.jpg",
-    productId: "101",
-  },
-  {
-    id: "reel-4",
-    name: "NOCTURNAL LEATHER MESSENGER BAG",
-    price: 14500,
-    image: "/images/leather-bag.jpg",
-    productId: "104",
-  },
-  {
-    id: "reel-5",
-    name: "RACING CLUB OVERSIZED T-SHIRT",
-    price: 4499,
-    image: "/images/streetwear-model-cap.jpg",
-    productId: "1",
-  },
-];
+export type { ReelItem };
 
 interface ReelsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  reels?: ReelItem[];
 }
 
-export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
+export default function ReelsModal({ isOpen, onClose, reels: propsReels }: ReelsModalProps) {
+  const [reelsList, setReelsList] = useState<ReelItem[]>(propsReels || defaultReels);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Fetch latest reels from API when modal opens or on reels-updated event
+  useEffect(() => {
+    if (propsReels && propsReels.length > 0) {
+      setReelsList(propsReels);
+      return;
+    }
+
+    const fetchReels = async () => {
+      try {
+        const res = await fetch("/api/reels", { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const active = data.filter((r) => r.active !== false);
+            setReelsList(active.length > 0 ? active : data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch reels:", err);
+      }
+    };
+
+    if (isOpen) {
+      fetchReels();
+    }
+
+    const handleUpdate = () => fetchReels();
+    window.addEventListener("reels-updated", handleUpdate);
+    return () => window.removeEventListener("reels-updated", handleUpdate);
+  }, [isOpen, propsReels]);
 
   // ESC key listener to always guarantee closing
   useEffect(() => {
@@ -72,16 +62,16 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
 
   if (!isOpen) return null;
 
-  const currentReel = REELS_DATA[currentIndex];
+  const currentReel = reelsList[currentIndex] || reelsList[0] || defaultReels[0];
 
   const handleNext = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev + 1) % REELS_DATA.length);
+    setCurrentIndex((prev) => (prev + 1) % reelsList.length);
   };
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentIndex((prev) => (prev - 1 + REELS_DATA.length) % REELS_DATA.length);
+    setCurrentIndex((prev) => (prev - 1 + reelsList.length) % reelsList.length);
   };
 
   return (
@@ -104,7 +94,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
         <div className="absolute top-4 inset-x-0 z-50 px-4 flex items-center justify-between pointer-events-auto">
           {/* Reel Indicator Dots */}
           <div className="flex items-center gap-1.5 bg-[#2C2A29]/75 backdrop-blur-xl px-3.5 py-1.5 rounded-full border border-white/25 shadow-lg">
-            {REELS_DATA.map((_, idx) => (
+            {reelsList.map((_, idx) => (
               <span
                 key={idx}
                 className={`h-1.5 rounded-full transition-all ${

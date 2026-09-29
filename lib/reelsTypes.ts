@@ -1,0 +1,51 @@
+export interface ReelItem {
+  id: string;
+  name: string;
+  price: number;
+  image: string;
+  productId: string;
+  active?: boolean;
+}
+
+export const defaultReels: ReelItem[] = [
+  {
+    id: "reel-1",
+    name: "BLACK NOCTURNAL HOODIE",
+    price: 6999,
+    image: "/images/hero-streetwear.jpg",
+    productId: "2",
+    active: true,
+  },
+  {
+    id: "reel-2",
+    name: "BLACK TIGER BONSAI T-SHIRT",
+    price: 8900,
+    image: "/images/streetwear-tiger.jpg",
+    productId: "102",
+    active: true,
+  },
+  {
+    id: "reel-3",
+    name: "PURPLE DRAGONFLY NAVY T-SHIRT",
+    price: 4700,
+    image: "/images/streetwear-dragonfly.jpg",
+    productId: "101",
+    active: true,
+  },
+  {
+    id: "reel-4",
+    name: "NOCTURNAL LEATHER MESSENGER BAG",
+    price: 14500,
+    image: "/images/leather-bag.jpg",
+    productId: "104",
+    active: true,
+  },
+  {
+    id: "reel-5",
+    name: "RACING CLUB OVERSIZED T-SHIRT",
+    price: 4499,
+    image: "/images/streetwear-model-cap.jpg",
+    productId: "1",
+    active: true,
+  },
+];

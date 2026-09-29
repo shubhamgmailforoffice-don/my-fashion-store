@@ -234,6 +234,12 @@ export default function AdminLayout({
             Categories
           </Link>
           <Link
+            href="/admin?tab=reels"
+            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
+          >
+            Reels
+          </Link>
+          <Link
             href="/admin?tab=users"
             className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
           >
@@ -321,6 +327,16 @@ export default function AdminLayout({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
               </svg>
               <span>5. Categories & Menu</span>
+            </Link>
+
+            <Link
+              href="/admin?tab=reels"
+              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
+            >
+              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              <span>6. Lookbook Reels</span>
             </Link>
 
             <Link

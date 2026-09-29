@@ -8,6 +8,7 @@ import { Order } from "@/lib/store";
 import InventoryManager from "@/components/admin/InventoryManager";
 import SectionsManager from "@/components/admin/SectionsManager";
 import CategoryManager from "@/components/admin/CategoryManager";
+import ReelsManager from "@/components/admin/ReelsManager";
 import { AdminCategory, DEFAULT_ADMIN_CATEGORIES, parseCategoriesData } from "@/lib/categories";
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
@@ -26,8 +27,8 @@ interface RegisteredUser {
 
 function AdminContent() {
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "categories" | "users" | null;
-  const [activeTab, setActiveTab] = useState<"orders" | "products" | "inventory" | "sections" | "categories" | "users">(initialTab || "orders");
+  const initialTab = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users" | null;
+  const [activeTab, setActiveTab] = useState<"orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users">(initialTab || "orders");
 
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
@@ -663,6 +664,21 @@ function AdminContent() {
           </span>
         </button>
         <button
+          onClick={() => setActiveTab("reels")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+            activeTab === "reels"
+              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
+              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
+          }`}
+        >
+          <span>6. Lookbook Reels</span>
+          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
+            activeTab === "reels" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-blue-100 text-blue-700"
+          }`}>
+            Reel Photos
+          </span>
+        </button>
+        <button
           onClick={() => setActiveTab("users")}
           className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
             activeTab === "users"
@@ -670,7 +686,7 @@ function AdminContent() {
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
           }`}
         >
-          <span>6. Registered Users</span>
+          <span>7. Registered Users</span>
           <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
             activeTab === "users" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
           }`}>
@@ -1315,7 +1331,14 @@ function AdminContent() {
       )}
 
       {/* ========================================================================= */}
-      {/* TAB 6: REGISTERED USERS (WHO CREATED ACCOUNTS) */}
+      {/* TAB 6: LOOKBOOK REELS & PHOTOS MANAGER */}
+      {/* ========================================================================= */}
+      {activeTab === "reels" && (
+        <ReelsManager products={productsList} />
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 7: REGISTERED USERS (WHO CREATED ACCOUNTS) */}
       {/* ========================================================================= */}
       {activeTab === "users" && (
         <section className="space-y-6">
