@@ -86,6 +86,7 @@ export default function AdminLayout({
   const pathname = usePathname();
   const router = useRouter();
   const [currentTab, setCurrentTab] = useState<string>("orders");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [adminUser, setAdminUser] = useState<{ name: string; email?: string } | null>(null);
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
@@ -125,6 +126,7 @@ export default function AdminLayout({
 
   const handleTabClick = (tabKey: string) => {
     setCurrentTab(tabKey);
+    setMobileMenuOpen(false);
     if (typeof window !== "undefined" && window.location.pathname === "/admin") {
       try {
         const url = new URL(window.location.href);
@@ -290,16 +292,135 @@ export default function AdminLayout({
   // Authenticated Admin Dashboard Layout with 90% #E8E6DF and 10% #E8262A theme
   return (
     <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex flex-col md:flex-row font-inter">
+      {/* Mobile Slide-Over Drawer */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex font-inter">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          {/* Drawer Content */}
+          <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col justify-between p-5 z-10 animate-in slide-in-from-left duration-200">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
+                <div>
+                  <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block mb-1">
+                    Control Center
+                  </span>
+                  <Image
+                    src="/logo-black.png"
+                    alt="DRIIVN"
+                    width={130}
+                    height={16}
+                    className="h-4 w-auto object-contain"
+                  />
+                  <span className="text-[8px] font-black tracking-[0.25em] text-neutral-500 uppercase block mt-0.5">
+                    OPERATIONS DESK
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-lg cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+
+              <nav className="space-y-1.5">
+                {ADMIN_NAV_ITEMS.map((item) => {
+                  const isActive = currentTab === item.key;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() => handleTabClick(item.key)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
+                        isActive
+                          ? "bg-[#E8262A] text-white shadow-sm font-black"
+                          : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                      }`}
+                    >
+                      <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                    </button>
+                  );
+                })}
+
+                <Link
+                  href="/shop"
+                  target="_blank"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-[#E8262A] hover:bg-[#E8262A]/10 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                  <span>View Live Store &rarr;</span>
+                </Link>
+              </nav>
+            </div>
+
+            <div className="pt-5 border-t border-neutral-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
+                    {adminUser?.name?.[0]?.toUpperCase() || "A"}
+                  </div>
+                  <div className="max-w-[130px]">
+                    <p className="text-xs font-bold text-black uppercase truncate">{adminUser?.name || "Admin"}</p>
+                    <p className="text-[10px] text-neutral-500 truncate">{adminUser?.email || "Operations"}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleAdminSignOut}
+                  title="Sign Out"
+                  className="text-neutral-500 hover:text-[#E8262A] transition-colors p-1"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+
+              <Link
+                href="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block text-center w-full py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-[10px] font-bold tracking-widest uppercase transition-colors rounded-lg text-black"
+              >
+                Exit to Storefront
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile Top Bar */}
-      <header className="md:hidden bg-white border-b border-neutral-300 p-3.5 sticky top-0 z-30 shadow-xs">
+      <header className="md:hidden bg-white border-b border-neutral-300 p-3 sticky top-0 z-30 shadow-xs">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#E8262A] animate-pulse" />
+          <div className="flex items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label="Open Admin Menu"
+              className="w-8 h-8 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 flex items-center justify-center text-neutral-800 transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <div>
-              <span className="text-[8px] font-bold tracking-[0.25em] text-[#E8262A] uppercase block">
-                Control Center
-              </span>
-              <h1 className="text-base font-bold tracking-widest uppercase text-[#2C2A29] font-anton leading-none">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2 h-2 rounded-full bg-[#E8262A] animate-pulse" />
+                <span className="text-[8px] font-bold tracking-[0.25em] text-[#E8262A] uppercase block">
+                  Control Center
+                </span>
+              </div>
+              <h1 className="text-sm font-bold tracking-widest uppercase text-[#2C2A29] font-anton leading-none">
                 DRIIVN OPERATIONS
               </h1>
             </div>
@@ -314,14 +435,14 @@ export default function AdminLayout({
             <button
               onClick={handleAdminSignOut}
               title="Sign Out"
-              className="w-7 h-7 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-[10px] text-white"
+              className="w-7 h-7 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-[10px] text-white cursor-pointer"
             >
               {adminUser?.name?.[0]?.toUpperCase() || "A"}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Tabs */}
+        {/* Mobile Navigation Tabs (All 7 Options) */}
         <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pb-0.5 text-[10px] font-bold tracking-wider uppercase">
           {ADMIN_NAV_ITEMS.map((item) => {
             const isActive = currentTab === item.key;
@@ -330,20 +451,23 @@ export default function AdminLayout({
                 key={item.key}
                 type="button"
                 onClick={() => handleTabClick(item.key)}
-                className={`px-2.5 py-1 rounded whitespace-nowrap transition-colors cursor-pointer ${
+                className={`px-2.5 py-1.5 rounded-xl whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
                   isActive
-                    ? "bg-white border border-[#E8262A] text-[#E8262A] font-black shadow-xs"
+                    ? "bg-[#E8262A] text-white font-black shadow-xs border border-[#E8262A]"
                     : "bg-neutral-100 border border-neutral-300 text-neutral-800 hover:bg-neutral-200"
                 }`}
               >
-                {item.shortLabel}
+                <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                  {item.icon}
+                </span>
+                <span>{item.shortLabel}</span>
               </button>
             );
           })}
           <Link
             href="/shop"
             target="_blank"
-            className="px-2.5 py-1 bg-[#E8262A]/10 border border-[#E8262A]/30 text-[#E8262A] font-black rounded whitespace-nowrap ml-auto"
+            className="px-2.5 py-1.5 bg-[#E8262A]/10 border border-[#E8262A]/30 text-[#E8262A] font-black rounded-xl whitespace-nowrap ml-auto"
           >
             Live Store ↗
           </Link>
@@ -438,7 +562,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Main Admin Content Container in #E8E6DF */}
-      <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+      <main className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-8">
         {children}
       </main>
     </div>

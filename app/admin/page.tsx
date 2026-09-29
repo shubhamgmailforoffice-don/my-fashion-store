@@ -28,6 +28,94 @@ interface RegisteredUser {
 type AdminTab = "orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users";
 const VALID_TABS: AdminTab[] = ["orders", "products", "inventory", "sections", "categories", "reels", "users"];
 
+interface TabNavItem {
+  key: AdminTab;
+  num: string;
+  label: string;
+  shortLabel: string;
+  icon: React.ReactNode;
+}
+
+const ADMIN_TAB_NAV: TabNavItem[] = [
+  {
+    key: "orders",
+    num: "1.",
+    label: "Orders & Dispatch",
+    shortLabel: "Orders",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    ),
+  },
+  {
+    key: "products",
+    num: "2.",
+    label: "Products & Photos",
+    shortLabel: "Products",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg>
+    ),
+  },
+  {
+    key: "inventory",
+    num: "3.",
+    label: "Inventory & Stock",
+    shortLabel: "Inventory",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    key: "sections",
+    num: "4.",
+    label: "Storefront Sections",
+    shortLabel: "Sections",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+      </svg>
+    ),
+  },
+  {
+    key: "categories",
+    num: "5.",
+    label: "Categories & Menu",
+    shortLabel: "Categories",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+    ),
+  },
+  {
+    key: "reels",
+    num: "6.",
+    label: "Lookbook Reels",
+    shortLabel: "Reels",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
+  {
+    key: "users",
+    num: "7.",
+    label: "Registered Users",
+    shortLabel: "Users",
+    icon: (
+      <svg className="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    ),
+  },
+];
+
 function AdminContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get("tab") as AdminTab | null;
@@ -568,29 +656,31 @@ function AdminContent() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xs font-inter">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-6 bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xs font-inter">
         <div>
           <span className="text-[10px] font-bold tracking-[0.25em] text-[#E8262A] uppercase font-inter">
             Control Center • Real-time Operations
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-wide text-[#2C2A29] mt-1 font-anton">
+          <h1 className="text-xl sm:text-3xl font-bold uppercase tracking-wide text-[#2C2A29] mt-0.5 font-anton">
             DRIIVN Administration
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
           <button
+            type="button"
             onClick={() => refreshData()}
-            className="border border-white/80 bg-white/70 hover:bg-white text-[#2C2A29] px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm"
+            className="border border-white/80 bg-white/70 hover:bg-white text-[#2C2A29] px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm text-center cursor-pointer"
           >
             ↻ Refresh
           </button>
           <button
+            type="button"
             onClick={() => {
               handleSelectTab("products");
               setIsAddModalOpen(true);
             }}
-            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30"
+            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-4 sm:px-5 py-2 sm:py-2.5 text-xs font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30 text-center cursor-pointer"
           >
             <span>+ Add Product</span>
           </button>
@@ -598,132 +688,73 @@ function AdminContent() {
       </div>
 
       {/* Top High-level Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-inter">
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 font-inter">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Revenue</p>
-          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">RS. {totalRevenue.toLocaleString()}</p>
+          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight truncate">RS. {totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Orders</p>
-          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{ordersList.length}</p>
+          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{ordersList.length}</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Live Catalog</p>
-          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{productsList.length} Items</p>
+          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{productsList.length} Items</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
+        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Registered Users</p>
-          <p className="text-xl sm:text-2xl font-bold text-[#E8262A] mt-1 font-inter tracking-tight">{usersList.length} Members</p>
+          <p className="text-lg sm:text-2xl font-bold text-[#E8262A] mt-1 font-inter tracking-tight">{usersList.length} Members</p>
         </div>
       </div>
 
-      {/* SEVEN DEDICATED TABS */}
-      <div className="flex border-b border-black/5 gap-x-2 overflow-x-auto no-scrollbar font-inter">
-        <button
-          onClick={() => handleSelectTab("orders")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "orders"
-              ? "border-[#E8262A] text-[#E8262A] bg-white/90 backdrop-blur-md rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black bg-white/40 hover:bg-white/70 backdrop-blur-xs rounded-t-xl"
-          }`}
-        >
-          <span>1. Orders & Dispatch</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "orders" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            {ordersList.length}
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("products")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "products"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>2. Products & Photos</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "products" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            {productsList.length}
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("inventory")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "inventory"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>3. Inventory & Stock</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "inventory" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            {productsList.filter(p => p.inStock === false).length > 0 ? `${productsList.filter(p => p.inStock === false).length} Out` : "All In"}
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("sections")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "sections"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>4. Storefront Sections</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "sections" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            Active
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("categories")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "categories"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>5. Categories & Menu</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "categories" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            Drawer
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("reels")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "reels"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>6. Lookbook Reels</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "reels" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-blue-100 text-blue-700"
-          }`}>
-            Reel Photos
-          </span>
-        </button>
-        <button
-          onClick={() => handleSelectTab("users")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
-            activeTab === "users"
-              ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
-              : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
-          }`}
-        >
-          <span>7. Registered Users</span>
-          <span className={`px-2 py-0.5 text-[10px] rounded-full font-bold ${
-            activeTab === "users" ? "bg-[#E8262A]/10 text-[#E8262A]" : "bg-neutral-200 text-neutral-700"
-          }`}>
-            {usersList.length}
-          </span>
-        </button>
+      {/* ALL SEVEN DEDICATED TABS - FULLY RESPONSIVE & MOBILE-FRIENDLY */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 font-inter">
+        {ADMIN_TAB_NAV.map((item) => {
+          const isActive = activeTab === item.key;
+          let badgeText = "";
+          if (item.key === "orders") badgeText = `${ordersList.length}`;
+          else if (item.key === "products") badgeText = `${productsList.length}`;
+          else if (item.key === "inventory") {
+            const outCount = productsList.filter((p) => p.inStock === false).length;
+            badgeText = outCount > 0 ? `${outCount} Out` : "All In";
+          } else if (item.key === "sections") badgeText = "Active";
+          else if (item.key === "categories") badgeText = "Drawer";
+          else if (item.key === "reels") badgeText = "Reels";
+          else if (item.key === "users") badgeText = `${usersList.length}`;
+
+          return (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => handleSelectTab(item.key)}
+              className={`p-2.5 sm:p-3 rounded-2xl transition-all flex flex-col items-center justify-between text-center cursor-pointer border ${
+                item.key === "users" ? "col-span-2 sm:col-span-1" : ""
+              } ${
+                isActive
+                  ? "bg-[#E8262A] text-white border-[#E8262A] shadow-md font-black ring-2 ring-[#E8262A]/20 scale-[1.01]"
+                  : "bg-white/85 hover:bg-white text-neutral-800 hover:text-black border-white/80 shadow-2xs backdrop-blur-sm hover:border-neutral-300"
+              }`}
+            >
+              <div className="flex items-center gap-1.5 justify-center w-full min-w-0">
+                <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                  {item.icon}
+                </span>
+                <span className="text-[11px] xl:text-xs font-black uppercase tracking-tight leading-tight truncate">
+                  {item.num} {item.label}
+                </span>
+              </div>
+              <span
+                className={`mt-1.5 px-2 py-0.5 text-[9px] rounded-full font-bold uppercase transition-colors ${
+                  isActive
+                    ? "bg-white text-[#E8262A] font-black"
+                    : "bg-neutral-100 text-neutral-700 border border-neutral-200"
+                }`}
+              >
+                {badgeText}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* ========================================================================= */}
@@ -1214,87 +1245,55 @@ function AdminContent() {
             </div>
           </div>
 
-          {/* Products Table */}
+          {/* Products Container: Responsive Mobile Cards + Desktop Table */}
           <div className="bg-white border border-neutral-300 rounded-2xl shadow-xs overflow-hidden">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-neutral-200 bg-[#F5F4EE] text-neutral-600 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="py-3 px-4">Photo</th>
-                  <th className="py-3 px-4">Product Name & Category</th>
-                  <th className="py-3 px-4">Price</th>
-                  <th className="py-3 px-4">Stock Status</th>
-                  <th className="py-3 px-4">Sizes Available</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-200">
-                {filteredProducts.map((product) => {
-                  const isInStock = product.inStock !== false;
-                  const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
+            {/* Mobile Cards View (Visible on Mobile / Small screens) */}
+            <div className="md:hidden divide-y divide-neutral-200">
+              {filteredProducts.map((product) => {
+                const isInStock = product.inStock !== false;
+                const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
 
-                  return (
-                    <tr key={product.id} className="hover:bg-neutral-50/80 transition-colors">
-                      {/* Photo Thumbnail */}
-                      <td className="py-3 px-4">
-                        <div
-                          onClick={() => setEditingProduct({ ...product })}
-                          className="relative w-12 h-16 bg-neutral-100 border border-neutral-300 rounded-lg overflow-hidden cursor-pointer group"
-                          title="Click to change photo"
-                        >
-                          <Image
-                            src={product.images[0] || "/images/products/oversized-tshirt.jpg"}
-                            alt={product.name}
-                            fill
-                            className="object-cover group-hover:scale-105 transition-transform"
-                          />
-                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[8px] font-bold text-white uppercase">
-                            Change
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* Product Name & Category */}
-                      <td className="py-3 px-4">
-                        <p className="font-bold text-black text-xs">{product.name}</p>
-                        <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-500 uppercase">
+                return (
+                  <div key={product.id} className="p-4 space-y-3 bg-white">
+                    <div className="flex gap-3 items-start">
+                      <div
+                        onClick={() => setEditingProduct({ ...product })}
+                        className="relative w-16 h-20 bg-neutral-100 border border-neutral-300 rounded-xl overflow-hidden cursor-pointer flex-shrink-0 group"
+                        title="Click to edit photo"
+                      >
+                        <Image
+                          src={product.images[0] || "/images/products/oversized-tshirt.jpg"}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                        />
+                        <span className="absolute bottom-1 right-1 bg-black/70 text-white text-[8px] font-bold px-1 rounded">
+                          {product.images.length}P
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <p className="font-bold text-black text-xs uppercase leading-snug truncate">{product.name}</p>
+                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 uppercase">
                           <span className="text-[#E8262A] font-bold">{product.category}</span>
                           <span>•</span>
                           <span>{product.subCategory || "Streetwear"}</span>
                         </div>
-                      </td>
-
-                      {/* Price */}
-                      <td className="py-3 px-4 font-bold text-black">
-                        RS. {product.price.toLocaleString()}
-                        {product.originalPrice && (
-                          <span className="text-neutral-400 line-through ml-1 text-[10px]">
-                            RS. {product.originalPrice.toLocaleString()}
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-black text-xs">
+                            RS. {product.price.toLocaleString()}
                           </span>
-                        )}
-                      </td>
-
-                      {/* Stock Status 1-Click Toggle */}
-                      <td className="py-3 px-4">
-                        <button
-                          type="button"
-                          onClick={() => handleToggleStock(product.id, isInStock)}
-                          className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-lg ${
-                            isInStock
-                              ? "bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-red-50 hover:border-red-300 hover:text-red-800"
-                              : "bg-red-50 border-red-300 text-red-800 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-800"
-                          }`}
-                        >
-                          {isInStock ? "In Stock (Active)" : "Sold Out"}
-                        </button>
-                      </td>
-
-                      {/* Sizes */}
-                      <td className="py-3 px-4">
-                        <div className="flex flex-wrap gap-1 max-w-[140px]">
+                          {product.originalPrice && (
+                            <span className="text-neutral-400 line-through text-[10px]">
+                              RS. {product.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        {/* Sizes */}
+                        <div className="flex flex-wrap gap-1 pt-0.5">
                           {ALL_SIZES.map((sz) => (
                             <span
                               key={sz}
-                              className={`text-[8px] font-bold px-1.5 py-0.5 uppercase rounded ${
+                              className={`text-[8px] font-bold px-1.5 py-0.2 uppercase rounded ${
                                 prodSizes.includes(sz)
                                   ? "bg-neutral-800 text-white"
                                   : "bg-neutral-100 text-neutral-400 line-through"
@@ -1304,30 +1303,159 @@ function AdminContent() {
                             </span>
                           ))}
                         </div>
-                      </td>
+                      </div>
+                    </div>
 
-                      {/* Actions */}
-                      <td className="py-3 px-4 text-right space-x-2 whitespace-nowrap">
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-neutral-100 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStock(product.id, isInStock)}
+                        className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-lg cursor-pointer ${
+                          isInStock
+                            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
+                            : "bg-red-50 border-red-300 text-red-800"
+                        }`}
+                      >
+                        {isInStock ? "● In Stock (Active)" : "○ Sold Out"}
+                      </button>
+
+                      <div className="flex items-center gap-1.5">
                         <button
                           type="button"
                           onClick={() => setEditingProduct({ ...product })}
-                          className="bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-[#E8262A] hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors rounded-lg"
+                          className="bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-[#E8262A] hover:text-white px-3 py-1 text-[10px] font-black tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
                         >
                           Edit & Photos
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteProduct(product.id, product.name)}
-                          className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-lg"
+                          className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
                         >
                           Delete
                         </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View (Hidden on Mobile) */}
+            <div className="hidden md:block overflow-x-auto w-full">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-neutral-200 bg-[#F5F4EE] text-neutral-600 font-bold uppercase text-[10px] tracking-wider">
+                    <th className="py-3 px-4">Photo</th>
+                    <th className="py-3 px-4">Product Name & Category</th>
+                    <th className="py-3 px-4">Price</th>
+                    <th className="py-3 px-4">Stock Status</th>
+                    <th className="py-3 px-4">Sizes Available</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-200">
+                  {filteredProducts.map((product) => {
+                    const isInStock = product.inStock !== false;
+                    const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
+
+                    return (
+                      <tr key={product.id} className="hover:bg-neutral-50/80 transition-colors">
+                        {/* Photo Thumbnail */}
+                        <td className="py-3 px-4">
+                          <div
+                            onClick={() => setEditingProduct({ ...product })}
+                            className="relative w-12 h-16 bg-neutral-100 border border-neutral-300 rounded-lg overflow-hidden cursor-pointer group"
+                            title="Click to change photo"
+                          >
+                            <Image
+                              src={product.images[0] || "/images/products/oversized-tshirt.jpg"}
+                              alt={product.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform"
+                            />
+                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-[8px] font-bold text-white uppercase">
+                              Change
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Product Name & Category */}
+                        <td className="py-3 px-4">
+                          <p className="font-bold text-black text-xs">{product.name}</p>
+                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-500 uppercase">
+                            <span className="text-[#E8262A] font-bold">{product.category}</span>
+                            <span>•</span>
+                            <span>{product.subCategory || "Streetwear"}</span>
+                          </div>
+                        </td>
+
+                        {/* Price */}
+                        <td className="py-3 px-4 font-bold text-black">
+                          RS. {product.price.toLocaleString()}
+                          {product.originalPrice && (
+                            <span className="text-neutral-400 line-through ml-1 text-[10px]">
+                              RS. {product.originalPrice.toLocaleString()}
+                            </span>
+                          )}
+                        </td>
+
+                        {/* Stock Status 1-Click Toggle */}
+                        <td className="py-3 px-4">
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStock(product.id, isInStock)}
+                            className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-lg cursor-pointer ${
+                              isInStock
+                                ? "bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-red-50 hover:border-red-300 hover:text-red-800"
+                                : "bg-red-50 border-red-300 text-red-800 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-800"
+                            }`}
+                          >
+                            {isInStock ? "In Stock (Active)" : "Sold Out"}
+                          </button>
+                        </td>
+
+                        {/* Sizes */}
+                        <td className="py-3 px-4">
+                          <div className="flex flex-wrap gap-1 max-w-[140px]">
+                            {ALL_SIZES.map((sz) => (
+                              <span
+                                key={sz}
+                                className={`text-[8px] font-bold px-1.5 py-0.5 uppercase rounded ${
+                                  prodSizes.includes(sz)
+                                    ? "bg-neutral-800 text-white"
+                                    : "bg-neutral-100 text-neutral-400 line-through"
+                                }`}
+                              >
+                                {sz}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3 px-4 text-right space-x-2 whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => setEditingProduct({ ...product })}
+                            className="bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-[#E8262A] hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                          >
+                            Edit & Photos
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProduct(product.id, product.name)}
+                            className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
       )}
@@ -1402,6 +1530,65 @@ function AdminContent() {
             </div>
           ) : (
             <div className="bg-white border border-neutral-300 rounded-2xl shadow-xs overflow-hidden">
+              {/* Mobile Cards View (Visible on Mobile / Small screens) */}
+            <div className="md:hidden divide-y divide-neutral-200">
+              {filteredUsers.map((user) => {
+                const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
+                const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
+
+                const userOrderCount = ordersList.filter((o) => {
+                  if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
+                  const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
+                  if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
+                  if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
+                  return false;
+                }).length;
+
+                return (
+                  <div key={user.id} className="p-4 space-y-3 bg-white">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-white text-xs">
+                          {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-black text-xs uppercase leading-snug">{user.name}</p>
+                          <p className="text-[10px] text-neutral-400 font-mono">
+                            Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "Recent"}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-neutral-100 text-black border border-neutral-200">
+                        {userOrderCount} Orders
+                      </span>
+                    </div>
+
+                    <div className="text-xs space-y-1 bg-[#F9F8F5] p-2.5 rounded-xl border border-neutral-200 font-mono">
+                      <p className="text-neutral-700 truncate">
+                        ✉️ {user.email ? <a href={`mailto:${user.email}`} className="underline">{user.email}</a> : <span className="text-neutral-400 italic">None</span>}
+                      </p>
+                      <p className="text-neutral-700">
+                        📞 {user.phone ? <a href={`tel:+91${userPhoneClean}`} className="underline">+91 {user.phone}</a> : <span className="text-neutral-400 italic">None</span>}
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSelectTab("orders");
+                        setOrderSearchQuery(user.name);
+                      }}
+                      className="w-full text-center py-2 text-[10px] text-[#E8262A] hover:text-[#d01e22] font-black uppercase tracking-wider bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-colors cursor-pointer"
+                    >
+                      View Customer Orders &rarr;
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop Table View (Hidden on Mobile) */}
+            <div className="hidden md:block overflow-x-auto w-full">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
                   <tr className="border-b border-neutral-200 bg-[#F5F4EE] text-neutral-600 font-bold uppercase text-[10px] tracking-wider">
@@ -1465,7 +1652,7 @@ function AdminContent() {
                               handleSelectTab("orders");
                               setOrderSearchQuery(user.name);
                             }}
-                            className="text-[10px] text-[#E8262A] hover:text-[#d01e22] font-bold uppercase tracking-wider underline"
+                            className="text-[10px] text-[#E8262A] hover:text-[#d01e22] font-bold uppercase tracking-wider underline cursor-pointer"
                           >
                             View Customer Orders &rarr;
                           </button>
@@ -1476,6 +1663,7 @@ function AdminContent() {
                 </tbody>
               </table>
             </div>
+          </div>
           )}
         </section>
       )}
@@ -1484,8 +1672,8 @@ function AdminContent() {
       {/* MODAL: EDIT PRODUCT & MULTI-PHOTO MANAGER */}
       {/* ========================================================================= */}
       {editingProduct && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-md font-inter">
-          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md font-inter">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-4 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
@@ -1810,8 +1998,8 @@ function AdminContent() {
       {/* MODAL: ADD NEW PRODUCT */}
       {/* ========================================================================= */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 bg-black/50 backdrop-blur-md font-inter">
-          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-6 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md font-inter">
+          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-4 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto">
             <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
