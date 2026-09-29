@@ -44,29 +44,29 @@ export default function ComingSoonClient({ initialData }: ComingSoonClientProps)
     };
 
   return (
-    <div className="min-h-screen bg-[#E8E6DF] py-12 px-4 sm:px-6 lg:px-8 font-inter">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#E5ECE7] py-10 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-300 pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-black/10 pb-6">
           <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E8262A] block font-inter">
-              Upcoming Atelier Releases
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#7A531C] block">
+              ✦ Exclusive Upcoming Drops ✦
             </span>
-            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-black font-anton mt-0.5">
+            <h1 className="text-3xl sm:text-4xl font-playfair font-bold tracking-tight text-[#2C2A29] mt-1">
               Coming Soon Drops
             </h1>
           </div>
 
           <Link
             href="/shop"
-            className="inline-flex items-center gap-2 bg-black hover:bg-[#E8262A] text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-full transition-colors w-fit"
+            className="inline-flex items-center gap-2 bg-white/85 hover:bg-white text-[#2C2A29] text-xs font-bold uppercase tracking-wider px-5 py-2.5 rounded-full border border-white/90 shadow-sm backdrop-blur-md transition-all active:scale-95 w-fit"
           >
             <span>&larr; Shop Live Drops</span>
           </Link>
         </div>
 
         {/* Category Tabs */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           {categoriesList.map((cat) => {
             const isSelected = activeCategory === cat.id;
             return (
@@ -74,10 +74,10 @@ export default function ComingSoonClient({ initialData }: ComingSoonClientProps)
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-4 py-2 text-xs font-black uppercase tracking-wider rounded-xl transition-all ${
+                className={`px-5 py-2 text-xs uppercase tracking-wider rounded-full transition-all cursor-pointer ${
                   isSelected
-                    ? "bg-[#E8262A] text-white shadow-md scale-102"
-                    : "bg-white hover:bg-neutral-100 text-neutral-800 border border-neutral-300"
+                    ? "bg-[#F2C078] text-[#2C2A29] font-bold shadow-md scale-105 border border-[#EAA958]"
+                    : "bg-white/70 hover:bg-white text-[#2C2A29] font-medium border border-white/80 backdrop-blur-md shadow-2xs"
                 }`}
               >
                 {cat.name}
