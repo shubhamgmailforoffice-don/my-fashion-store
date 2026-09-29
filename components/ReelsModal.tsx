@@ -165,7 +165,7 @@ export default function ReelsModal({ isOpen, onClose }: ReelsModalProps) {
         <div className="relative z-30 mt-auto p-5 pb-8 space-y-3 bg-gradient-to-t from-[#2C2A29] via-[#2C2A29]/90 to-transparent">
           {/* Garment Name & Price */}
           <div className="space-y-1 text-left">
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-white font-anton drop-shadow">
+            <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wider text-white font-anton drop-shadow">
               {currentReel.name}
             </h2>
             <p className="text-sm font-bold text-neutral-300">

@@ -438,10 +438,10 @@ export default function InventoryManager({
       {/* Top Action Bar with Separate "Add to Inventory" Button */}
       <div className="bg-white/70 backdrop-blur-xl border border-white/80 p-6 rounded-3xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
             Catalogue & Stock Operations
           </span>
-          <h2 className="text-2xl font-black uppercase tracking-wider text-black font-anton mt-0.5">
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-[#2C2A29] font-anton mt-0.5">
             Inventory & Stock Desk
           </h2>
           <p className="text-xs text-neutral-600 mt-1">
@@ -453,7 +453,7 @@ export default function InventoryManager({
           <button
             type="button"
             onClick={() => onRefresh()}
-            className="px-3.5 py-2 bg-white/70 hover:bg-white border border-white/80 rounded-xl text-xs font-bold text-neutral-800 uppercase transition-all shadow-2xs backdrop-blur-sm"
+            className="px-3.5 py-2 bg-white/70 hover:bg-white border border-white/80 rounded-xl text-xs font-bold text-[#2C2A29] uppercase transition-all shadow-2xs backdrop-blur-sm"
           >
             ↻ Refresh
           </button>
@@ -461,7 +461,7 @@ export default function InventoryManager({
             type="button"
             onClick={handleEmptyAllStock}
             disabled={isSaving || products.length === 0}
-            className="px-3 py-2 bg-amber-50/80 hover:bg-amber-100 border border-amber-300/80 rounded-xl text-xs font-black text-amber-900 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
+            className="px-3 py-2 bg-amber-50/80 hover:bg-amber-100 border border-amber-300/80 rounded-xl text-xs font-bold text-amber-900 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
             title="Set stock quantity to 0 (Sold Out) for all products"
           >
             Set All Stock to 0
@@ -470,7 +470,7 @@ export default function InventoryManager({
             type="button"
             onClick={handleDeleteAllProducts}
             disabled={isSaving || products.length === 0}
-            className="px-3 py-2 bg-red-50/80 hover:bg-red-100 border border-red-300/80 rounded-xl text-xs font-black text-red-700 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
+            className="px-3 py-2 bg-red-50/80 hover:bg-red-100 border border-red-300/80 rounded-xl text-xs font-bold text-red-700 uppercase transition-all shadow-2xs disabled:opacity-40 backdrop-blur-sm"
             title="Permanently delete all products to start completely fresh"
           >
             🗑️ Delete All Products
@@ -478,7 +478,7 @@ export default function InventoryManager({
           <button
             type="button"
             onClick={() => setIsAddDraftOpen(true)}
-            className="px-4 py-2 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5 border border-red-500/30"
+            className="px-4 py-2 bg-[#E8262A] hover:bg-[#d01e22] text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-xs active:scale-95 flex items-center gap-1.5 border border-red-500/30"
           >
             <span>+ Add to Inventory</span>
           </button>
@@ -488,10 +488,10 @@ export default function InventoryManager({
       {/* Metrics Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
-          <p className="text-[10px] font-black uppercase tracking-widest text-neutral-500">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">
             Total Inventory Items
           </p>
-          <p className="text-2xl font-black text-black font-anton mt-1">
+          <p className="text-2xl font-bold text-[#2C2A29] font-inter tracking-tight mt-1">
             {totalCount}
           </p>
           <span className="text-[10px] text-neutral-400 font-bold uppercase mt-1 block">
@@ -500,10 +500,10 @@ export default function InventoryManager({
         </div>
 
         <div className="bg-white/75 backdrop-blur-xl border border-emerald-300/80 p-5 rounded-2xl shadow-xs bg-emerald-50/30 hover:shadow-md transition-all">
-          <p className="text-[10px] font-black uppercase tracking-widest text-emerald-800">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-800">
             Live on Storefront
           </p>
-          <p className="text-2xl font-black text-emerald-700 font-anton mt-1">
+          <p className="text-2xl font-bold text-emerald-700 font-inter tracking-tight mt-1">
             {liveCount}
           </p>
           <span className="text-[10px] text-emerald-600 font-bold uppercase mt-1 block">
@@ -512,10 +512,10 @@ export default function InventoryManager({
         </div>
 
         <div className="bg-white/75 backdrop-blur-xl border border-amber-300/80 p-5 rounded-2xl shadow-xs bg-amber-50/30 hover:shadow-md transition-all">
-          <p className="text-[10px] font-black uppercase tracking-widest text-amber-800">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-amber-800">
             Inventory Drafts (Offline)
           </p>
-          <p className="text-2xl font-black text-amber-700 font-anton mt-1">
+          <p className="text-2xl font-bold text-amber-700 font-inter tracking-tight mt-1">
             {draftCount}
           </p>
           <span className="text-[10px] text-amber-600 font-bold uppercase mt-1 block">
@@ -524,10 +524,10 @@ export default function InventoryManager({
         </div>
 
         <div className="bg-white/75 backdrop-blur-xl border border-red-300/80 p-5 rounded-2xl shadow-xs bg-red-50/30 hover:shadow-md transition-all">
-          <p className="text-[10px] font-black uppercase tracking-widest text-[#E8262A]">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#E8262A]">
             Low Stock Alerts (&le; 5 left)
           </p>
-          <p className="text-2xl font-black text-[#E8262A] font-anton mt-1">
+          <p className="text-2xl font-bold text-[#E8262A] font-inter tracking-tight mt-1">
             {lowStockCount}
           </p>
           <span className="text-[10px] text-red-500 font-bold uppercase mt-1 block">
@@ -781,10 +781,10 @@ export default function InventoryManager({
           <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A]">
                   New Product Workflow &bull; Step 1
                 </span>
-                <h3 className="text-xl font-black uppercase tracking-wider text-black font-anton mt-0.5">
+                <h3 className="text-xl font-bold uppercase tracking-wide text-[#2C2A29] font-anton mt-0.5">
                   Add Draft to Inventory
                 </h3>
                 <p className="text-xs text-neutral-500">
@@ -1054,10 +1054,10 @@ export default function InventoryManager({
           <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A]">
                   Publish to Storefront
                 </span>
-                <h3 className="text-xl font-black uppercase tracking-wider text-black font-anton mt-0.5">
+                <h3 className="text-xl font-bold uppercase tracking-wide text-[#2C2A29] font-anton mt-0.5">
                   Add Product to Site
                 </h3>
                 <p className="text-xs text-neutral-500">
@@ -1210,10 +1210,10 @@ export default function InventoryManager({
           <div className="bg-white/95 backdrop-blur-2xl border border-white/70 rounded-3xl max-w-3xl w-full max-h-[92vh] overflow-y-auto p-6 sm:p-8 shadow-2xl space-y-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A]">
                   Full Garment Control
                 </span>
-                <h3 className="text-xl font-black uppercase tracking-wider text-black font-anton mt-0.5">
+                <h3 className="text-xl font-bold uppercase tracking-wide text-[#2C2A29] font-anton mt-0.5">
                   Manage Product & Photos
                 </h3>
                 <p className="text-xs text-neutral-500 font-mono">

@@ -1,11 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-primary: #E8262A;
   --color-brand-red: #E8262A;
   --color-brand-bg: #E8E6DF;
-  --font-anton: 'Anton', Impact, sans-serif;
+  --font-anton: 'Oswald', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Oswald', 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-playfair: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
 }
@@ -13,9 +14,9 @@
 @layer base {
   :root {
     --background: #E8E6DF;
-    --foreground: #121212;
+    --foreground: #2C2A29;
     --primary: #E8262A;
-    --font-heading: 'Anton', Impact, sans-serif;
+    --font-heading: 'Oswald', 'Inter', ui-sans-serif, system-ui, sans-serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
   }
 
@@ -25,13 +26,24 @@
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
     background-color: #E8E6DF;
-    color: #121212;
+    color: #2C2A29;
     font-family: 'Inter', var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   }
 
   .font-anton, .font-heading {
-    font-family: 'Anton', var(--font-anton), Impact, sans-serif;
-    letter-spacing: 0.04em;
+    font-family: 'Oswald', var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0.035em;
+    font-weight: 700;
+  }
+
+  /* Prevent synthetic browser faux-bolding / ink smearing on display headers */
+  .font-anton.font-black,
+  .font-anton.font-extrabold,
+  .font-anton.font-bold,
+  .font-heading.font-black,
+  .font-heading.font-extrabold,
+  .font-heading.font-bold {
+    font-weight: 700;
   }
 }
 
@@ -45,7 +57,9 @@
   }
 
   .font-anton {
-    font-family: 'Anton', Impact, sans-serif;
+    font-family: 'Oswald', 'Inter', ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.035em;
   }
 
   .font-inter {

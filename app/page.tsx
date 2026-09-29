@@ -150,7 +150,7 @@ export default async function Home() {
                         {section.subtitle}
                       </p>
                     )}
-                    <h2 className="text-xl sm:text-3xl font-black tracking-tight text-neutral-900 font-anton uppercase">
+                    <h2 className="text-xl sm:text-3xl font-bold tracking-wide text-[#2C2A29] font-anton uppercase">
                       {section.title}
                     </h2>
                   </div>
@@ -215,7 +215,7 @@ export default async function Home() {
                     </div>
 
                     <div className="relative z-10 mt-4">
-                      <span className="text-2xl sm:text-4xl font-black uppercase tracking-widest text-white drop-shadow-lg font-anton">
+                      <span className="text-2xl sm:text-4xl font-bold uppercase tracking-wider text-white drop-shadow-lg font-anton">
                         {section.featuredBag.title}
                       </span>
                       <p className="text-[11px] font-bold tracking-widest text-neutral-400 uppercase mt-1">
@@ -249,7 +249,7 @@ export default async function Home() {
                         {section.subtitle}
                       </p>
                     )}
-                    <h2 className="text-xl sm:text-3xl font-black tracking-tight text-neutral-900 font-anton uppercase">
+                    <h2 className="text-xl sm:text-3xl font-bold tracking-wide text-[#2C2A29] font-anton uppercase">
                       {section.title}
                     </h2>
                   </div>
@@ -280,7 +280,7 @@ export default async function Home() {
                         <span className="text-[9px] font-bold text-[#E8262A] uppercase tracking-widest">
                           {item.tag || `Look 0${idx + 1}`}
                         </span>
-                        <h4 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider font-anton">
+                        <h4 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider font-anton">
                           {item.title}
                         </h4>
                       </div>
@@ -302,13 +302,13 @@ export default async function Home() {
                 <p className="text-[10px] font-bold tracking-[0.3em] text-[#E8262A] uppercase mb-1">
                   Explore The Lineup
                 </p>
-                <h2 className="text-3xl font-black tracking-tight text-gray-900 font-anton uppercase">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-wide text-[#2C2A29] font-anton uppercase">
                   Shop by Category
                 </h2>
               </div>
               <Link
                 href="/shop"
-                className="text-xs font-black tracking-widest text-black hover:text-[#E8262A] uppercase border-b border-[#2C2A29] hover:border-[#E8262A] pb-1 transition-all"
+                className="text-xs font-bold tracking-widest text-[#2C2A29] hover:text-[#E8262A] uppercase border-b border-[#2C2A29] hover:border-[#E8262A] pb-1 transition-all"
               >
                 View Full Catalog &rarr;
               </Link>
@@ -330,16 +330,16 @@ export default async function Home() {
                   <div className="absolute inset-0 bg-gradient-to-t from-[#2C2A29]/90 via-[#2C2A29]/30 to-transparent z-10" />
 
                   <div className="relative z-20 w-full p-4 rounded-2xl bg-[#2C2A29]/65 backdrop-blur-xl border border-white/25 space-y-1.5 transition-all group-hover:bg-[#2C2A29]/80 group-hover:border-white/40 shadow-lg">
-                    <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block">
+                    <span className="text-[9px] font-bold tracking-[0.3em] text-[#E8262A] uppercase block">
                       Category 0{index + 1} &bull; {cat.tag}
                     </span>
-                    <h3 className="text-base sm:text-lg font-black tracking-wider text-white uppercase font-anton group-hover:text-[#E8262A] transition-colors">
+                    <h3 className="text-base sm:text-lg font-bold tracking-wider text-white uppercase font-anton group-hover:text-[#E8262A] transition-colors">
                       {cat.name}
                     </h3>
                     <p className="text-[10px] text-gray-200 line-clamp-2 uppercase font-medium">
                       {cat.subText}
                     </p>
-                    <span className="inline-block text-[10px] font-black tracking-widest text-white group-hover:text-[#E8262A] uppercase pt-1 transition-colors">
+                    <span className="inline-block text-[10px] font-bold tracking-widest text-white group-hover:text-[#E8262A] uppercase pt-1 transition-colors">
                       Explore {cat.name} &rarr;
                     </span>
                   </div>
@@ -353,10 +353,10 @@ export default async function Home() {
         <section className="bg-[#2C2A29] text-white py-20 px-4 sm:px-6 lg:px-8 border-t border-white/15">
           <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             <div className="lg:col-span-6 space-y-5">
-              <span className="text-[10px] font-black tracking-[0.4em] text-[#E8262A] uppercase">
+              <span className="text-[10px] font-bold tracking-[0.4em] text-[#E8262A] uppercase">
                 Our Blueprint
               </span>
-              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight leading-tight font-anton">
+              <h2 className="text-3xl sm:text-5xl font-bold uppercase tracking-wide leading-tight font-anton">
                 Crafted in India, <br />
                 Worn Worldwide.
               </h2>
@@ -365,15 +365,15 @@ export default async function Home() {
               </p>
               <div className="grid grid-cols-3 gap-3 pt-4 border-t border-white/10">
                 <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
-                  <p className="text-2xl font-black text-white font-anton">420</p>
+                  <p className="text-2xl font-bold text-white font-inter tracking-tight">420</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">GSM French Terry</p>
                 </div>
                 <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
-                  <p className="text-2xl font-black text-white font-anton">100%</p>
+                  <p className="text-2xl font-bold text-white font-inter tracking-tight">100%</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Combed Cotton</p>
                 </div>
                 <div className="bg-white/10 border border-white/20 backdrop-blur-xl p-3.5 rounded-2xl shadow-lg">
-                  <p className="text-2xl font-black text-white font-anton">PAN-INDIA</p>
+                  <p className="text-2xl font-bold text-white font-inter tracking-tight">PAN-INDIA</p>
                   <p className="text-[9px] font-bold text-gray-400 uppercase tracking-wider mt-0.5">Express Dispatch</p>
                 </div>
               </div>
@@ -390,7 +390,7 @@ export default async function Home() {
               <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end bg-[#2C2A29]/80 backdrop-blur-xl p-4 rounded-2xl border border-white/25 shadow-xl">
                 <div>
                   <p className="text-[10px] font-bold tracking-widest text-[#E8262A] uppercase">Archive Series</p>
-                  <p className="text-sm font-black tracking-widest text-white uppercase font-anton">Seasonal Drops</p>
+                  <p className="text-sm font-bold tracking-wider text-white uppercase font-anton">Seasonal Drops</p>
                 </div>
                 <Link
                   href="/shop"

@@ -199,10 +199,10 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
       {/* Top Header & Save Actions */}
       <div className="bg-white border border-neutral-300 p-5 rounded-2xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A] block">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block">
             Storefront Sections & Showcase
           </span>
-          <h2 className="text-xl sm:text-2xl font-black text-black font-anton uppercase mt-0.5">
+          <h2 className="text-xl sm:text-2xl font-bold text-[#2C2A29] font-anton uppercase tracking-wide mt-0.5">
             Homepage Options Manager
           </h2>
           <p className="text-xs text-neutral-600 mt-1">
@@ -214,7 +214,7 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
           <button
             type="button"
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2.5 rounded-xl border border-neutral-300 bg-neutral-100 hover:bg-neutral-200 text-black text-xs font-black uppercase tracking-wider transition-colors active:scale-95"
+            className="px-4 py-2.5 rounded-xl border border-neutral-300 bg-neutral-100 hover:bg-neutral-200 text-[#2C2A29] text-xs font-bold uppercase tracking-wider transition-colors active:scale-95"
           >
             + Add New Section
           </button>
@@ -223,7 +223,7 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
             type="button"
             onClick={() => handleSaveAll()}
             disabled={isSaving}
-            className="px-6 py-2.5 rounded-xl bg-[#E8262A] hover:bg-[#d01e22] text-white text-xs font-black uppercase tracking-wider transition-all shadow-md active:scale-95 disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl bg-[#E8262A] hover:bg-[#d01e22] text-white text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
             {isSaving ? "Publishing..." : "Save & Publish Changes"}
           </button>
@@ -232,7 +232,7 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
 
       {/* Success Notification Banner */}
       {saveSuccess && (
-        <div className="bg-emerald-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider flex items-center justify-between shadow-md">
+        <div className="bg-emerald-600 text-white px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-between shadow-md">
           <span>✓ Homepage sections published successfully! Changes are live.</span>
           <button onClick={() => setSaveSuccess(false)}>&times;</button>
         </div>
@@ -257,11 +257,11 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
               {/* Section Card Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-neutral-200 gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-black text-black">
+                  <span className="w-7 h-7 rounded-full bg-neutral-200 flex items-center justify-center text-xs font-bold text-[#2C2A29]">
                     0{idx + 1}
                   </span>
                   <div>
-                    <h3 className="text-base font-black text-black font-anton uppercase">
+                    <h3 className="text-base font-bold text-[#2C2A29] font-anton uppercase tracking-wide">
                       {section.title || "Untitled Section"}
                     </h3>
                     <span className="text-[10px] font-mono text-neutral-400">
@@ -452,10 +452,10 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
           <div className="w-full max-w-lg bg-white rounded-2xl p-6 shadow-2xl border border-neutral-300 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3 border-b border-neutral-200">
               <div>
-                <span className="text-[9px] font-black uppercase tracking-widest text-[#E8262A]">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-[#E8262A]">
                   New Showcase
                 </span>
-                <h3 className="text-lg font-black uppercase text-black font-anton">
+                <h3 className="text-lg font-bold uppercase text-[#2C2A29] font-anton tracking-wide">
                   Add Homepage Section
                 </h3>
               </div>

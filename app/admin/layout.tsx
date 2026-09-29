@@ -112,10 +112,10 @@ export default function AdminLayout({
       <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex items-center justify-center p-4 font-inter">
         <div className="max-w-md w-full bg-white border border-neutral-300 shadow-2xl p-8 space-y-6 rounded-2xl">
           <div className="text-center space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#E8262A] block font-inter">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
               Restricted Area &bull; Staff Authentication
             </span>
-            <h1 className="text-2xl font-black tracking-wider uppercase text-black font-anton">
+            <h1 className="text-2xl font-bold tracking-wider uppercase text-[#2C2A29] font-anton">
               DRIIVN CONTROL CENTER
             </h1>
             <p className="text-xs text-neutral-600">
@@ -176,10 +176,10 @@ export default function AdminLayout({
           <div className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-full bg-[#E8262A] animate-pulse" />
             <div>
-              <span className="text-[8px] font-black tracking-[0.25em] text-[#E8262A] uppercase block">
+              <span className="text-[8px] font-bold tracking-[0.25em] text-[#E8262A] uppercase block">
                 Control Center
               </span>
-              <h1 className="text-base font-black tracking-widest uppercase text-black font-anton leading-none">
+              <h1 className="text-base font-bold tracking-widest uppercase text-[#2C2A29] font-anton leading-none">
                 DRIIVN OPERATIONS
               </h1>
             </div>

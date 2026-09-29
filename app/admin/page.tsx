@@ -538,10 +538,10 @@ function AdminContent() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xs font-inter">
         <div>
-          <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase font-inter">
+          <span className="text-[10px] font-bold tracking-[0.25em] text-[#E8262A] uppercase font-inter">
             Control Center • Real-time Operations
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-wider text-black mt-1 font-anton">
+          <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-wide text-[#2C2A29] mt-1 font-anton">
             DRIIVN Administration
           </h1>
         </div>
@@ -549,7 +549,7 @@ function AdminContent() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => refreshData()}
-            className="border border-white/80 bg-white/70 hover:bg-white text-neutral-800 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm"
+            className="border border-white/80 bg-white/70 hover:bg-white text-[#2C2A29] px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm"
           >
             ↻ Refresh
           </button>
@@ -558,7 +558,7 @@ function AdminContent() {
               setActiveTab("products");
               setIsAddModalOpen(true);
             }}
-            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30"
+            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30"
           >
             <span>+ Add Product</span>
           </button>
@@ -569,19 +569,19 @@ function AdminContent() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-inter">
         <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Revenue</p>
-          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">RS. {totalRevenue.toLocaleString()}</p>
+          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">RS. {totalRevenue.toLocaleString()}</p>
         </div>
         <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Orders</p>
-          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{ordersList.length}</p>
+          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{ordersList.length}</p>
         </div>
         <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Live Catalog</p>
-          <p className="text-xl sm:text-2xl font-black text-black mt-1 font-anton">{productsList.length} Items</p>
+          <p className="text-xl sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{productsList.length} Items</p>
         </div>
         <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
           <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Registered Users</p>
-          <p className="text-xl sm:text-2xl font-black text-[#E8262A] mt-1 font-anton">{usersList.length} Members</p>
+          <p className="text-xl sm:text-2xl font-bold text-[#E8262A] mt-1 font-inter tracking-tight">{usersList.length} Members</p>
         </div>
       </div>
 
@@ -1437,7 +1437,7 @@ function AdminContent() {
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Product & Photo Editor
                 </span>
-                <h3 className="text-xl font-black tracking-wider uppercase mt-0.5 font-anton text-black">
+                <h3 className="text-xl font-bold tracking-wide uppercase mt-0.5 font-anton text-[#2C2A29]">
                   Edit Details & Photography
                 </h3>
               </div>
@@ -1763,7 +1763,7 @@ function AdminContent() {
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Catalog Operations
                 </span>
-                <h3 className="text-xl font-black tracking-wider uppercase mt-0.5 font-anton text-black">
+                <h3 className="text-xl font-bold tracking-wide uppercase mt-0.5 font-anton text-[#2C2A29]">
                   Add New Drop Product
                 </h3>
               </div>
@@ -2097,7 +2097,7 @@ function AdminContent() {
       {quickAddSubOpen && (
         <div className="fixed inset-0 z-60 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
           <div className="bg-white/95 backdrop-blur-2xl rounded-3xl max-w-sm w-full p-6 border border-white/70 shadow-2xl animate-in zoom-in-95">
-            <h4 className="text-sm font-black font-anton uppercase text-black mb-1">
+            <h4 className="text-sm font-bold font-anton uppercase text-[#2C2A29] tracking-wide mb-1">
               Add New Sub-Category
             </h4>
             <p className="text-xs text-neutral-500 mb-4">

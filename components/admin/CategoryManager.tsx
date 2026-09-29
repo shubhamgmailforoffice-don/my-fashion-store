@@ -347,10 +347,10 @@ export default function CategoryManager({
       {/* Header Banner */}
       <div className="bg-white border border-neutral-300 p-6 rounded-2xl shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <span className="text-[10px] font-black uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
             Garment Structure & Drop Teasers
           </span>
-          <h2 className="text-2xl font-black uppercase tracking-wider text-black font-anton mt-0.5">
+          <h2 className="text-2xl font-bold uppercase tracking-wide text-[#2C2A29] font-anton mt-0.5">
             Category & Coming Soon Management
           </h2>
           <p className="text-xs text-neutral-600 mt-1">
@@ -373,7 +373,7 @@ export default function CategoryManager({
           <div>
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-[#E8262A]" />
-              <h3 className="font-black text-black font-anton text-lg uppercase">
+              <h3 className="font-bold text-[#2C2A29] font-anton text-lg uppercase tracking-wide">
                 Category &quot;Coming Soon&quot; Drop Pages
               </h3>
             </div>
@@ -422,12 +422,12 @@ export default function CategoryManager({
                   {/* Category Title & Status */}
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h4 className="font-black text-black font-anton text-base uppercase">
+                      <h4 className="font-bold text-[#2C2A29] font-anton text-base uppercase tracking-wide">
                         {catConfig.name}
                       </h4>
                       <p className="text-[10px] text-neutral-500 font-bold uppercase">
                         {prodCount === 0 ? (
-                          <span className="text-amber-700 font-black">⚠️ 0 Live Products</span>
+                          <span className="text-amber-700 font-bold">⚠️ 0 Live Products</span>
                         ) : (
                           <span className="text-emerald-700">✓ {prodCount} Live Product{prodCount > 1 ? "s" : ""}</span>
                         )}
@@ -454,10 +454,10 @@ export default function CategoryManager({
                       className="object-cover opacity-60"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent p-2.5 flex flex-col justify-end">
-                      <span className="text-[8px] font-black text-[#E8262A] uppercase">
+                      <span className="text-[8px] font-bold text-[#E8262A] uppercase">
                         {catConfig.badge || "DROPPING SOON"}
                       </span>
-                      <p className="text-[11px] font-black text-white uppercase font-anton truncate">
+                      <p className="text-[11px] font-bold text-white uppercase font-anton tracking-wide truncate">
                         {catConfig.title}
                       </p>
                       <p className="text-[8px] text-neutral-300 truncate">
@@ -542,7 +542,7 @@ export default function CategoryManager({
       {/* ========================================================================= */}
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b border-neutral-300 pb-2">
-          <h3 className="font-black text-black font-anton text-lg uppercase">
+          <h3 className="font-bold text-[#2C2A29] font-anton text-lg uppercase tracking-wide">
             Mobile Drawer & Catalog Subcategories
           </h3>
           <span className="text-xs text-neutral-500">
@@ -560,7 +560,7 @@ export default function CategoryManager({
                 <div className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4">
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#E8262A]" />
-                    <h3 className="font-black text-black font-anton text-base uppercase">
+                    <h3 className="font-bold text-[#2C2A29] font-anton text-base uppercase tracking-wide">
                       {acc.name}
                     </h3>
                   </div>
@@ -687,7 +687,7 @@ export default function CategoryManager({
               +
             </div>
             <div>
-              <h3 className="font-black text-black font-anton text-base uppercase">
+              <h3 className="font-bold text-[#2C2A29] font-anton text-base uppercase tracking-wide">
                 Add New Category
               </h3>
               <p className="text-xs text-neutral-500 mt-1 max-w-xs">
@@ -724,10 +724,10 @@ export default function CategoryManager({
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-5 border border-neutral-300 shadow-2xl animate-in zoom-in-95 duration-150 my-8">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#E8262A]">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#E8262A]">
                   Configure Drop Teaser
                 </span>
-                <h3 className="text-xl font-black text-black font-anton uppercase">
+                <h3 className="text-xl font-bold text-[#2C2A29] font-anton uppercase tracking-wide">
                   {editingConfig.name} — Coming Soon Settings
                 </h3>
               </div>
@@ -886,10 +886,10 @@ export default function CategoryManager({
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 border border-neutral-300 shadow-2xl animate-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
               <div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-[#E8262A]">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#E8262A]">
                   Customer Waitlist
                 </span>
-                <h3 className="text-lg font-black text-black font-anton uppercase">
+                <h3 className="text-lg font-bold text-[#2C2A29] font-anton uppercase tracking-wide">
                   VIP Drop Leads: {viewingLeadsCategory}
                 </h3>
               </div>
