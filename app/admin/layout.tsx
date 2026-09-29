@@ -2,8 +2,81 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+
+const ADMIN_NAV_ITEMS = [
+  {
+    key: "orders",
+    label: "1. Orders & Dispatch",
+    shortLabel: "Orders",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    ),
+  },
+  {
+    key: "products",
+    label: "2. Products & Photos",
+    shortLabel: "Products",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+      </svg>
+    ),
+  },
+  {
+    key: "inventory",
+    label: "3. Inventory & Stock",
+    shortLabel: "Inventory",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    key: "sections",
+    label: "4. Storefront Sections",
+    shortLabel: "Sections",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+      </svg>
+    ),
+  },
+  {
+    key: "categories",
+    label: "5. Categories & Menu",
+    shortLabel: "Categories",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
+      </svg>
+    ),
+  },
+  {
+    key: "reels",
+    label: "6. Lookbook Reels",
+    shortLabel: "Reels",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
+  {
+    key: "users",
+    label: "7. Registered Users",
+    shortLabel: "Users",
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    ),
+  },
+];
 
 export default function AdminLayout({
   children,
@@ -11,11 +84,58 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [currentTab, setCurrentTab] = useState<string>("orders");
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [adminUser, setAdminUser] = useState<{ name: string; email?: string } | null>(null);
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
   const [adminAuthError, setAdminAuthError] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+
+  useEffect(() => {
+    const syncTab = () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const t = params.get("tab");
+        if (t) {
+          setCurrentTab(t);
+        }
+      } catch {}
+    };
+
+    syncTab();
+
+    const handleTabChange = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      if (customEvent.detail) {
+        setCurrentTab(customEvent.detail);
+      }
+    };
+
+    window.addEventListener("admin-active-tab-changed", handleTabChange);
+    window.addEventListener("admin-switch-tab", handleTabChange);
+    window.addEventListener("popstate", syncTab);
+
+    return () => {
+      window.removeEventListener("admin-active-tab-changed", handleTabChange);
+      window.removeEventListener("admin-switch-tab", handleTabChange);
+      window.removeEventListener("popstate", syncTab);
+    };
+  }, []);
+
+  const handleTabClick = (tabKey: string) => {
+    setCurrentTab(tabKey);
+    if (typeof window !== "undefined" && window.location.pathname === "/admin") {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("tab", tabKey);
+        window.history.pushState({}, "", url.toString());
+        window.dispatchEvent(new CustomEvent("admin-switch-tab", { detail: tabKey }));
+      } catch {}
+    } else {
+      router.push(`/admin?tab=${tabKey}`);
+    }
+  };
 
   useEffect(() => {
     try {
@@ -203,48 +323,23 @@ export default function AdminLayout({
 
         {/* Mobile Navigation Tabs */}
         <div className="flex items-center gap-1.5 mt-2.5 overflow-x-auto no-scrollbar pb-0.5 text-[10px] font-bold tracking-wider uppercase">
-          <Link
-            href="/admin?tab=orders"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Orders
-          </Link>
-          <Link
-            href="/admin?tab=products"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Products
-          </Link>
-          <Link
-            href="/admin?tab=inventory"
-            className="px-2.5 py-1 bg-white border border-[#E8262A] rounded text-[#E8262A] font-black whitespace-nowrap"
-          >
-            Inventory
-          </Link>
-          <Link
-            href="/admin?tab=sections"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Sections
-          </Link>
-          <Link
-            href="/admin?tab=categories"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Categories
-          </Link>
-          <Link
-            href="/admin?tab=reels"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Reels
-          </Link>
-          <Link
-            href="/admin?tab=users"
-            className="px-2.5 py-1 bg-neutral-100 border border-neutral-300 rounded text-neutral-800 hover:bg-neutral-200 whitespace-nowrap"
-          >
-            Users
-          </Link>
+          {ADMIN_NAV_ITEMS.map((item) => {
+            const isActive = currentTab === item.key;
+            return (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => handleTabClick(item.key)}
+                className={`px-2.5 py-1 rounded whitespace-nowrap transition-colors cursor-pointer ${
+                  isActive
+                    ? "bg-white border border-[#E8262A] text-[#E8262A] font-black shadow-xs"
+                    : "bg-neutral-100 border border-neutral-300 text-neutral-800 hover:bg-neutral-200"
+                }`}
+              >
+                {item.shortLabel}
+              </button>
+            );
+          })}
           <Link
             href="/shop"
             target="_blank"
@@ -277,77 +372,26 @@ export default function AdminLayout({
           </div>
 
           <nav className="space-y-1.5">
-            <Link
-              href="/admin?tab=orders"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              <span>1. Orders & Dispatch</span>
-            </Link>
-
-            <Link
-              href="/admin?tab=products"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
-              <span>2. Products & Photos</span>
-            </Link>
-
-            {/* Inventory Management Tab */}
-            <Link
-              href="/admin?tab=inventory"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-              <span>3. Inventory & Stock</span>
-            </Link>
-
-            {/* Storefront Sections Manager Tab */}
-            <Link
-              href="/admin?tab=sections"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-              </svg>
-              <span>4. Storefront Sections</span>
-            </Link>
-
-            <Link
-              href="/admin?tab=categories"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
-              </svg>
-              <span>5. Categories & Menu</span>
-            </Link>
-
-            <Link
-              href="/admin?tab=reels"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
-              <span>6. Lookbook Reels</span>
-            </Link>
-
-            <Link
-              href="/admin?tab=users"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-neutral-700 hover:text-black hover:bg-neutral-100 transition-colors"
-            >
-              <svg className="w-4 h-4 text-[#E8262A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-              <span>6. Registered Users</span>
-            </Link>
+            {ADMIN_NAV_ITEMS.map((item) => {
+              const isActive = currentTab === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => handleTabClick(item.key)}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
+                    isActive
+                      ? "bg-[#E8262A] text-white shadow-sm font-black"
+                      : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                  }`}
+                >
+                  <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                    {item.icon}
+                  </span>
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
 
             <Link
               href="/shop"

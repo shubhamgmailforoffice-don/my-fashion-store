@@ -25,10 +25,15 @@ interface RegisteredUser {
   createdAt: string;
 }
 
+type AdminTab = "orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users";
+const VALID_TABS: AdminTab[] = ["orders", "products", "inventory", "sections", "categories", "reels", "users"];
+
 function AdminContent() {
   const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users" | null;
-  const [activeTab, setActiveTab] = useState<"orders" | "products" | "inventory" | "sections" | "categories" | "reels" | "users">(initialTab || "orders");
+  const initialTab = searchParams.get("tab") as AdminTab | null;
+  const [activeTab, setActiveTab] = useState<AdminTab>(
+    initialTab && VALID_TABS.includes(initialTab) ? initialTab : "orders"
+  );
 
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [ordersList, setOrdersList] = useState<Order[]>([]);
@@ -141,13 +146,39 @@ function AdminContent() {
     }
   };
 
+  // Instant tab selection handler that updates URL and layout synchronously
+  const handleSelectTab = (newTab: AdminTab) => {
+    setActiveTab(newTab);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set("tab", newTab);
+      window.history.pushState({}, "", url.toString());
+      window.dispatchEvent(new CustomEvent("admin-active-tab-changed", { detail: newTab }));
+    } catch {}
+  };
+
   // Sync tab with URL parameter if it changes
   useEffect(() => {
-    const tabParam = searchParams.get("tab") as "orders" | "products" | "inventory" | "sections" | "categories" | "users" | null;
-    if (tabParam && ["orders", "products", "inventory", "sections", "categories", "users"].includes(tabParam)) {
+    const tabParam = searchParams.get("tab") as AdminTab | null;
+    if (tabParam && VALID_TABS.includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [searchParams]);
+
+  // Support instant custom event from layout navigation
+  useEffect(() => {
+    const handleCustomTabSwitch = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const target = customEvent.detail as AdminTab;
+      if (target && VALID_TABS.includes(target)) {
+        setActiveTab(target);
+      }
+    };
+    window.addEventListener("admin-switch-tab", handleCustomTabSwitch);
+    return () => {
+      window.removeEventListener("admin-switch-tab", handleCustomTabSwitch);
+    };
+  }, []);
 
   // Load all operational data
   const refreshData = async () => {
@@ -556,7 +587,7 @@ function AdminContent() {
           </button>
           <button
             onClick={() => {
-              setActiveTab("products");
+              handleSelectTab("products");
               setIsAddModalOpen(true);
             }}
             className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-all flex items-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30"
@@ -586,11 +617,11 @@ function AdminContent() {
         </div>
       </div>
 
-      {/* FIVE DEDICATED TABS */}
+      {/* SEVEN DEDICATED TABS */}
       <div className="flex border-b border-black/5 gap-x-2 overflow-x-auto no-scrollbar font-inter">
         <button
-          onClick={() => setActiveTab("orders")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("orders")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "orders"
               ? "border-[#E8262A] text-[#E8262A] bg-white/90 backdrop-blur-md rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black bg-white/40 hover:bg-white/70 backdrop-blur-xs rounded-t-xl"
@@ -604,8 +635,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("products")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("products")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "products"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -619,8 +650,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("inventory")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("inventory")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "inventory"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -634,8 +665,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("sections")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("sections")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "sections"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -649,8 +680,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("categories")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("categories")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "categories"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -664,8 +695,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("reels")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("reels")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "reels"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -679,8 +710,8 @@ function AdminContent() {
           </span>
         </button>
         <button
-          onClick={() => setActiveTab("users")}
-          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap ${
+          onClick={() => handleSelectTab("users")}
+          className={`py-3 px-5 text-xs font-black tracking-wider uppercase border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "users"
               ? "border-[#E8262A] text-[#E8262A] bg-white rounded-t-xl shadow-xs"
               : "border-transparent text-neutral-600 hover:text-black hover:bg-white/50"
@@ -1174,7 +1205,7 @@ function AdminContent() {
               })}
               <button
                 type="button"
-                onClick={() => setActiveTab("categories")}
+                onClick={() => handleSelectTab("categories")}
                 className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 rounded-xl transition-colors flex items-center gap-1.5"
                 title="Configure Coming Soon Drop Pages"
               >
@@ -1431,7 +1462,7 @@ function AdminContent() {
                           <button
                             type="button"
                             onClick={() => {
-                              setActiveTab("orders");
+                              handleSelectTab("orders");
                               setOrderSearchQuery(user.name);
                             }}
                             className="text-[10px] text-[#E8262A] hover:text-[#d01e22] font-bold uppercase tracking-wider underline"
