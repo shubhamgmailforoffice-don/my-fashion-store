@@ -88,6 +88,57 @@ export default function Navbar() {
       .catch(() => {});
   }, []);
 
+  // Auto-hide navigation on scroll down, show on scroll up
+  const [isNavVisible, setIsNavVisible] = useState(true);
+  const [isExternalModalOpen, setIsExternalModalOpen] = useState(false);
+
+  useEffect(() => {
+    let lastY = 0;
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentY = window.scrollY;
+          const diff = currentY - lastY;
+
+          // Always visible near top of page
+          if (currentY < 40) {
+            setIsNavVisible(true);
+          } else if (Math.abs(diff) > 8) {
+            // Scroll down: hide navbar
+            if (diff > 0 && currentY > 80) {
+              setIsNavVisible(false);
+            }
+            // Scroll up: reveal navbar
+            else if (diff < 0) {
+              setIsNavVisible(true);
+            }
+          }
+
+          lastY = currentY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    const handleModalState = (e: Event) => {
+      const detail = (e as CustomEvent<{ open: boolean }>).detail;
+      if (detail && typeof detail.open === "boolean") {
+        setIsExternalModalOpen(detail.open);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("modal-state-change", handleModalState);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("modal-state-change", handleModalState);
+    };
+  }, []);
+
   // Allow other components to trigger reels or cart via window event
   useEffect(() => {
     const handleOpenReels = () => setIsReelsOpen(true);
@@ -376,10 +427,23 @@ export default function Navbar() {
     return null;
   }
 
+  const isAnyModalOpen =
+    isCartOpen ||
+    isSearchOpen ||
+    isMobileMenuOpen ||
+    isReelsOpen ||
+    isWishlistOpen ||
+    isCheckoutOpen ||
+    isExternalModalOpen;
+
   return (
     <>
-      {/* Main Sticky Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-black/5 bg-[#E8E6DF]/80 backdrop-blur-xl shadow-xs transition-colors">
+      {/* Main Sticky Header with Auto-hide on Scroll */}
+      <header
+        className={`sticky top-0 z-40 w-full border-b border-black/5 bg-[#E8E6DF]/85 dark:bg-[#0e0e10]/85 backdrop-blur-xl shadow-xs transition-transform duration-300 ease-in-out ${
+          isNavVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
           
           {/* Left Column: Mobile Pill (+ DRIIVN) or Desktop Navigation */}
@@ -1481,9 +1545,13 @@ export default function Navbar() {
       )}
 
 
-      {/* Mobile Floating Bottom Navigation Dock (Exact replica of Screenshot 4 - NO BLACK) */}
+      {/* Mobile Floating Bottom Navigation Dock (Auto-hides on scroll down and when any modal is open) */}
       <nav
-        className="lg:hidden fixed bottom-4 inset-x-0 z-40 flex items-center justify-center gap-2.5 px-3 pointer-events-none select-none"
+        className={`lg:hidden fixed bottom-4 inset-x-0 z-40 flex items-center justify-center gap-2.5 px-3 pointer-events-none select-none transition-all duration-300 ease-in-out ${
+          isNavVisible && !isAnyModalOpen
+            ? "translate-y-0 opacity-100"
+            : "translate-y-28 opacity-0 pointer-events-none"
+        }`}
         aria-label="Mobile Navigation Dock"
       >
         {/* 1st (Far Left): Blue Circular Button - Lookbook / Reels Feature (Screenshot 4) */}

@@ -57,6 +57,9 @@ export default function SupportWidget() {
     if (isOpen) {
       scrollToBottom();
     }
+    window.dispatchEvent(
+      new CustomEvent("modal-state-change", { detail: { open: isOpen } })
+    );
   }, [messages, isOpen, isTyping]);
 
   // Hide widget inside Admin Control Center
