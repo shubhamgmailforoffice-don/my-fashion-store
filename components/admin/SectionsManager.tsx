@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/data";
 import { HomepageSection } from "@/lib/sections";
+import { gooeyToast } from "goey-toast";
 
 interface SectionsManagerProps {
   products: Product[];
@@ -64,11 +65,13 @@ export default function SectionsManager({ products }: SectionsManagerProps) {
       if (res.ok && data?.success) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 2500);
+        gooeyToast.success("Homepage layout saved successfully!");
       } else {
-        alert("Failed to save sections: " + (data?.error || "Server response error"));
+        const msg = "Failed to save sections: " + (data?.error || "Server response error");
+        gooeyToast.error(msg);
       }
     } catch (err) {
-      alert("Error saving sections: " + String(err));
+      gooeyToast.error("Error saving sections: " + String(err));
     } finally {
       setIsSaving(false);
     }

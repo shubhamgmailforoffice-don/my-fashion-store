@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/data";
+import { gooeyToast } from "goey-toast";
 
 interface WishlistDrawerProps {
   isOpen: boolean;
@@ -61,9 +62,24 @@ export default function WishlistDrawer({
   }, [isOpen]);
 
   const removeFromWishlist = (id: string) => {
+    const itemToRemove = wishlist.find((item) => item.id === id);
     const updated = wishlist.filter((item) => item.id !== id);
     setWishlist(updated);
     localStorage.setItem("my_wishlist", JSON.stringify(updated));
+
+    if (itemToRemove) {
+      gooeyToast.info("Removed from wishlist", {
+        description: itemToRemove.name,
+        action: {
+          label: "Undo",
+          onClick: () => {
+            const restored = [...updated, itemToRemove];
+            setWishlist(restored);
+            localStorage.setItem("my_wishlist", JSON.stringify(restored));
+          },
+        },
+      });
+    }
   };
 
   const moveToCart = (item: Product) => {
@@ -88,6 +104,21 @@ export default function WishlistDrawer({
       localStorage.setItem("cart", JSON.stringify(cart));
       window.dispatchEvent(new Event("cart-updated"));
       removeFromWishlist(item.id);
+
+      gooeyToast.success(`Moved ${item.name} to bag`, {
+        action: {
+          label: "View Bag",
+          onClick: () => {
+            onClose();
+            if (onOpenCart) {
+              onOpenCart();
+            } else {
+              window.dispatchEvent(new Event("open-cart"));
+            }
+          },
+        },
+      });
+
       if (onOpenCart) {
         onClose();
         onOpenCart();

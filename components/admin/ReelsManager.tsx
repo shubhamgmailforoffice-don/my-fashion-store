@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ReelItem, defaultReels } from "@/lib/reelsTypes";
 import { Product } from "@/lib/data";
 import ReelsModal from "@/components/ReelsModal";
+import { gooeyToast } from "goey-toast";
 
 interface ReelsManagerProps {
   products: Product[];
@@ -70,12 +71,17 @@ export default function ReelsManager({ products }: ReelsManagerProps) {
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 4000);
         window.dispatchEvent(new CustomEvent("reels-updated"));
+        gooeyToast.success("Lookbook reels saved successfully!");
       } else {
         const err = await res.json();
-        setErrorMessage(err.error || "Failed to save reels changes.");
+        const msg = err.error || "Failed to save reels changes.";
+        setErrorMessage(msg);
+        gooeyToast.error(msg);
       }
     } catch {
-      setErrorMessage("Network error while saving reels.");
+      const msg = "Network error while saving reels.";
+      setErrorMessage(msg);
+      gooeyToast.error(msg);
     } finally {
       setIsSaving(false);
     }
@@ -101,13 +107,14 @@ export default function ReelsManager({ products }: ReelsManagerProps) {
   // Delete reel
   const handleDeleteReel = (id: string) => {
     if (reels.length <= 1) {
-      alert("At least one lookbook reel must remain in catalog.");
+      gooeyToast.warning("At least one lookbook reel must remain in catalog.");
       return;
     }
     if (confirm("Are you sure you want to remove this lookbook reel?")) {
       const updated = reels.filter((r) => r.id !== id);
       setReels(updated);
       handleSaveAll(updated);
+      gooeyToast.info("Reel removed");
     }
   };
 
@@ -133,13 +140,14 @@ export default function ReelsManager({ products }: ReelsManagerProps) {
 
       const data = await res.json();
       if (res.ok && data.success && data.url) {
+        gooeyToast.success("Photo uploaded successfully");
         return data.url;
       } else {
-        alert(data.error || "Image upload failed");
+        gooeyToast.error(data.error || "Image upload failed");
         return null;
       }
     } catch {
-      alert("Network error uploading photo.");
+      gooeyToast.error("Network error uploading photo.");
       return null;
     } finally {
       setUploadingImage(false);
@@ -169,7 +177,7 @@ export default function ReelsManager({ products }: ReelsManagerProps) {
     if (!editingReel) return;
 
     if (!editingReel.image.trim()) {
-      alert("Please provide a photo for this reel.");
+      gooeyToast.warning("Please provide a photo for this reel.");
       return;
     }
 

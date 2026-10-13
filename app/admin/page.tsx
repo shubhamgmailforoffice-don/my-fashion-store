@@ -10,6 +10,7 @@ import SectionsManager from "@/components/admin/SectionsManager";
 import CategoryManager from "@/components/admin/CategoryManager";
 import ReelsManager from "@/components/admin/ReelsManager";
 import { AdminCategory, DEFAULT_ADMIN_CATEGORIES, parseCategoriesData } from "@/lib/categories";
+import { gooeyToast } from "goey-toast";
 
 const ALL_SIZES = ["S", "M", "L", "XL", "XXL"];
 
@@ -224,11 +225,12 @@ function AdminContent() {
         }
         setQuickSubName("");
         setQuickAddSubOpen(false);
+        gooeyToast.success(`Subcategory "${trimmed}" added!`);
       } else {
-        alert("Failed to save new subcategory.");
+        gooeyToast.error("Failed to save new subcategory.");
       }
     } catch (e) {
-      alert("Error adding subcategory: " + String(e));
+      gooeyToast.error("Error adding subcategory: " + String(e));
     } finally {
       setIsAddingSubCategory(false);
     }
@@ -500,9 +502,10 @@ function AdminContent() {
           setEditingProduct(null);
         }, 1000);
         refreshData();
+        gooeyToast.success(`Product "${editingProduct.name}" updated!`);
       }
     } catch (err) {
-      alert("Error saving product: " + String(err));
+      gooeyToast.error("Error saving product: " + String(err));
     }
   };
 
@@ -519,9 +522,10 @@ function AdminContent() {
       if (res.ok) {
         setIsAddModalOpen(false);
         refreshData();
+        gooeyToast.success(`Product "${newProductForm.name}" created!`);
       }
     } catch (err) {
-      alert("Error creating product: " + String(err));
+      gooeyToast.error("Error creating product: " + String(err));
     }
   };
 
@@ -535,9 +539,10 @@ function AdminContent() {
       });
       if (res.ok) {
         refreshData();
+        gooeyToast.info(`Product "${name}" deleted`);
       }
     } catch (err) {
-      alert("Error deleting product: " + String(err));
+      gooeyToast.error("Error deleting product: " + String(err));
     }
   };
 

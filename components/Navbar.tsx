@@ -10,6 +10,7 @@ import ReelsModal from "./ReelsModal";
 import WishlistDrawer from "./WishlistDrawer";
 import OrderButton from "./OrderButton";
 import ThemeToggle from "./ThemeToggle";
+import { gooeyToast } from "goey-toast";
 
 export interface CartItem {
   id: string;
@@ -236,10 +237,22 @@ export default function Navbar() {
   };
 
   const handleRemoveItem = (id: string, size: string) => {
+    const itemToRemove = cartItems.find((item) => item.id === id && item.size === size);
     const updated = cartItems.filter(
       (item) => !(item.id === id && item.size === size)
     );
     saveCart(updated);
+    if (itemToRemove) {
+      gooeyToast.info(`Removed ${itemToRemove.name}`, {
+        description: `Size: ${size}`,
+        action: {
+          label: "Undo",
+          onClick: () => {
+            saveCart([...updated, itemToRemove]);
+          },
+        },
+      });
+    }
   };
 
   const handlePlaceOrder = async (e: React.FormEvent) => {
@@ -248,12 +261,16 @@ export default function Navbar() {
     setOrderError("");
 
     if (!shippingName.trim() || !shippingPhone.trim() || !shippingAddress.trim() || !shippingPincode.trim()) {
-      setOrderError("Please fill out all required shipping fields.");
+      const msg = "Please fill out all required shipping fields.";
+      setOrderError(msg);
+      gooeyToast.warning(msg);
       return;
     }
 
     if (!sameWhatsApp && customWhatsApp.trim().length !== 10) {
-      setOrderError("Please enter a valid 10-digit WhatsApp number or tick the box to use your delivery number.");
+      const msg = "Please enter a valid 10-digit WhatsApp number.";
+      setOrderError(msg);
+      gooeyToast.warning(msg);
       return;
     }
 
@@ -298,6 +315,10 @@ export default function Navbar() {
       setPlacedOrder(data.order);
       saveCart([]);
 
+      gooeyToast.success("Order Placed Successfully!", {
+        description: `Order #${data.order?.id || "DRIIVN"} has been confirmed.`,
+      });
+
       // Automatically link placed order to current session & localStorage
       try {
         const orderId = data.order?.id;
@@ -330,7 +351,9 @@ export default function Navbar() {
     } catch (err: unknown) {
       setIsOrderAnimating(false);
       setIsPlacingOrder(false);
-      setOrderError(err instanceof Error ? err.message : "Error placing order");
+      const errMsg = err instanceof Error ? err.message : "Error placing order";
+      setOrderError(errMsg);
+      gooeyToast.error("Order could not be placed", { description: errMsg });
     }
   };
 
@@ -1346,6 +1369,9 @@ export default function Navbar() {
                           onClick={() => {
                             navigator.clipboard.writeText("driivnstore@upi");
                             setCopiedUpi(true);
+                            gooeyToast.success("UPI ID copied to clipboard", {
+                              description: "driivnstore@upi",
+                            });
                             setTimeout(() => setCopiedUpi(false), 2000);
                           }}
                           className="bg-[#2C2A29] text-white hover:bg-[#E8262A] hover:text-white px-2.5 py-1 text-[9px] font-black uppercase tracking-wider transition-colors rounded-lg shadow-xs"

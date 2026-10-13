@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ComingSoonCategoryConfig } from "@/lib/comingSoonTypes";
+import { gooeyToast } from "goey-toast";
 
 interface ComingSoonViewProps {
   config: ComingSoonCategoryConfig;
@@ -42,11 +43,18 @@ export default function ComingSoonView({
       const data = await res.json();
       if (res.ok && data.success) {
         setIsSubmitted(true);
+        gooeyToast.success("You're on the VIP Priority Access list!", {
+          description: `We'll alert ${contact.trim()} first before the drop goes public.`,
+        });
       } else {
-        setErrorMessage(data.error || "Unable to join priority list. Please try again.");
+        const err = data.error || "Unable to join priority list. Please try again.";
+        setErrorMessage(err);
+        gooeyToast.error("Subscription failed", { description: err });
       }
     } catch {
-      setErrorMessage("Network error. Please try again.");
+      const err = "Network error. Please try again.";
+      setErrorMessage(err);
+      gooeyToast.error(err);
     } finally {
       setIsSubmitting(false);
     }

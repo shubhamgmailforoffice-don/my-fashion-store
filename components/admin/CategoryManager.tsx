@@ -10,6 +10,7 @@ import {
   ComingSoonSubscriber,
   defaultComingSoonConfigs,
 } from "@/lib/comingSoonTypes";
+import { gooeyToast } from "goey-toast";
 
 interface AccordionCategory {
   id: string;
@@ -158,11 +159,10 @@ export default function CategoryManager({
         const json = await res.json();
         setComingSoonData(json.data);
         setEditingConfig(null);
-        setSaveMessage(`Saved Coming Soon details for ${editingConfig.name}`);
-        setTimeout(() => setSaveMessage(""), 2000);
+        gooeyToast.success(`Saved Coming Soon details for ${editingConfig.name}`);
       }
     } catch (e) {
-      alert("Error saving config: " + String(e));
+      gooeyToast.error("Error saving config: " + String(e));
     } finally {
       setIsSaving(false);
     }
@@ -186,11 +186,12 @@ export default function CategoryManager({
       const data = await res.json();
       if (res.ok && data.success) {
         setEditingConfig({ ...editingConfig, bannerImage: data.url });
+        gooeyToast.success("Banner image uploaded successfully");
       } else {
-        alert("Upload failed: " + (data.error || "Unknown error"));
+        gooeyToast.error("Upload failed: " + (data.error || "Unknown error"));
       }
     } catch (err) {
-      alert("Image upload error: " + String(err));
+      gooeyToast.error("Image upload error: " + String(err));
     } finally {
       setUploadingImage(false);
     }
@@ -211,9 +212,10 @@ export default function CategoryManager({
       if (res.ok) {
         const json = await res.json();
         setComingSoonData(json.data);
+        gooeyToast.info("Subscriber removed");
       }
     } catch (e) {
-      alert("Error deleting subscriber: " + String(e));
+      gooeyToast.error("Error deleting subscriber: " + String(e));
     }
   };
 
@@ -268,13 +270,12 @@ export default function CategoryManager({
       if (res.ok) {
         const result = await res.json();
         setData(result.data);
-        setSaveMessage(`Removed "${subCategory}"`);
-        setTimeout(() => setSaveMessage(""), 2000);
+        gooeyToast.info(`Removed subcategory "${subCategory}"`);
         window.dispatchEvent(new CustomEvent("driivn_categories_updated", { detail: result.data }));
         onCategoriesUpdated?.();
       }
     } catch (e) {
-      alert("Error removing subcategory: " + String(e));
+      gooeyToast.error("Error removing subcategory: " + String(e));
     } finally {
       setIsSaving(false);
     }
@@ -298,14 +299,14 @@ export default function CategoryManager({
       if (res.ok) {
         const result = await res.json();
         setData(result.data);
+        const createdName = newCategoryName;
         setNewCategoryName("");
-        setSaveMessage(`Created category "${newCategoryName}"`);
-        setTimeout(() => setSaveMessage(""), 2000);
+        gooeyToast.success(`Created category "${createdName}"`);
         window.dispatchEvent(new CustomEvent("driivn_categories_updated", { detail: result.data }));
         onCategoriesUpdated?.();
       }
     } catch (e) {
-      alert("Error creating category: " + String(e));
+      gooeyToast.error("Error creating category: " + String(e));
     } finally {
       setIsSaving(false);
     }

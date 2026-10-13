@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/lib/data";
+import { gooeyToast } from "goey-toast";
 
 interface QuickAddModalProps {
   product: Product | null;
@@ -51,15 +52,24 @@ export default function QuickAddModal({
       localStorage.setItem("cart", JSON.stringify(cart));
       window.dispatchEvent(new Event("cart-updated"));
       
+      gooeyToast.success(`Added ${product.name} to bag`, {
+        description: `Size: ${selectedSize} • Rs. ${product.price.toLocaleString()}`,
+        action: {
+          label: "View Bag",
+          onClick: () => window.dispatchEvent(new Event("open-cart")),
+        },
+      });
+
       setIsSuccess(true);
       if (onAddedToCart) onAddedToCart();
 
       setTimeout(() => {
         setIsSuccess(false);
         onClose();
-      }, 1200);
+      }, 700);
     } catch (e) {
       console.error("Failed to add to cart", e);
+      gooeyToast.error("Failed to add item to bag");
     }
   };
 

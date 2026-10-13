@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { User, Order } from "@/lib/store";
+import { gooeyToast } from "goey-toast";
 
 // Hydration-safe external store subscriber for user session
 const sessionSubscribe = (callback: () => void) => {
@@ -269,12 +270,12 @@ export default function AccountPage() {
   const handleSaveAddress = (e: React.FormEvent) => {
     e.preventDefault();
     if (!addressForm.name || !addressForm.phone || !addressForm.street || !addressForm.pincode) {
-      alert("Please fill in all required address fields.");
+      gooeyToast.warning("Please fill in all required address fields.");
       return;
     }
 
     if (!addressForm.sameWhatsApp && (!addressForm.whatsapp || addressForm.whatsapp.trim().length !== 10)) {
-      alert("Please enter a valid 10-digit WhatsApp number or check the box to use your mobile number.");
+      gooeyToast.warning("Please enter a valid 10-digit WhatsApp number.");
       return;
     }
 
@@ -315,6 +316,9 @@ export default function AccountPage() {
 
     saveAddressesToStorage(updated);
     setIsAddressModalOpen(false);
+    gooeyToast.success(editingAddressId ? "Address updated successfully" : "Address saved successfully", {
+      description: `${addrPayload.name} - ${addrPayload.city}, ${addrPayload.state}`,
+    });
   };
 
   const handleDeleteAddress = (id: string) => {
@@ -324,6 +328,7 @@ export default function AccountPage() {
       remaining[0].isDefault = true;
     }
     saveAddressesToStorage(remaining);
+    gooeyToast.info("Address removed");
   };
 
   const handleSetDefaultAddress = (id: string) => {

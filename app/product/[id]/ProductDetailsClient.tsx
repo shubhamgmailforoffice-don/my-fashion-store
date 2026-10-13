@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product, products } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
+import { gooeyToast } from "goey-toast";
 
 interface ProductDetailsClientProps {
   product: Product;
@@ -108,7 +109,9 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert("PLEASE SELECT A SIZE BEFORE ADDING TO BAG.");
+      gooeyToast.warning("Please select a size first", {
+        description: "Select your preferred size before adding this piece to your bag.",
+      });
       return;
     }
 
@@ -149,6 +152,14 @@ export default function ProductDetailsClient({ product, allProducts }: ProductDe
 
       setIsAdding(false);
       setAddedToCart(true);
+
+      gooeyToast.success(`Added ${product.name} to bag`, {
+        description: `Size: ${selectedSize} • Qty: ${quantity}`,
+        action: {
+          label: "View Bag",
+          onClick: () => window.dispatchEvent(new Event("open-cart")),
+        },
+      });
 
       // Auto-hide success message after 4 seconds
       setTimeout(() => {

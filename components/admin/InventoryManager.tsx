@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import { Product } from "@/lib/data";
 import { AdminCategory, DEFAULT_ADMIN_CATEGORIES, parseCategoriesData } from "@/lib/categories";
+import { gooeyToast } from "goey-toast";
 
 interface InventoryManagerProps {
   products: Product[];
@@ -123,9 +124,10 @@ export default function InventoryManager({
 
       if (res.ok) {
         onRefresh();
+        gooeyToast.success(newInStock ? `"${product.name}" marked in stock` : `"${product.name}" marked sold out`);
       }
     } catch (err) {
-      alert("Error updating inventory: " + String(err));
+      gooeyToast.error("Error updating inventory: " + String(err));
     } finally {
       setUpdatingId(null);
     }
@@ -172,9 +174,10 @@ export default function InventoryManager({
       });
       if (res.ok) {
         onRefresh();
+        gooeyToast.info(`"${product.name}" stock set to 0`);
       }
     } catch (err) {
-      alert("Error setting stock to 0: " + String(err));
+      gooeyToast.error("Error setting stock to 0: " + String(err));
     } finally {
       setUpdatingId(null);
     }
@@ -196,11 +199,12 @@ export default function InventoryManager({
           setActiveManageProduct(null);
         }
         onRefresh();
+        gooeyToast.info(`Product "${product.name}" deleted`);
       } else {
-        alert("Failed to delete product.");
+        gooeyToast.error("Failed to delete product.");
       }
     } catch (err) {
-      alert("Error deleting product: " + String(err));
+      gooeyToast.error("Error deleting product: " + String(err));
     } finally {
       setUpdatingId(null);
     }
@@ -227,8 +231,9 @@ export default function InventoryManager({
         )
       );
       onRefresh();
+      gooeyToast.info("All products marked as Sold Out (0 stock)");
     } catch (err) {
-      alert("Error: " + String(err));
+      gooeyToast.error("Error: " + String(err));
     } finally {
       setIsSaving(false);
     }
@@ -241,7 +246,7 @@ export default function InventoryManager({
     }
     const secondConfirm = prompt(`Type "DELETE ALL" to confirm permanent deletion:`);
     if (secondConfirm !== "DELETE ALL") {
-      alert("Deletion cancelled.");
+      gooeyToast.info("Deletion cancelled.");
       return;
     }
     setIsSaving(true);
@@ -254,8 +259,9 @@ export default function InventoryManager({
         )
       );
       onRefresh();
+      gooeyToast.info("All products permanently deleted from inventory");
     } catch (err) {
-      alert("Error deleting products: " + String(err));
+      gooeyToast.error("Error deleting products: " + String(err));
     } finally {
       setIsSaving(false);
     }
@@ -278,11 +284,12 @@ export default function InventoryManager({
       const data = await res.json();
       if (res.ok && data.url) {
         onUrl(data.url);
+        gooeyToast.success("Image uploaded successfully");
       } else {
-        alert(data.error || "Failed to upload image.");
+        gooeyToast.error(data.error || "Failed to upload image.");
       }
     } catch (err) {
-      alert("Upload failed: " + String(err));
+      gooeyToast.error("Upload failed: " + String(err));
     } finally {
       setUploadingImage(false);
     }
@@ -292,7 +299,7 @@ export default function InventoryManager({
   const handleSaveDraft = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!draftForm.name.trim()) {
-      alert("Please enter garment name.");
+      gooeyToast.warning("Please enter garment name.");
       return;
     }
 
@@ -333,11 +340,12 @@ export default function InventoryManager({
           subCategory: "T-shirts",
         });
         onRefresh();
+        gooeyToast.success(`Draft "${payload.name}" saved to inventory!`);
       } else {
-        alert("Failed to save draft.");
+        gooeyToast.error("Failed to save draft.");
       }
     } catch (err) {
-      alert("Error saving draft: " + String(err));
+      gooeyToast.error("Error saving draft: " + String(err));
     } finally {
       setIsSaving(false);
     }
@@ -365,13 +373,15 @@ export default function InventoryManager({
       });
 
       if (res.ok) {
+        const publishedName = publishingProduct.name;
         setPublishingProduct(null);
         onRefresh();
+        gooeyToast.success(`"${publishedName}" published to live store!`);
       } else {
-        alert("Failed to publish to site.");
+        gooeyToast.error("Failed to publish to site.");
       }
     } catch (err) {
-      alert("Error publishing: " + String(err));
+      gooeyToast.error("Error publishing: " + String(err));
     } finally {
       setIsSaving(false);
     }
@@ -393,6 +403,7 @@ export default function InventoryManager({
       });
       if (res.ok) {
         onRefresh();
+        gooeyToast.info(newVisible ? `"${product.name}" is now live on storefront` : `"${product.name}" moved to drafts`);
       }
     } catch (err) {
       console.error(err);
@@ -421,13 +432,15 @@ export default function InventoryManager({
       });
 
       if (res.ok) {
+        const prodName = activeManageProduct.name;
         setActiveManageProduct(null);
         onRefresh();
+        gooeyToast.success(`Changes saved for "${prodName}"!`);
       } else {
-        alert("Failed to save changes.");
+        gooeyToast.error("Failed to save changes.");
       }
     } catch (err) {
-      alert("Error: " + String(err));
+      gooeyToast.error("Error: " + String(err));
     } finally {
       setIsSaving(false);
     }
