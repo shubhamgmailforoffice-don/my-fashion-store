@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -25,7 +26,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-white/80 backdrop-blur-xl border-t border-white/80 text-black mb-14 lg:mb-0">
+    <footer className="bg-white/80 dark:bg-[#121215]/90 backdrop-blur-xl border-t border-white/80 dark:border-neutral-800/80 text-black dark:text-white mb-14 lg:mb-0 transition-colors">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
           
@@ -37,7 +38,14 @@ export default function Footer() {
                 alt="DRIIVN"
                 width={160}
                 height={20}
-                className="h-6 w-auto object-contain"
+                className="h-6 w-auto object-contain dark:hidden"
+              />
+              <Image
+                src="/logo-white.png"
+                alt="DRIIVN"
+                width={160}
+                height={20}
+                className="h-6 w-auto object-contain hidden dark:block"
               />
             </Link>
             <p className="text-xs text-gray-500 leading-relaxed tracking-wider uppercase max-w-sm">
@@ -134,14 +142,18 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright row */}
-        <div className="mt-14 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="mt-14 pt-8 border-t border-gray-100 dark:border-neutral-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[10px] font-bold text-gray-400 tracking-widest uppercase">
             © 2026 DRIIVN. ALL RIGHTS RESERVED.
           </p>
+          <div className="flex items-center gap-2.5">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-400">Appearance</span>
+            <ThemeToggle size="sm" />
+          </div>
           <div className="flex gap-6 text-[10px] font-bold text-gray-400 tracking-widest uppercase">
-            <Link href="/privacy" className="hover:text-black transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-black transition-colors">Terms of Service</Link>
-            <Link href="/returns" className="hover:text-black transition-colors">Authenticity Guarantee</Link>
+            <Link href="/privacy" className="hover:text-black dark:hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-black dark:hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/returns" className="hover:text-black dark:hover:text-white transition-colors">Authenticity Guarantee</Link>
           </div>
         </div>
       </div>

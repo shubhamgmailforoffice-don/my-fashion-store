@@ -9,6 +9,7 @@ import { STATE_CITIES_MAP, INDIAN_STATES } from "@/lib/indiaLocations";
 import ReelsModal from "./ReelsModal";
 import WishlistDrawer from "./WishlistDrawer";
 import OrderButton from "./OrderButton";
+import ThemeToggle from "./ThemeToggle";
 
 export interface CartItem {
   id: string;
@@ -421,14 +422,27 @@ export default function Navbar() {
                 alt="DRIIVN"
                 width={170}
                 height={22}
-                className="h-5 sm:h-6 md:h-7 w-auto object-contain"
+                className="h-5 sm:h-6 md:h-7 w-auto object-contain dark:hidden"
+                priority
+              />
+              <Image
+                src="/logo-white.png"
+                alt="DRIIVN"
+                width={170}
+                height={22}
+                className="h-5 sm:h-6 md:h-7 w-auto object-contain hidden dark:block"
                 priority
               />
             </Link>
           </div>
 
-          {/* Right Column: Actions (Search & Bag removed from mobile upper bar as requested, moved to bottom bar) */}
-          <div className="flex items-center justify-end gap-x-2 sm:gap-x-4 xl:gap-x-5">
+          {/* Right Column: Actions */}
+          <div className="flex items-center justify-end gap-x-2 sm:gap-x-3.5 xl:gap-x-5">
+            {/* Dark & Light Theme Switcher matching button1.png / button2.png */}
+            <div className="flex items-center mr-0.5 sm:mr-1">
+              <ThemeToggle size="sm" />
+            </div>
+
             {/* Desktop-Only Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
@@ -512,8 +526,9 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* Right: Saved Bookmark & Bag */}
-              <div className="flex items-center gap-3">
+              {/* Right: Theme Toggle, Saved Bookmark & Bag */}
+              <div className="flex items-center gap-2.5 sm:gap-3">
+                <ThemeToggle size="sm" />
                 <button
                   type="button"
                   onClick={() => {

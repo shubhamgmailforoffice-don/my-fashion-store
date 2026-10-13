@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const ADMIN_NAV_ITEMS = [
   {
@@ -232,10 +233,16 @@ export default function AdminLayout({
   if (!isAdmin) {
     return (
       <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex items-center justify-center p-4 font-inter">
-        <div className="max-w-md w-full bg-white border border-neutral-300 shadow-2xl p-8 space-y-6 rounded-2xl">
+        <div className="max-w-md w-full bg-white border border-neutral-300 shadow-2xl p-8 space-y-6 rounded-2xl relative">
+          <div className="flex justify-between items-center pb-2 border-b border-neutral-200">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8262A] font-inter">
+              Staff Portal
+            </span>
+            <ThemeToggle size="sm" />
+          </div>
           <div className="text-center space-y-2">
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
-              Restricted Area &bull; Staff Authentication
+              Restricted Area &bull; Authentication
             </span>
             <h1 className="text-2xl font-bold tracking-wider uppercase text-[#2C2A29] font-anton">
               DRIIVN CONTROL CENTER
@@ -313,19 +320,29 @@ export default function AdminLayout({
                     alt="DRIIVN"
                     width={130}
                     height={16}
-                    className="h-4 w-auto object-contain"
+                    className="h-4 w-auto object-contain dark:hidden"
+                  />
+                  <Image
+                    src="/logo-white.png"
+                    alt="DRIIVN"
+                    width={130}
+                    height={16}
+                    className="h-4 w-auto object-contain hidden dark:block"
                   />
                   <span className="text-[8px] font-black tracking-[0.25em] text-neutral-500 uppercase block mt-0.5">
                     OPERATIONS DESK
                   </span>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-lg cursor-pointer"
-                >
-                  &times;
-                </button>
+                <div className="flex items-center gap-2">
+                  <ThemeToggle size="sm" />
+                  <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-lg cursor-pointer"
+                  >
+                    &times;
+                  </button>
+                </div>
               </div>
 
               <nav className="space-y-1.5">
@@ -426,6 +443,7 @@ export default function AdminLayout({
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <ThemeToggle size="sm" />
             <Link
               href="/"
               className="text-[9px] font-bold uppercase tracking-wider text-neutral-700 hover:text-black border border-neutral-300 rounded px-2 py-1 bg-neutral-100"
@@ -478,16 +496,26 @@ export default function AdminLayout({
       <aside className="hidden md:flex w-64 bg-white border-r border-neutral-300 flex-col justify-between p-6 flex-shrink-0 shadow-sm">
         <div className="space-y-8">
           <div>
-            <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block mb-1">
-              Control Center
-            </span>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase">
+                Control Center
+              </span>
+              <ThemeToggle size="sm" />
+            </div>
             <div className="flex flex-col items-start gap-1">
               <Image
                 src="/logo-black.png"
                 alt="DRIIVN"
                 width={140}
                 height={18}
-                className="h-5 w-auto object-contain"
+                className="h-5 w-auto object-contain dark:hidden"
+              />
+              <Image
+                src="/logo-white.png"
+                alt="DRIIVN"
+                width={140}
+                height={18}
+                className="h-5 w-auto object-contain hidden dark:block"
               />
               <span className="text-[8px] font-black tracking-[0.25em] text-neutral-500 uppercase">
                 OPERATIONS DESK
