@@ -1,5 +1,5 @@
 import { getAsyncProducts } from "@/lib/store";
-import ModernLandingView from "@/components/ModernLandingView";
+import VexoLandingView from "@/components/VexoLandingView";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -7,5 +7,5 @@ export const revalidate = 0;
 export default async function Home() {
   const allProducts = await getAsyncProducts();
 
-  return <ModernLandingView products={allProducts} />;
+  return <VexoLandingView products={allProducts} />;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Product, products } from "@/lib/data";
@@ -12,577 +12,544 @@ interface ProductDetailsClientProps {
   allProducts?: Product[];
 }
 
-interface CartStorageItem {
-  id: string;
-  name: string;
-  price: number;
-  image: string;
-  size: string;
-  color: string;
-  quantity: number;
-}
-
 export default function ProductDetailsClient({ product, allProducts }: ProductDetailsClientProps) {
-  const [activeImage, setActiveImage] = useState(product.images[0]);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [quantity, setQuantity] = useState(1);
-  const [isAdding, setIsAdding] = useState(false);
-  const [addedToCart, setAddedToCart] = useState(false);
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  // Gallery images with fallbacks for bento grid
+  const galleryImages = [
+    product.images[0] || "/images/products/black-nocturnal-hoodie.jpg",
+    product.images[1] || product.images[0] || "/images/streetwear-model-2.jpg",
+    product.images[2] || "/images/streetwear-model-cap.jpg",
+    product.images[3] || "/images/hero-streetwear.jpg",
+  ];
+
+  const [activeImage, setActiveImage] = useState<string>(galleryImages[0]);
+  const [selectedSize, setSelectedSize] = useState<string>("S");
+  const [selectedColor, setSelectedColor] = useState<string>(product.colors[0] || "Black");
+  const [isDescOpen, setIsDescOpen] = useState<boolean>(true);
+  const [isShippingOpen, setIsShippingOpen] = useState<boolean>(true);
+  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
+  const [isAdding, setIsAdding] = useState<boolean>(false);
 
   const isOutOfStock = product.inStock === false;
-  const availableSizes =
-    product.sizes && product.sizes.length > 0
-      ? product.sizes
-      : ["S", "M", "L", "XL", "XXL"];
+  const availableSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ["S", "M", "L", "XL", "XXL"];
 
-  // Recommendations: exclude current product
-  const productPool = allProducts && allProducts.length > 0 ? allProducts : products;
-  const recommendations = productPool
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
-
-  // Get customized streetwear specs based on the product type
-  const getProductSpecs = () => {
-    const name = product.name.toUpperCase();
-    if (name.includes("T-SHIRT")) {
-      return {
-        material: "100% COMBED FRENCH TERRY COTTON",
-        weight: "280 GSM HEAVYWEIGHT FABRIC",
-        fit: "BOXY, OVERSIZED SILHOUETTE WITH DROPPED SHOULDERS",
-        print: "HIGH-DENSITY EMBOSSED GRAPHIC SCREEN PRINT",
-        care: "COLD MACHINE WASH INSIDE OUT. DO NOT IRON ON PRINT.",
-        details: [
-          "Preshrunk to minimize shrinkage",
-          "Thick 1.2-inch ribbed collar",
-          "Double-needle stitched shoulders, armholes, cuffs, and hem",
-          "Signature rubberized branding patch on back neck",
-        ],
-      };
-    } else if (name.includes("HOODIE")) {
-      return {
-        material: "80% ORGANIC COTTON, 20% RECYCLED POLYESTER FLEECE",
-        weight: "420 GSM SUPER-HEAVYWEIGHT PREMIUM FLEECE",
-        fit: "OVERSIZED ULTRA-BOXY COMFORT FIT",
-        print: "PREMIUM CHENILLE EMBROIDERY & PUFF PRINT ON CHEST",
-        care: "HAND WASH RECOMMENDED. DRY FLAT. DO NOT TUMBLE DRY.",
-        details: [
-          "Double-lined hood without drawstrings for minimal, clean aesthetic",
-          "Kangaroo front pouch pocket with reinforced stitching",
-          "Heavy ribbed cuffs and waistband for secure fit",
-          "Drop shoulder pattern with premium coverseaming",
-        ],
-      };
-    } else if (name.includes("PANTS") || name.includes("CARGO")) {
-      return {
-        material: "100% DURABLE RIPSTOP MILITARY-GRADE COTTON",
-        weight: "320 GSM MID-HEAVY RUGGED FABRIC",
-        fit: "RELAXED WIDE-LEG FIT WITH ADJUSTABLE HEM TOGGLES",
-        print: "TONAL HIGH-DENSITY RUNNING BRAND LOGO PRINT",
-        care: "MACHINE WASH COLD WITH LIKE COLORS. HANG DRY.",
-        details: [
-          "6-pocket tactical design including deep side cargo pockets",
-          "Articulated knees for unrestricted movement and structure",
-          "Premium YKK zipper fly with heavy-duty metal button closure",
-          "Adjustable drawcords at waist and ankle openings",
-        ],
-      };
-    } else {
-      return {
-        material: "100% PREMIUM COTTON SHIRTING / SPECIAL ARCHIVE BLEND",
-        weight: "300 GSM PREMIUM FABRIC WEIGHT",
-        fit: "STREETWEAR SILHOUETTE, TRUE TO SIZE FOR OVERSIZED DRAPE",
-        print: "LIMITED EDITION SERIALIZED BRANDING",
-        care: "DRY CLEAN OR DELICATE COLD MACHINE WASH.",
-        details: [
-          "Exclusive collection-specific woven brand labels",
-          "Reinforced side seams with high-tensile strength thread",
-          "Premium custom hardware details throughout",
-          "Comes in custom collection dustbag and collectible box",
-        ],
-      };
-    }
+  // Color options representation
+  const colorMap: Record<string, string> = {
+    Black: "#171717",
+    White: "#F3F4F6",
+    Greenish: "#9EAA96",
+    Grey: "#A8A29E",
+    Logan: "#B4A8BF",
+    Orange: "#EA580C",
+    Red: "#DC2626",
+    Brown: "#78350F",
+    Navy: "#1E3A8A",
   };
 
-  const specs = getProductSpecs();
+  const productColors = product.colors && product.colors.length > 0 ? product.colors : ["Black", "White", "Greenish", "Grey"];
 
-  const handleAddToCart = () => {
-    if (!selectedSize) {
-      gooeyToast.warning("Please select a size first", {
-        description: "Select your preferred size before adding this piece to your bag.",
-      });
-      return;
-    }
+  // Wishlist persistence
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem("my_wishlist");
+      if (stored) {
+        const list: Product[] = JSON.parse(stored);
+        if (list.some((item) => String(item.id) === String(product.id))) {
+          setIsWishlisted(true);
+        }
+      }
+    } catch {}
+  }, [product.id]);
 
-    setIsAdding(true);
-
-    setTimeout(() => {
-      // Save item to local storage cart
-      const currentCart: CartStorageItem[] = JSON.parse(
-        localStorage.getItem("cart") || "[]"
-      );
-
-      const cartItem: CartStorageItem = {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        image: product.images[0],
-        size: selectedSize,
-        color: selectedColor,
-        quantity: quantity,
-      };
-
-      // Check if item with same ID and size exists
-      const existingItemIndex = currentCart.findIndex(
-        (item: CartStorageItem) =>
-          item.id === product.id && item.size === selectedSize
-      );
-
-      if (existingItemIndex > -1) {
-        currentCart[existingItemIndex].quantity += quantity;
+  const toggleWishlist = () => {
+    try {
+      const stored = localStorage.getItem("my_wishlist") || "[]";
+      let list: Product[] = JSON.parse(stored);
+      if (isWishlisted) {
+        list = list.filter((item) => String(item.id) !== String(product.id));
+        setIsWishlisted(false);
+        gooeyToast("Removed from Wishlist");
       } else {
-        currentCart.push(cartItem);
+        list.push(product);
+        setIsWishlisted(true);
+        gooeyToast.success("Saved to Wishlist", {
+          description: product.name,
+        });
+      }
+      localStorage.setItem("my_wishlist", JSON.stringify(list));
+      window.dispatchEvent(new Event("wishlist-updated"));
+    } catch {}
+  };
+
+  // Add to Bag / Buy Now
+  const handleBuyNow = () => {
+    if (isOutOfStock) return;
+    setIsAdding(true);
+    try {
+      const stored = localStorage.getItem("cart") || "[]";
+      const cart = JSON.parse(stored);
+      const cartItemId = `${product.id}-${selectedSize}-${selectedColor}`;
+
+      const existing = cart.find((item: any) => item.id === cartItemId);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          id: cartItemId,
+          name: product.name,
+          price: product.price,
+          image: activeImage,
+          size: selectedSize,
+          color: selectedColor,
+          quantity: 1,
+        });
       }
 
-      localStorage.setItem("cart", JSON.stringify(currentCart));
-
-      // Dispatch storage update event for Navbar listener
+      localStorage.setItem("cart", JSON.stringify(cart));
       window.dispatchEvent(new Event("cart-updated"));
 
-      setIsAdding(false);
-      setAddedToCart(true);
-
       gooeyToast.success(`Added ${product.name} to bag`, {
-        description: `Size: ${selectedSize} • Qty: ${quantity}`,
+        description: `Size: ${selectedSize} • Color: ${selectedColor} • ₹${product.price.toLocaleString()}`,
         action: {
           label: "View Bag",
           onClick: () => window.dispatchEvent(new Event("open-cart")),
         },
       });
 
-      // Auto-hide success message after 4 seconds
-      setTimeout(() => {
-        setAddedToCart(false);
-      }, 4000);
-    }, 400);
+      // Slide open cart drawer
+      window.dispatchEvent(new Event("open-cart"));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
+  // Recommendations: exclude current product
+  const productPool = allProducts && allProducts.length > 0 ? allProducts : products;
+  const recommendations = productPool.filter((p) => String(p.id) !== String(product.id)).slice(0, 4);
+
   return (
-    <div className="min-h-screen py-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-4">
-        {/* Breadcrumb Navigation */}
-        <div className="flex items-center space-x-2 text-[10px] font-bold tracking-widest text-neutral-500 uppercase mb-8">
-          <Link href="/" className="hover:text-black transition-colors">
-            Home
+    <div className="min-h-screen bg-[#F3F4F6] dark:bg-[#0c0d0e] text-[#171717] dark:text-[#ededed] transition-colors py-8 pb-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Breadcrumb Navigation (WiDK reference style) */}
+        <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400 mb-5 select-none">
+          <Link href="/" className="hover:text-black dark:hover:text-white flex items-center gap-1 font-medium">
+            <span>&larr; Home</span>
           </Link>
-          <span>/</span>
-          <Link href="/shop" className="hover:text-black transition-colors">
+          <span>&rsaquo;</span>
+          <Link href="/shop" className="hover:text-black dark:hover:text-white font-medium">
             Shop
           </Link>
-          <span>/</span>
-          <span className="text-black font-extrabold">{product.name}</span>
+          <span>&rsaquo;</span>
+          <span className="font-semibold text-neutral-900 dark:text-neutral-100 truncate max-w-[200px] sm:max-w-none">
+            {product.name}
+          </span>
         </div>
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-x-12 gap-y-10">
-          {/* Column 1: Image Gallery (Takes 7 columns on large screens) */}
-          <div className="lg:col-span-7 flex flex-col md:flex-row-reverse gap-4">
-            {/* Main Active Image */}
-            <div className="relative aspect-[3/4] flex-1 bg-[#2C2A29] rounded-3xl overflow-hidden border border-white/80 shadow-md">
+        {/* Product Card Container (WiDK Bento Style) */}
+        <div className="bg-white dark:bg-[#151618] rounded-[32px] p-4 sm:p-7 shadow-[0_12px_40px_rgba(0,0,0,0.06)] border border-neutral-200/60 dark:border-neutral-800/80">
+          
+          {/* Top Bento Gallery: 1 Big Left, 2 Top Right, 1 Wide Bottom Right */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 mb-7 select-none">
+            
+            {/* Left Big Feature Frame */}
+            <div className="lg:col-span-6 relative aspect-[4/5] sm:aspect-[4/4.8] rounded-[24px] overflow-hidden bg-neutral-100 dark:bg-neutral-900 group shadow-xs">
               <Image
                 src={activeImage}
                 alt={product.name}
                 fill
                 priority
-                className="object-cover"
+                className="object-cover transition-transform duration-700 group-hover:scale-102"
               />
-
-              {/* Floating Badges with Frosted Glass */}
-              <div className="absolute left-4 top-4 flex flex-col gap-1.5 z-10">
-                {isOutOfStock ? (
-                  <span className="bg-white/85 text-black border border-white/70 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
-                    Sold Out
-                  </span>
-                ) : (
-                  <>
-                    {product.isNew && (
-                      <span className="bg-[#2C2A29]/80 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
-                        New Arrival
-                      </span>
-                    )}
-                    {product.isSale && (
-                      <span className="bg-[#E8262A]/90 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
-                        Sale Drop
-                      </span>
-                    )}
-                    {product.isBlindBox && (
-                      <span className="bg-blue-600/90 text-white border border-white/20 backdrop-blur-md px-3 py-1 text-[9px] font-black tracking-widest uppercase rounded-full shadow-xs">
-                        Mystery Box
-                      </span>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Thumbnail Selectors */}
-            <div className="flex md:flex-col gap-3 md:w-24 overflow-x-auto md:overflow-x-visible pb-2 md:pb-0 scrollbar-none">
-              {product.images.map((img, index) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveImage(img)}
-                  className={`relative aspect-[3/4] w-20 md:w-full flex-shrink-0 rounded-2xl overflow-hidden bg-[#2C2A29] border transition-all ${
-                    activeImage === img
-                      ? "border-[#2C2A29] ring-2 ring-[#2C2A29] shadow-md scale-102"
-                      : "border-white/80 hover:border-[#2C2A29] shadow-2xs opacity-80 hover:opacity-100"
-                  }`}
-                >
-                  <Image
-                    src={img}
-                    alt={`${product.name} gallery ${index + 1}`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Column 2: Details & Purchase Options (Takes 5 columns) */}
-          <div className="lg:col-span-5 flex flex-col justify-start">
-            <div className="border-b border-black/5 pb-6">
-              <span className="text-[10px] font-black tracking-[0.3em] text-[#E8262A] uppercase block mb-1">
-                DRIIVN COUTURE
-              </span>
-              <h1 className="text-2xl md:text-3xl font-black tracking-normal text-black leading-tight mb-3">
-                {product.name}
-              </h1>
-
-              <div className="flex items-baseline gap-3 mt-2">
-                <span className="text-lg font-black tracking-widest text-black">
-                  RS. {product.price.toLocaleString()}
+              {/* Category Floating Pill Badge */}
+              <div className="absolute top-4 right-4 z-10">
+                <span className="bg-white/85 dark:bg-black/85 backdrop-blur-md px-3.5 py-1 text-xs font-bold text-neutral-800 dark:text-neutral-100 rounded-full shadow-md border border-white/40 dark:border-neutral-700">
+                  {product.subCategory || product.category || "Exclusive"}
                 </span>
-                {product.originalPrice && (
-                  <span className="text-sm font-bold tracking-widest text-gray-400 line-through">
-                    RS. {product.originalPrice.toLocaleString()}
-                  </span>
-                )}
               </div>
-              {product.stockQuantity !== undefined && product.stockQuantity > 0 && product.stockQuantity <= 5 && (
-                <div className="inline-flex items-center gap-2 bg-red-500/10 border border-red-500/20 px-3 py-1.5 rounded-full mt-2.5 backdrop-blur-xs">
-                  <span className="w-2 h-2 rounded-full bg-[#E8262A] animate-ping" />
-                  <span className="text-[11px] font-black text-[#E8262A] uppercase tracking-wider">
-                    Hurry! Only {product.stockQuantity} left in stock
+
+              {isOutOfStock && (
+                <div className="absolute left-4 top-4 z-10">
+                  <span className="bg-black/80 text-white px-3 py-1 text-xs font-bold rounded-full backdrop-blur-md">
+                    Sold Out
                   </span>
                 </div>
               )}
-              <p className="text-[9px] text-neutral-500 tracking-wider mt-1.5 uppercase font-medium">
-                INCLUSIVE OF ALL TAXES • COMPLIMENTARY EXPRESS SHIPPING
-              </p>
             </div>
 
-            {/* Selector Section */}
-            <div className="py-6 space-y-6 border-b border-black/5">
-              {/* Color Selection */}
-              <div>
-                <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase mb-3">
-                  Select Color: <span className="font-semibold text-black">{selectedColor}</span>
-                </h3>
-                <div className="flex gap-2">
-                  {product.colors.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`text-[10px] font-black tracking-widest uppercase px-4 py-2 rounded-xl transition-all ${
-                        selectedColor === color
-                          ? "border border-[#2C2A29] bg-[#2C2A29] text-white shadow-xs"
-                          : "border border-white/80 hover:border-[#2C2A29] text-neutral-700 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
-                      }`}
-                    >
-                      {color}
-                    </button>
-                  ))}
-                </div>
+            {/* Right Bento Column */}
+            <div className="lg:col-span-6 flex flex-col gap-3.5 sm:gap-4">
+              
+              {/* Top Pair: 2 Alternate Model Perspective Shots */}
+              <div className="grid grid-cols-2 gap-3.5 sm:gap-4 flex-1">
+                <button
+                  type="button"
+                  onClick={() => setActiveImage(galleryImages[1])}
+                  className={`relative aspect-[4/5] sm:aspect-auto rounded-[22px] overflow-hidden bg-neutral-100 dark:bg-neutral-900 group shadow-xs cursor-pointer border-2 transition-all ${
+                    activeImage === galleryImages[1] ? "border-black dark:border-white" : "border-transparent"
+                  }`}
+                >
+                  <Image
+                    src={galleryImages[1]}
+                    alt="Product perspective view 1"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setActiveImage(galleryImages[2])}
+                  className={`relative aspect-[4/5] sm:aspect-auto rounded-[22px] overflow-hidden bg-neutral-100 dark:bg-neutral-900 group shadow-xs cursor-pointer border-2 transition-all ${
+                    activeImage === galleryImages[2] ? "border-black dark:border-white" : "border-transparent"
+                  }`}
+                >
+                  <Image
+                    src={galleryImages[2]}
+                    alt="Product perspective view 2"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </button>
               </div>
 
-              {/* Size Selection */}
-              <div>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase">
-                    Select Size
-                  </h3>
-                  <button
-                    type="button"
-                    onClick={() => setIsSizeGuideOpen(true)}
-                    className="text-[9px] font-black tracking-widest text-[#E8262A] hover:text-black uppercase underline transition-colors"
-                  >
-                    Sizing Guide
-                  </button>
+              {/* Bottom Wide Macro/Fabric Texture Shot */}
+              <button
+                type="button"
+                onClick={() => setActiveImage(galleryImages[3])}
+                className={`relative aspect-[16/9] sm:h-52 rounded-[22px] overflow-hidden bg-neutral-100 dark:bg-neutral-900 group shadow-xs cursor-pointer border-2 transition-all ${
+                  activeImage === galleryImages[3] ? "border-black dark:border-white" : "border-transparent"
+                }`}
+              >
+                <Image
+                  src={galleryImages[3]}
+                  alt="Fabric texture and detail closeup"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent flex items-end p-4">
+                  <span className="text-[10px] font-bold text-white uppercase tracking-widest bg-black/50 backdrop-blur-md px-2.5 py-1 rounded-full">
+                    Atelier Grade &bull; Custom Milled
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Configuration: Left Specs & Accordions + Right Obsidian Buy Card */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pt-2">
+            
+            {/* Left 7 Columns: Product Specs, Rating, Colors, Sizes, Accordions */}
+            <div className="lg:col-span-7 space-y-6">
+              
+              {/* Title & Wishlist */}
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
+                    {product.name}
+                  </h1>
+                  <div className="flex items-center gap-1.5 mt-2">
+                    <span className="text-amber-500 font-bold text-xs sm:text-sm">★</span>
+                    <span className="text-xs sm:text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                      4.9
+                    </span>
+                    <span className="text-xs text-neutral-500 dark:text-neutral-400">
+                      (41) New Reviews
+                    </span>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-5 gap-2">
-                  {["S", "M", "L", "XL", "XXL"].map((size) => {
-                    const isAvailable = availableSizes.includes(size) && !isOutOfStock;
+                <button
+                  type="button"
+                  onClick={toggleWishlist}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-xs border ${
+                    isWishlisted
+                      ? "bg-red-50 text-red-500 border-red-200"
+                      : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 border-neutral-200 dark:border-neutral-700 hover:scale-105"
+                  }`}
+                  aria-label="Save to Wishlist"
+                >
+                  <svg
+                    className={`w-5 h-5 ${isWishlisted ? "fill-red-500 stroke-red-500" : "fill-none stroke-currentColor"}`}
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Color Selector */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2.5">
+                  Color
+                </p>
+                <div className="flex items-center gap-4">
+                  {productColors.map((colorName) => {
+                    const isSelected = selectedColor.toLowerCase() === colorName.toLowerCase();
+                    const hex = colorMap[colorName] || "#555555";
                     return (
                       <button
-                        key={size}
+                        key={colorName}
                         type="button"
-                        disabled={!isAvailable}
-                        onClick={() => isAvailable && setSelectedSize(size)}
-                        className={`relative h-11 flex items-center justify-center text-xs font-black tracking-wider uppercase rounded-xl transition-all ${
-                          !isAvailable
-                            ? "border border-black/5 bg-black/5 text-neutral-400 cursor-not-allowed line-through backdrop-blur-2xs"
-                            : selectedSize === size
-                            ? "border border-[#2C2A29] bg-[#2C2A29] text-white shadow-xs scale-102"
-                            : "border border-white/80 hover:border-[#2C2A29] text-neutral-800 bg-white/70 hover:bg-white backdrop-blur-xs shadow-2xs"
-                        }`}
+                        onClick={() => setSelectedColor(colorName)}
+                        className="flex flex-col items-center gap-1.5 group cursor-pointer"
                       >
-                        <span>{size}</span>
-                        {!isAvailable && (
-                          <span className="absolute -top-1.5 -right-1 bg-neutral-800 text-white text-[7px] font-bold px-1 rounded-xs uppercase">
-                            Out
-                          </span>
-                        )}
+                        <div
+                          className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${
+                            isSelected ? "ring-2 ring-offset-2 ring-black dark:ring-white dark:ring-offset-neutral-900" : ""
+                          }`}
+                          style={{
+                            backgroundColor: hex,
+                            border: colorName.toLowerCase() === "white" ? "1px solid #d1d5db" : "none",
+                          }}
+                        />
+                        <span className={`text-[10px] tracking-tight ${isSelected ? "font-bold text-black dark:text-white" : "text-neutral-500 dark:text-neutral-400"}`}>
+                          {colorName}
+                        </span>
                       </button>
                     );
                   })}
                 </div>
-                {selectedSize && !isOutOfStock && (
-                  <p className="text-[9px] text-neutral-500 font-medium tracking-widest mt-2.5 uppercase">
-                    Selected size {selectedSize}: boxy streetwear fit, drop shoulder silhouette.
-                  </p>
-                )}
-                {isOutOfStock && (
-                  <p className="text-[9px] text-[#E8262A] font-bold tracking-widest mt-2.5 uppercase">
-                    Garment is sold out across all sizes.
+              </div>
+
+              {/* Size Selector */}
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-2.5">
+                  Size
+                </p>
+                <div className="flex items-center gap-2">
+                  {availableSizes.map((sz) => {
+                    const isSelected = selectedSize === sz;
+                    return (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setSelectedSize(sz)}
+                        className={`w-11 h-9 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                          isSelected
+                            ? "bg-black text-white dark:bg-white dark:text-black shadow-md"
+                            : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Expandable Accordion: Description */}
+              <div className="border-t border-neutral-200 dark:border-neutral-800 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsDescOpen(!isDescOpen)}
+                  className="w-full flex items-center justify-between text-left py-1 text-sm font-bold text-neutral-900 dark:text-white"
+                >
+                  <span>Description</span>
+                  <svg
+                    className={`w-4 h-4 text-neutral-500 transition-transform ${isDescOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isDescOpen && (
+                  <p className="mt-3 text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                    {product.description ||
+                      "Architecturally drafted for an oversized, comfortable silhouette. Cut from heavy French Terry and ripstop fabric, tested for durable everyday wear with soft inner lining."}
                   </p>
                 )}
               </div>
 
-              {/* Quantity */}
-              {!isOutOfStock && (
+              {/* Expandable Accordion: Shipping 2x2 Grid */}
+              <div className="border-t border-neutral-200 dark:border-neutral-800 pt-4 pb-2">
+                <button
+                  type="button"
+                  onClick={() => setIsShippingOpen(!isShippingOpen)}
+                  className="w-full flex items-center justify-between text-left py-1 text-sm font-bold text-neutral-900 dark:text-white"
+                >
+                  <span>Shipping</span>
+                  <svg
+                    className={`w-4 h-4 text-neutral-500 transition-transform ${isShippingOpen ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                {isShippingOpen && (
+                  <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2.5 bg-neutral-50 dark:bg-neutral-800/60 p-2.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50">
+                      <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                        %
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400">Discount</p>
+                        <p className="text-xs font-bold text-neutral-900 dark:text-white">&gt; ₹3,000 Disc 15%</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 bg-neutral-50 dark:bg-neutral-800/60 p-2.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50">
+                      <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                        📦
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400">Package</p>
+                        <p className="text-xs font-bold text-neutral-900 dark:text-white">Atelier Box Packaging</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 bg-neutral-50 dark:bg-neutral-800/60 p-2.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50">
+                      <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                        ⏱️
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400">Delivery Time</p>
+                        <p className="text-xs font-bold text-neutral-900 dark:text-white">2-4 Working Days</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5 bg-neutral-50 dark:bg-neutral-800/60 p-2.5 rounded-2xl border border-neutral-200/50 dark:border-neutral-700/50">
+                      <div className="w-8 h-8 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-xs flex-shrink-0 font-bold">
+                        🚀
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-neutral-500 dark:text-neutral-400">Estimation Arrive</p>
+                        <p className="text-xs font-bold text-neutral-900 dark:text-white">Express Pan-India</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right 5 Columns: Obsidian Black Card & Customer Reviews */}
+            <div className="lg:col-span-5 space-y-4">
+              
+              {/* Obsidian Black Price & Buy Card */}
+              <div className="bg-[#121212] text-white rounded-[26px] p-6 shadow-2xl border border-neutral-800 flex items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-[10px] font-bold tracking-[0.25em] text-neutral-800 uppercase mb-3">
-                    Quantity
-                  </h3>
-                  <div className="flex items-center w-32 bg-white/70 backdrop-blur-md border border-white/80 rounded-xl overflow-hidden shadow-2xs">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="w-10 h-10 flex items-center justify-center text-sm font-black text-neutral-600 hover:text-black hover:bg-white/80 transition-colors"
-                    >
-                      -
-                    </button>
-                    <span className="flex-1 text-center text-xs font-black tracking-widest text-black">
-                      {quantity}
+                  <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest block">
+                    Special Price
+                  </span>
+                  <div className="flex items-baseline gap-2 mt-0.5">
+                    <span className="text-2xl sm:text-3xl font-black tracking-tight">
+                      ₹ {product.price.toLocaleString()}
                     </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="w-10 h-10 flex items-center justify-center text-sm font-black text-neutral-600 hover:text-black hover:bg-white/80 transition-colors"
-                    >
-                      +
-                    </button>
+                    {product.originalPrice && (
+                      <span className="text-xs text-neutral-500 line-through">
+                        ₹ {product.originalPrice.toLocaleString()}
+                      </span>
+                    )}
                   </div>
                 </div>
-              )}
-            </div>
 
-            {/* Action Buttons */}
-            {/* Action Buttons */}
-            <div className="py-6 space-y-3">
-              <button
-                onClick={handleAddToCart}
-                disabled={isAdding || isOutOfStock}
-                className={`w-full py-4 text-xs font-black tracking-[0.2em] uppercase rounded-xl transition-all duration-300 flex items-center justify-center shadow-md ${
-                  isOutOfStock
-                    ? "bg-neutral-200 text-neutral-400 cursor-not-allowed border border-neutral-300"
-                    : isAdding
-                    ? "bg-neutral-400 text-white cursor-wait"
-                    : addedToCart
-                    ? "bg-emerald-600 text-white"
-                    : "bg-[#2C2A29] text-white hover:bg-[#E8262A] active:scale-[0.99] border border-white/10"
-                }`}
-              >
-                {isOutOfStock
-                  ? "Sold Out / Out of Stock"
-                  : isAdding
-                  ? "Adding to Bag..."
-                  : addedToCart
-                  ? "✓ Added to Bag"
-                  : "Add to Bag"}
-              </button>
-
-              {isOutOfStock && (
-                <div className="bg-red-500/10 border border-red-500/20 backdrop-blur-xs p-3.5 rounded-xl text-center">
-                  <p className="text-[10px] font-black tracking-widest text-[#E8262A] uppercase">
-                    This garment is currently sold out. Check back soon for our next drop!
-                  </p>
-                </div>
-              )}
-
-              {addedToCart && (
-                <div className="bg-emerald-500/10 border border-emerald-500/20 backdrop-blur-xs p-3.5 rounded-xl text-center">
-                  <p className="text-[10px] font-black tracking-widest text-emerald-800 uppercase">
-                    Success! Product added to shopping bag.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Specifications */}
-            <div className="mt-2 space-y-4 border border-white/80 bg-white/60 backdrop-blur-md rounded-2xl p-6 shadow-xs">
-              <div>
-                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-2">
-                  Specifications
-                </h4>
-                <ul className="text-[11px] text-neutral-600 space-y-1.5 tracking-wide uppercase font-medium">
-                  <li>
-                    <span className="font-black text-neutral-800">Fabric:</span>{" "}
-                    {specs.material}
-                  </li>
-                  <li>
-                    <span className="font-black text-neutral-800">Weight:</span>{" "}
-                    {specs.weight}
-                  </li>
-                  <li>
-                    <span className="font-black text-neutral-800">Fit:</span>{" "}
-                    {specs.fit}
-                  </li>
-                  <li>
-                    <span className="font-black text-neutral-800">Graphics:</span>{" "}
-                    {specs.print}
-                  </li>
-                </ul>
-              </div>
-
-              <div className="border-t border-black/5 pt-4">
-                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-2">
-                  Details
-                </h4>
-                <ul className="text-[11px] text-neutral-600 list-disc pl-4 space-y-1.5 tracking-wide uppercase font-medium">
-                  {specs.details.map((detail, index) => (
-                    <li key={index}>{detail}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="border-t border-black/5 pt-4">
-                <h4 className="text-[10px] font-black tracking-[0.25em] text-black uppercase mb-1">
-                  Care Guide
-                </h4>
-                <p className="text-[11px] text-neutral-600 tracking-wide uppercase font-medium">
-                  {specs.care}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Sizing Guide Modal */}
-        {isSizeGuideOpen && (
-          <div className="fixed inset-0 z-50 overflow-hidden flex items-center justify-center p-4">
-            <div
-              className="fixed inset-0 bg-black/60 backdrop-blur-md transition-opacity"
-              onClick={() => setIsSizeGuideOpen(false)}
-            />
-            <div className="relative bg-white/95 backdrop-blur-2xl max-w-lg w-full p-6 sm:p-8 z-10 shadow-2xl rounded-3xl border border-white/80 space-y-6">
-              <div className="flex justify-between items-center border-b border-black/5 pb-4">
-                <div>
-                  <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
-                    DRIIVN MEASUREMENT TABLE
-                  </span>
-                  <h3 className="text-base font-black tracking-widest uppercase">
-                    Oversized Fit Guide (Inches)
-                  </h3>
-                </div>
                 <button
-                  onClick={() => setIsSizeGuideOpen(false)}
-                  className="w-8 h-8 rounded-full bg-black/5 hover:bg-[#2C2A29] hover:text-white flex items-center justify-center text-lg font-bold transition-colors"
+                  type="button"
+                  onClick={handleBuyNow}
+                  disabled={isOutOfStock}
+                  className={`px-6 py-3.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide transition-all shadow-lg flex items-center gap-2 whitespace-nowrap ${
+                    isOutOfStock
+                      ? "bg-neutral-700 text-neutral-400 cursor-not-allowed"
+                      : "bg-white hover:bg-neutral-200 text-black hover:scale-105 active:scale-95"
+                  }`}
                 >
-                  &times;
+                  <span>{isOutOfStock ? "Sold Out" : "Buy Now"}</span>
+                  {!isOutOfStock && <span className="text-sm">&rarr;</span>}
                 </button>
               </div>
 
-              <div className="overflow-x-auto rounded-xl border border-black/10">
-                <table className="w-full text-[10px] uppercase font-bold tracking-wider text-left">
-                  <thead className="bg-black/5 border-b border-black/10 text-black">
-                    <tr>
-                      <th className="py-2.5 px-3">Size</th>
-                      <th className="py-2.5 px-3">Chest</th>
-                      <th className="py-2.5 px-3">Length</th>
-                      <th className="py-2.5 px-3">Shoulder</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-black/5">
-                    <tr>
-                      <td className="py-2.5 px-3 font-black">S</td>
-                      <td className="py-2.5 px-3">44&quot;</td>
-                      <td className="py-2.5 px-3">28.5&quot;</td>
-                      <td className="py-2.5 px-3">21&quot;</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2.5 px-3 font-black">M</td>
-                      <td className="py-2.5 px-3">46&quot;</td>
-                      <td className="py-2.5 px-3">29.5&quot;</td>
-                      <td className="py-2.5 px-3">22&quot;</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2.5 px-3 font-black">L</td>
-                      <td className="py-2.5 px-3">48&quot;</td>
-                      <td className="py-2.5 px-3">30.5&quot;</td>
-                      <td className="py-2.5 px-3">23&quot;</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2.5 px-3 font-black">XL</td>
-                      <td className="py-2.5 px-3">50&quot;</td>
-                      <td className="py-2.5 px-3">31.5&quot;</td>
-                      <td className="py-2.5 px-3">24&quot;</td>
-                    </tr>
-                    <tr>
-                      <td className="py-2.5 px-3 font-black">XXL</td>
-                      <td className="py-2.5 px-3">52&quot;</td>
-                      <td className="py-2.5 px-3">32.5&quot;</td>
-                      <td className="py-2.5 px-3">25&quot;</td>
-                    </tr>
-                  </tbody>
-                </table>
+              {/* Customer Reviews Panel */}
+              <div className="bg-neutral-50 dark:bg-[#1b1c1e] rounded-[26px] p-5 border border-neutral-200/80 dark:border-neutral-800/80">
+                <div className="flex items-center justify-between mb-3.5">
+                  <h3 className="text-xs font-bold text-neutral-900 dark:text-white">
+                    Reviews (41)
+                  </h3>
+                  <button
+                    type="button"
+                    onClick={() => gooeyToast("Opening customer reviews")}
+                    className="text-xs font-bold text-neutral-500 hover:text-black dark:hover:text-white transition-colors"
+                  >
+                    See more
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-neutral-800 text-white flex items-center justify-center text-xs font-bold">
+                      AS
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold text-neutral-900 dark:text-white leading-snug">
+                        Alexander Stewart
+                      </p>
+                      <div className="flex items-center gap-2 text-[10px] text-neutral-400">
+                        <span>13/12/2026</span>
+                        <div className="flex text-amber-500">★★★★★</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-xs leading-relaxed text-neutral-600 dark:text-neutral-400">
+                    &ldquo;Goddamn!, this piece makes me feel soooooo comfortable and genuinely warm af, I love the drape and fabric weight, make sure you buy it guys, love it!&rdquo;
+                  </p>
+
+                  <div className="flex items-center gap-2 pt-1">
+                    {[galleryImages[1], galleryImages[2], galleryImages[0]].map((img, i) => (
+                      <div
+                        key={i}
+                        className="relative w-12 h-14 rounded-xl overflow-hidden bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 shadow-2xs"
+                      >
+                        <Image src={img} alt="Customer fit photo" fill className="object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <p className="text-[9px] text-neutral-500 uppercase tracking-widest font-medium">
-                *All garments are designed with a boxy silhouette and dropped shoulders. For a more fitted look, consider sizing down.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => setIsSizeGuideOpen(false)}
-                className="w-full bg-[#2C2A29] text-white py-3.5 text-xs font-black tracking-widest uppercase hover:bg-[#E8262A] transition-colors rounded-xl shadow-xs border border-white/10"
-              >
-                Got It
-              </button>
             </div>
+
           </div>
-        )}
 
-        {/* You May Also Like Section */}
-        {recommendations.length > 0 && (
-          <section className="mt-24 pt-16 border-t border-gray-100">
-            <div className="mb-12">
-              <p className="text-[10px] font-bold tracking-[0.3em] text-gray-500 uppercase mb-2">
-                Exclusive Drops
-              </p>
-              <h2 className="text-3xl font-black tracking-tighter text-black uppercase">
-                You May Also Like
+        </div>
+
+        {/* Bottom Section: "More All You Needs." Recommendations */}
+        <section className="mt-16 sm:mt-24">
+          <div className="flex items-baseline justify-between mb-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900 dark:text-white">
+                More All You Needs.
               </h2>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">
+                Complementary garments tested for layering, drape, and daily rotation.
+              </p>
             </div>
+            <Link
+              href="/shop"
+              className="text-xs font-bold text-neutral-900 dark:text-white hover:text-[#E8262A] dark:hover:text-[#E8262A] flex items-center gap-1 transition-colors"
+            >
+              <span>Explore All</span>
+              <span>&rarr;</span>
+            </Link>
+          </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12 sm:gap-x-8">
-              {recommendations.map((rec) => (
-                <ProductCard key={rec.id} product={rec} />
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-5">
+            {recommendations.map((rec) => (
+              <ProductCard key={rec.id} product={rec} />
+            ))}
+          </div>
+        </section>
+
+      </main>
     </div>
   );
 }
