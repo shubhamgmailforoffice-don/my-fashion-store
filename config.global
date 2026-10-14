@@ -1,0 +1,89 @@
+# ==============================================================================
+# DRIIVN FASHION STORE - GLOBAL PROJECT CONFIGURATION & INSTRUCTIONS
+# File: config.global
+# ==============================================================================
+
+[PROJECT_METADATA]
+name = "my-fashion-store"
+brand = "DRIIVN"
+version = "0.1.0"
+framework = "Next.js 16.3.5 (App Router)"
+ui_library = "React 19.2.8"
+styling = "Tailwind CSS v4 (@tailwindcss/postcss)"
+database_orm = "Prisma 6.4.1"
+animation = "Framer Motion 14.1.1"
+notifications = "goey-toast 0.5.0"
+language = "TypeScript 5.x"
+
+# ==============================================================================
+# COMMANDS & SCRIPTS
+# ==============================================================================
+[COMMANDS]
+dev = "npm run dev"                   # Starts local development server on http://localhost:3000
+build = "npm run build"               # Runs prisma generate && next build
+start = "npm run start"               # Starts production build server
+lint = "npm run lint"                 # Runs ESLint code style and syntax checks
+db_push = "npm run db:push"           # Synchronizes schema with database via Prisma
+db_seed = "npm run db:seed"           # Seeds baseline catalogue and products into database
+
+# ==============================================================================
+# ARCHITECTURE & DIRECTORY STRUCTURE
+# ==============================================================================
+[DIRECTORIES]
+app/                  # Next.js App Router routes, page views, and API endpoints
+app/api/              # REST API route handlers (products, reels, sections, orders, upload)
+components/           # Reusable UI components (Navbar, Footer, ProductCard, QuickAddModal, etc.)
+components/admin/     # Admin dashboard and management portal components
+data/                 # Mock and initial static data resources
+lib/                  # Shared utilities, store state management, Prisma client, location maps
+prisma/               # Prisma database schema definition (schema.prisma)
+public/               # Static assets, branding logos, SVG icons (including ai-antenna.svg)
+scripts/              # Database migration and seeding scripts (seed.js)
+
+# ==============================================================================
+# CORE SYSTEM INSTRUCTIONS & GUIDELINES
+# ==============================================================================
+
+[INSTRUCTIONS.NAVIGATION_AND_NAVBAR]
+1. Header Auto-Hide:
+   - Sticky header hides automatically on downward scroll and reappears smoothly on upward scroll.
+2. Mobile Floating Bottom Dock:
+   - Floating dock is positioned fixed at the bottom on mobile devices.
+   - Contains:
+     * AI Antenna Button (Blue circular action triggering Lookbook / Reels modal).
+     * Frosted Glass Capsule Dock (Shop All / Explore, Account Portal, Cart Bag with live counter badge, Search).
+     * Support Widget Button (Dark circular action triggering live customer concierge).
+   - The dock automatically hides when any full-screen modal or drawer is active to prevent overlapping.
+
+[INSTRUCTIONS.THEMING_AND_STYLING]
+1. Theme Modes:
+   - Supports dual Light and Dark themes managed via `ThemeContext` in `lib/theme.tsx`.
+   - Theme toggle component is integrated in the header with persistent state.
+2. Styling Guidelines:
+   - Tailwind CSS v4 utility classes.
+   - Preserves high-contrast streetwear aesthetic with clean typography and frosted glass backdrops (`backdrop-blur`).
+
+[INSTRUCTIONS.MODALS_AND_DRAWERS]
+1. Global Modal Event Bus:
+   - Components can trigger modals globally using window CustomEvents:
+     * `window.dispatchEvent(new CustomEvent("open-reels"))`
+     * `window.dispatchEvent(new CustomEvent("open-cart"))`
+     * `window.dispatchEvent(new CustomEvent("open-support"))`
+2. Quick Add & Cart Flow:
+   - `QuickAddModal` enables direct size selection and cart addition from any product card.
+   - `ToastProvider` with `goey-toast` delivers visual feedback on user actions.
+
+[INSTRUCTIONS.DATA_AND_API]
+1. Prisma & Database:
+   - Always run `npm run db:push` when modifying `prisma/schema.prisma`.
+   - Use `lib/prisma.ts` singleton for server-side queries.
+2. API Conventions:
+   - Standard Next.js route handlers in `app/api/<route>/route.ts`.
+   - Handle cache revalidation or use `cache: "no-store"` where live data is required.
+
+[INSTRUCTIONS.NEXTJS_AGENT_RULES]
+1. Version Notice:
+   - Next.js 16 contains breaking changes relative to older legacy Next.js versions.
+   - Review relevant documentation in `node_modules/next/dist/docs/` when introducing new routing or server component patterns.
+2. Windows Shell Execution:
+   - If running scripts on Windows PowerShell encounters execution policy restrictions, execute commands via `cmd /c <command>`.
