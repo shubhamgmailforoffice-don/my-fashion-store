@@ -6,6 +6,8 @@ import { useState } from "react";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 
+import { gooeyToast } from "goey-toast";
+
 export default function Footer() {
   const pathname = usePathname();
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -20,6 +22,9 @@ export default function Footer() {
     e.preventDefault();
     if (newsletterEmail) {
       setSubscribed(true);
+      gooeyToast.success("Subscribed to DRIIVN Drops", {
+        description: `Confirmation sent to ${newsletterEmail}`,
+      });
       setNewsletterEmail("");
       setTimeout(() => setSubscribed(false), 5000);
     }

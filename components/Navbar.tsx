@@ -446,60 +446,79 @@ export default function Navbar() {
           isNavVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-3 items-center">
+        <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           
-          {/* Left Column: Mobile Pill (+ DRIIVN) or Desktop Navigation */}
-          <div className="flex items-center justify-start">
-            {/* Mobile Brand Pill (Screenshot 1 & 4 style: + BLUORNG / + DRIIVN) */}
+          {/* Left Column: Hamburger (Mobile & Desktop) + WiDK Category Pills */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Hamburger Button (WiDK style) */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="lg:hidden flex items-center gap-1.5 bg-white/60 hover:bg-white/90 border border-white/75 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
+              className="flex items-center justify-center w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 backdrop-blur-md transition-all active:scale-95 shadow-2xs cursor-pointer"
               aria-label="Open navigation menu"
             >
-              <span className="text-sm font-light text-neutral-800 leading-none">+</span>
-              <span className="text-[11px] font-black tracking-widest text-black uppercase font-mono">
-                DRIIVN
-              </span>
+              <svg className="w-4 h-4 text-neutral-800 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
 
-            {/* Desktop Left Navigation with collision-free responsive labels */}
-            <nav className="hidden lg:flex items-center gap-x-3 xl:gap-x-5">
+            {/* Desktop WiDK Category Pills */}
+            <nav className="hidden xl:flex items-center gap-2">
               <Link
                 href="/shop"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
+                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/80 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white transition-all shadow-2xs flex items-center gap-1"
               >
-                Shop All
+                <span>Clothing</span>
+                <span className="text-[10px] text-neutral-400">&rsaquo;</span>
               </Link>
               <Link
-                href="/collections"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
+                href="/shop"
+                className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/50 hover:bg-white dark:bg-neutral-800/50 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300 transition-all"
               >
-                Collections
+                New Arrivals
               </Link>
+              <Link
+                href="/shop"
+                className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/50 hover:bg-white dark:bg-neutral-800/50 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300 transition-all"
+              >
+                Sale
+              </Link>
+
+              {/* WiDK Search Pill Input Button */}
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="flex items-center gap-2 bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 px-3.5 py-1.5 rounded-full text-xs text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-all shadow-2xs cursor-pointer"
+                aria-label="Search catalogue"
+              >
+                <span>Search drops...</span>
+                <svg className="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </button>
+
               <Link
                 href="/shop?category=Tops"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
+                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
               >
-                Tops
+                Men
               </Link>
               <Link
                 href="/shop?category=Bottoms"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
+                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
               >
-                Bottoms
+                Women
               </Link>
               <Link
-                href="/shop-by-color"
-                className="text-[11px] xl:text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase whitespace-nowrap"
+                href="/shop?category=Accessories"
+                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
               >
-                <span className="hidden xl:inline">Shop by Color</span>
-                <span className="xl:hidden">Colors</span>
+                Accessories
               </Link>
             </nav>
           </div>
 
-          {/* Center Column: Iconic DRIIVN Logo mathematically centered */}
+          {/* Center Column: Iconic DRIIVN Logo */}
           <div className="flex items-center justify-center text-center">
             <Link
               href="/"
@@ -509,7 +528,7 @@ export default function Navbar() {
               <Image
                 src="/logo-black.png"
                 alt="DRIIVN"
-                width={170}
+                width={160}
                 height={22}
                 className="h-5 sm:h-6 md:h-7 w-auto object-contain dark:hidden"
                 priority
@@ -517,7 +536,7 @@ export default function Navbar() {
               <Image
                 src="/logo-white.png"
                 alt="DRIIVN"
-                width={170}
+                width={160}
                 height={22}
                 className="h-5 sm:h-6 md:h-7 w-auto object-contain hidden dark:block"
                 priority
@@ -525,68 +544,65 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right Column: Actions */}
-          <div className="flex items-center justify-end gap-x-2 sm:gap-x-3.5 xl:gap-x-5">
-            {/* Dark & Light Theme Switcher matching button1.png / button2.png */}
-            <div className="flex items-center mr-0.5 sm:mr-1">
-              <ThemeToggle size="sm" />
-            </div>
+          {/* Right Column: WiDK Actions */}
+          <div className="flex items-center justify-end gap-2 sm:gap-3.5">
+            <nav className="hidden lg:flex items-center gap-4 text-xs font-medium text-neutral-700 dark:text-neutral-300 mr-2">
+              <Link href="/collections" className="hover:text-black dark:hover:text-white transition-colors">
+                Collections
+              </Link>
+              <Link href="/returns" className="hover:text-black dark:hover:text-white transition-colors">
+                FAQs
+              </Link>
+            </nav>
 
-            {/* Desktop-Only Search */}
+            {/* Dark & Light Theme Switcher */}
+            <ThemeToggle size="sm" />
+
+            {/* Search (Mobile & Tablet) */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap p-1"
-              aria-label="Search catalogue"
+              className="xl:hidden w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
+              aria-label="Search"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span>Search</span>
             </button>
 
+            {/* Wishlist Button (Heart) */}
+            <button
+              type="button"
+              onClick={() => setIsWishlistOpen(true)}
+              className="relative w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-red-500 dark:hover:text-red-400 transition-all shadow-2xs cursor-pointer"
+              aria-label="Saved Wishlist"
+            >
+              <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </button>
 
-
-            {/* Desktop-Only Account */}
+            {/* Account Profile Button */}
             <Link
               href="/account"
-              className="hidden lg:flex text-xs font-bold tracking-wider text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
-              title={currentUser ? `Signed in as ${currentUser.name}` : "Member Portal"}
+              className="w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
+              title={currentUser ? `Signed in as ${currentUser.name}` : "Member Account"}
+              aria-label="Member Account"
             >
-              {currentUser ? (
-                <div className="flex items-center gap-1.5 bg-neutral-100 hover:bg-neutral-200 py-1 px-2 rounded-full transition-colors">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                  <span className="max-w-[120px] truncate text-[11px] font-bold">
-                    {currentUser.name.split(" ")[0]}
-                  </span>
-                </div>
-              ) : (
-                <span className="text-xs font-bold">Account</span>
-              )}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
             </Link>
 
-            {/* Desktop-Only Bag Button */}
+            {/* Shopping Bag Button (Cart) */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="hidden lg:flex text-xs font-bold tracking-widest text-gray-900 hover:text-[#E8262A] transition-colors uppercase items-center gap-1.5 whitespace-nowrap"
+              className="flex items-center gap-1.5 bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              <span>Bag ({cartCount})</span>
-            </button>
-
-            {/* Mobile Bookmark / Wishlist Icon (Screenshot 1, 2, 4 style) */}
-            <button
-              type="button"
-              onClick={() => setIsWishlistOpen(true)}
-              className="lg:hidden p-2 text-neutral-800 hover:text-black transition-colors"
-              aria-label="Saved Items"
-              title="Saved Items"
-            >
-              <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-              </svg>
+              <span>{cartCount}</span>
             </button>
           </div>
         </div>

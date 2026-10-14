@@ -306,30 +306,51 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
   }, [selectedPill, comingSoonData, filteredProducts]);
 
   return (
-    <div className="min-h-screen pt-4 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Top Header Row with "All Products" and "Advance Filters" (Screenshot 4) */}
-      <div className="flex items-center justify-between pt-2 pb-3">
-        <h1 className="font-inter font-medium text-base sm:text-lg text-neutral-900">
-          All Products
-        </h1>
+    <div className="min-h-screen py-6 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      {/* WiDK Streetwear Container Card */}
+      <div className="bg-white dark:bg-[#151618] rounded-[32px] p-5 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.05)] border border-neutral-200/70 dark:border-neutral-800/80">
+        
+        {/* Top Header Row with "All Products" and "Advance Filters" */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 mb-4 border-b border-neutral-100 dark:border-neutral-800">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-neutral-900 dark:text-white">
+              All Products
+            </h1>
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">
+              Limited capsule drops • Heavyweight custom French Terry • Boxy unisex fits
+            </p>
+          </div>
 
-        {/* Advance Filters Button (Screenshot 4 Style with toggle/flashlight icon) */}
-        <button
-          type="button"
-          onClick={() => setIsFiltersOpen(true)}
-          className="flex items-center gap-1.5 text-xs font-medium text-neutral-800 hover:text-black bg-white/70 hover:bg-white border border-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs"
-          aria-label="Open advance filters"
-        >
-          {/* Filter / Flashlight Icon */}
-          <svg className="w-3.5 h-3.5 text-neutral-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-          </svg>
-          <span className="text-[11px] font-medium tracking-tight">Advance Filters</span>
-          {(selectedColor !== "All" || sortBy !== "default" || inStockOnly) && (
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A]" />
-          )}
-        </button>
-      </div>
+          <div className="flex items-center gap-2">
+            {/* Quick Sort Select */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-neutral-100 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-xs font-semibold px-3 py-1.5 rounded-full text-neutral-800 dark:text-neutral-200 focus:outline-none cursor-pointer"
+            >
+              <option value="default">Sort: Featured</option>
+              <option value="newest">Sort: Newest</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+
+            {/* Advance Filters Button */}
+            <button
+              type="button"
+              onClick={() => setIsFiltersOpen(true)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white bg-neutral-100 dark:bg-neutral-800/80 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 px-3.5 py-1.5 rounded-full transition-all active:scale-95 shadow-2xs cursor-pointer"
+              aria-label="Open advance filters"
+            >
+              <svg className="w-3.5 h-3.5 text-neutral-600 dark:text-neutral-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+              <span>Filters</span>
+              {(selectedColor !== "All" || sortBy !== "default" || inStockOnly) && (
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A]" />
+              )}
+            </button>
+          </div>
+        </div>
 
       {/* Horizontal Scrollable Category Filter Pills (Exact Screenshot 4 Style) */}
       <div className="flex gap-2 overflow-x-auto pb-4 pt-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth">
@@ -433,6 +454,8 @@ function ShopContent({ initialProducts, initialComingSoon }: ShopClientProps) {
           ))}
         </div>
       )}
+
+      </div>{/* End WiDK Container Card */}
 
       {/* Advance Filters Drawer / Modal */}
       {isFiltersOpen && (
