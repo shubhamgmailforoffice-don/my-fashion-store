@@ -60,6 +60,7 @@ const getSessionServerSnapshot = () => "";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const isHomePage = pathname === "/";
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -438,9 +439,10 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Main Sticky Header with Auto-hide on Scroll */}
-      <header
-        className={`sticky top-0 z-40 w-full border-b border-black/5 bg-[#E8E6DF]/85 dark:bg-[#0e0e10]/85 backdrop-blur-xl shadow-xs transition-transform duration-300 ease-in-out ${
+      {/* Main Sticky Header with Auto-hide on Scroll (Hidden on Homepage for pure showcase layout) */}
+      {!isHomePage && (
+        <header
+          className={`sticky top-0 z-40 w-full border-b border-black/5 bg-[#E8E6DF]/85 dark:bg-[#0e0e10]/85 backdrop-blur-xl shadow-xs transition-transform duration-300 ease-in-out ${
           isNavVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
@@ -589,6 +591,7 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+      )}
 
       {/* Mobile Drawer Menu (Exact replica of Screenshots 7, 8, 9, 10 - No Walk-in Stores) */}
       {isMobileMenuOpen && (

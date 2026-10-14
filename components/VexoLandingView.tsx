@@ -14,11 +14,27 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [activeLookIndex, setActiveLookIndex] = useState(0);
 
-  // Auto-cycle through lookbook outfits every 4.5 seconds
+  // Typewriter text state for hero line 2 ("EVERY WORKOUT!")
+  const [typedWorkoutText, setTypedWorkoutText] = useState("EVERY WORKOUT!");
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    const fullText = "EVERY WORKOUT!";
+    let idx = 0;
+    const interval = setInterval(() => {
+      idx = (idx + 1) % (fullText.length + 6);
+      if (idx <= fullText.length) {
+        setTypedWorkoutText(fullText.slice(0, Math.max(idx, 6)));
+      }
+    }, 180);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Auto-cycle through lookbook outfits every 4.2 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveLookIndex((prev) => (prev + 1) % lookbookOutfits.length);
-    }, 4500);
+    }, 4200);
     return () => clearInterval(timer);
   }, []);
 
@@ -70,7 +86,7 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
   return (
     <div className="min-h-screen bg-[#BAC2CB] dark:bg-[#060709] text-[#111111] dark:text-[#f3f4f6] transition-colors py-4 sm:py-8 px-2 sm:px-6 lg:px-10">
       
-      {/* Outer Showcase Window (Exact Match to Reference Video Canvas) */}
+      {/* Outer Floating Presentation Window (Exact Match to Video Canvas) */}
       <div className="max-w-[1360px] mx-auto bg-[#ECEEF1] dark:bg-[#121316] rounded-[38px] sm:rounded-[46px] shadow-[0_25px_80px_rgba(0,0,0,0.18)] border border-white/60 dark:border-neutral-800 overflow-hidden">
         
         {/* ========================================================================= */}
@@ -125,31 +141,34 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
         </header>
 
         {/* ========================================================================= */}
-        {/* 1. HERO SECTION (Video 00:00 - 00:04 Replica)                             */}
+        {/* 1. HERO SECTION WITH TYPEWRITER KINETIC HEADLINE (Video 00:00 - 00:04)    */}
         {/* ========================================================================= */}
         <section className="relative px-6 sm:px-12 pt-8 sm:pt-14 pb-12 sm:pb-24 overflow-hidden select-none">
           
           {/* Centered Kinetic Headline */}
           <div className="text-center max-w-4xl mx-auto space-y-2 relative z-10">
             <motion.div
-              initial={{ opacity: 0, y: 25 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             >
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-neutral-900 dark:text-white uppercase leading-[1.05]">
-                GEAR UP EVERY SEASON <br />
-                <span className="tracking-wide">EVERY WORKOUT!</span>
+                <span className="block tracking-tight">GEAR UP EVERY SEASON</span>
+                <span className="inline-block tracking-wide text-neutral-900 dark:text-white mt-1">
+                  {typedWorkoutText}
+                  <span className="inline-block w-1 h-8 sm:h-12 bg-black dark:bg-white ml-1.5 animate-pulse align-middle" />
+                </span>
               </h1>
             </motion.div>
 
-            {/* Action Buttons Directly Below Headline (Matching Video Layout) */}
+            {/* Action Buttons Directly Below Headline & Above Model (Video 00:00) */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.25 }}
               className="flex items-center justify-center gap-4 pt-3 sm:pt-4"
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}>
                 <Link
                   href="/shop"
                   className="bg-black text-white px-6 py-2.5 rounded-full text-[11px] font-black tracking-widest uppercase transition-shadow shadow-md hover:shadow-xl"
@@ -158,7 +177,7 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
                 </Link>
               </motion.div>
 
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <motion.div whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}>
                 <Link
                   href="/collections"
                   className="text-[11px] font-bold tracking-widest uppercase text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
@@ -169,7 +188,7 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
             </motion.div>
           </div>
 
-          {/* Hero Visual Area: Center Model + Left Avatar Card + Right Video Card */}
+          {/* Hero Visual Area: Center Model with Dynamic Zoom + Floating Side Cards */}
           <div className="relative mt-8 sm:mt-12 flex flex-col lg:flex-row items-center justify-center">
             
             {/* Left Floating Card: 3 Avatar Stack & Editorial Blurb (Video 00:00) */}
@@ -201,12 +220,20 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
               </motion.div>
             </motion.div>
 
-            {/* Central Model Presentation (Exact Silhouette from Video 00:01) */}
+            {/* Central Model Presentation (Smooth Dynamic Zoom Matching Video 00:00 -> 00:02) */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.94 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-md aspect-[4/5] rounded-[34px] overflow-hidden bg-neutral-200 dark:bg-neutral-800 shadow-2xl border-4 border-white dark:border-neutral-800 group"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{
+                opacity: 1,
+                scale: [0.92, 1.04, 0.98, 1],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+              }}
+              className="relative w-full max-w-md aspect-[4/5] rounded-[36px] overflow-hidden bg-neutral-200 dark:bg-neutral-800 shadow-2xl border-4 border-white dark:border-neutral-800 group"
             >
               <Image
                 src="/images/hero-streetwear.jpg"
@@ -265,16 +292,19 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
         </section>
 
         {/* ========================================================================= */}
-        {/* 2. SECTION 2: SLIT-SCAN BLINDS REVEAL & "W O R K O U T" WATERMARK         */}
-        {/* (Exact match to Video 00:05 - 00:07)                                      */}
+        {/* 2. SECTION 2: SLIT-SCAN REVEAL & "W O R K O U T" WATERMARK (Video 00:05)  */}
         {/* ========================================================================= */}
         <section className="relative py-16 sm:py-24 px-6 sm:px-12 border-t border-black/5 dark:border-white/5 overflow-hidden">
           
-          {/* Giant Outline Typography Watermark: "W O R K O U T" (Video 00:05) */}
+          {/* Giant Outline Typography Watermark: "W O R K O U T" (Exact Video Replica) */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0 opacity-[0.06] dark:opacity-[0.04]">
-            <span className="text-[130px] sm:text-[230px] font-black tracking-[0.25em] uppercase text-neutral-900 dark:text-white">
+            <motion.span
+              animate={{ letterSpacing: ["0.2em", "0.3em", "0.2em"] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="text-[130px] sm:text-[230px] font-black uppercase text-neutral-900 dark:text-white"
+            >
               WORKOUT
-            </span>
+            </motion.span>
           </div>
 
           <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
@@ -300,7 +330,7 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
               </p>
             </motion.div>
 
-            {/* Center Kinetic Slit-Scan Card (Dynamic Horizontal Blinds from Video 00:05-00:06) */}
+            {/* Center Slit-Scan Card: Dynamic Blinds that Open and Close (Video 00:05-00:06) */}
             <div className="md:col-span-6 flex justify-center">
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -311,20 +341,22 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
               >
                 <div className="relative flex-1 rounded-[26px] overflow-hidden flex flex-col justify-between">
                   
-                  {/* Dynamic Blinds that Expand & Contract to Reveal Model */}
+                  {/* The Horizontal Blinds Mask: Animated Height Contracting to Reveal Model */}
                   <div className="absolute inset-0 z-10 flex flex-col justify-between pointer-events-none p-1">
                     {Array.from({ length: 11 }).map((_, i) => (
                       <motion.div
                         key={i}
-                        initial={{ scaleX: 1 }}
-                        animate={{ scaleX: [1, 0.05, 0.95, 0.15, 1] }}
+                        initial={{ scaleY: 1 }}
+                        animate={{
+                          scaleY: [1, 0.04, 0.9, 0.1, 1],
+                        }}
                         transition={{
                           repeat: Infinity,
                           duration: 4.5,
-                          delay: i * 0.1,
+                          delay: i * 0.08,
                           ease: "easeInOut",
                         }}
-                        className="h-2.5 w-full bg-black/90 origin-left rounded-full"
+                        className="h-2.5 w-full bg-black origin-center rounded-full"
                       />
                     ))}
                   </div>
@@ -394,10 +426,10 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
               </p>
             </div>
 
-            {/* Two Large Bento Split Cards (Exact Replica of Video 00:08) */}
+            {/* Two Large Bento Split Cards (Video 00:08) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               
-              {/* Card 1: Sling Bag 01 / WINTER 2025 */}
+              {/* Card 1: 01 / WINTER 2025 */}
               <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.3 }}>
                 <Link
                   href="/shop?category=Accessories"
@@ -433,7 +465,7 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
                 </Link>
               </motion.div>
 
-              {/* Card 2: Technical Windbreaker 02 / WINTER 2025 */}
+              {/* Card 2: 02 / WINTER 2025 */}
               <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.3 }}>
                 <Link
                   href="/shop?category=Tops"
@@ -476,12 +508,12 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
 
         {/* ========================================================================= */}
         {/* 4. SECTION 5: "FRESH FITS FOR YOUR NEXT WORKOUT!" 8-CARD GRID             */}
-        {/* (Exact match to Video 00:14 - 00:18)                                      */}
+        {/* (Video 00:14 - 00:18 with Blur-to-Sharp Scroll Entrance)                  */}
         {/* ========================================================================= */}
         <section className="py-16 sm:py-24 px-6 sm:px-12 border-t border-black/5 dark:border-white/5">
           <div className="max-w-6xl mx-auto">
             
-            {/* Header Bar with Tags */}
+            {/* Header Bar */}
             <div className="flex items-center justify-between pb-8 select-none">
               <span className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest">
                 NEW ARRIVAL
@@ -499,10 +531,10 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
               {products.slice(0, 8).map((p, index) => (
                 <motion.div
                   key={p.id}
-                  initial={{ opacity: 0, y: 25 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0.4, filter: "blur(8px)", y: 25 }}
+                  whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  transition={{ duration: 0.6, delay: index * 0.05 }}
                   whileHover={{ y: -5 }}
                   className="group relative bg-[#1E2024] text-white rounded-[24px] p-2.5 shadow-lg border border-neutral-800 flex flex-col justify-between overflow-hidden"
                 >
@@ -607,10 +639,10 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeLookIndex}
-                initial={{ opacity: 0, scale: 0.96, y: 15 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.96, y: -15 }}
-                transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 0, scale: 0.94, x: 30 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.94, x: -30 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="relative w-full max-w-md aspect-[3/4] rounded-[36px] overflow-hidden bg-neutral-900 border-4 border-white dark:border-neutral-800 shadow-2xl flex flex-col justify-between p-6 sm:p-8"
               >
                 <Image
@@ -621,13 +653,13 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-black/40" />
 
-                {/* Card Top Meta Specs */}
+                {/* Card Top Meta Specs (Sliding into view from sides) */}
                 <div className="relative z-10 flex justify-between items-start text-[10px] font-mono font-bold text-neutral-300 uppercase tracking-widest">
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
                     <p>{currentLook.leftSpec}</p>
                     <p className="text-[#E8262A] mt-0.5">{currentLook.season}</p>
                   </motion.div>
-                  <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }} className="text-right">
+                  <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }} className="text-right">
                     <p>{currentLook.rightSpec}</p>
                     <p className="text-neutral-400 mt-0.5">{currentLook.delivery}</p>
                   </motion.div>
@@ -635,9 +667,9 @@ export default function VexoLandingView({ products }: VexoLandingViewProps) {
 
                 {/* Card Bottom Meta & CTA */}
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
+                  initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
+                  transition={{ delay: 0.2 }}
                   className="relative z-10 pt-8 text-center"
                 >
                   <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.25em] block mb-1">
