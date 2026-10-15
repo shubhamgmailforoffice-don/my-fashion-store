@@ -218,10 +218,10 @@ export default function AdminLayout({
   // Initial session verification state
   if (isAdmin === null) {
     return (
-      <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex items-center justify-center p-6 font-inter">
+      <div className="min-h-screen bg-[#DFE3E6] dark:bg-[#0c0d0e] text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-6 font-inter">
         <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-[#E8262A] border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-xs uppercase tracking-[0.25em] text-neutral-600 font-bold">
+          <div className="w-9 h-9 border-2 border-black dark:border-white border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs uppercase tracking-[0.25em] text-neutral-500 dark:text-neutral-400 font-bold">
             Verifying Admin Credentials...
           </p>
         </div>
@@ -232,29 +232,30 @@ export default function AdminLayout({
   // Unauthenticated: Admin Login Modal
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex items-center justify-center p-4 font-inter">
-        <div className="max-w-md w-full bg-white border border-neutral-300 shadow-2xl p-8 space-y-6 rounded-2xl relative">
-          <div className="flex justify-between items-center pb-2 border-b border-neutral-200">
+      <div className="min-h-screen bg-[#DFE3E6] dark:bg-[#0c0d0e] text-neutral-900 dark:text-neutral-100 flex items-center justify-center p-4 sm:p-6 font-inter">
+        <div className="max-w-md w-full bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 shadow-[0_12px_40px_rgba(0,0,0,0.08)] p-6 sm:p-8 space-y-6 rounded-[32px] relative">
+          <div className="flex justify-between items-center pb-3 border-b border-neutral-100 dark:border-neutral-800">
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E8262A] font-inter">
               Staff Portal
             </span>
             <ThemeToggle size="sm" />
           </div>
           <div className="text-center space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#E8262A] block font-inter">
-              Restricted Area &bull; Authentication
+            <span className="inline-flex items-center gap-1.5 bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full text-[9px] font-bold tracking-widest text-[#E8262A] uppercase border border-neutral-200 dark:border-neutral-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A] animate-pulse" />
+              RESTRICTED AREA • DRIIVN ATELIER
             </span>
-            <h1 className="text-2xl font-bold tracking-wider uppercase text-[#2C2A29] font-anton">
-              DRIIVN CONTROL CENTER
+            <h1 className="text-2xl font-black tracking-tight uppercase text-neutral-900 dark:text-white pt-1">
+              CONTROL CENTER
             </h1>
-            <p className="text-xs text-neutral-600">
-              Enter administrative passkey to access inventory, sections, and dispatch desk.
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 leading-relaxed">
+              Enter administrative passkey to access inventory, storefront sections, catalog, and live dispatch desk.
             </p>
           </div>
 
           <form onSubmit={handleAdminLogin} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-600 mb-1.5 font-inter">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-1.5 font-inter">
                 Admin Master Password
               </label>
               <input
@@ -264,12 +265,12 @@ export default function AdminLayout({
                 placeholder="ENTER MASTER PASSKEY"
                 value={adminPasswordInput}
                 onChange={(e) => setAdminPasswordInput(e.target.value)}
-                className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-4 py-3 text-xs tracking-widest uppercase font-mono text-black placeholder:text-neutral-400 focus:outline-none focus:border-[#E8262A] transition-colors"
+                className="w-full bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl px-4 py-3.5 text-xs tracking-widest uppercase font-mono text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-black dark:focus:border-white transition-colors"
               />
             </div>
 
             {adminAuthError && (
-              <div className="p-3 bg-red-50 border border-red-200 text-[#E8262A] text-xs font-bold uppercase rounded-lg">
+              <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 text-[#E8262A] text-xs font-bold uppercase rounded-xl">
                 {adminAuthError}
               </div>
             )}
@@ -277,14 +278,14 @@ export default function AdminLayout({
             <button
               type="submit"
               disabled={isVerifying}
-              className="w-full bg-[#E8262A] hover:bg-[#d01e22] disabled:bg-neutral-400 text-white py-3.5 text-xs font-black tracking-[0.2em] uppercase rounded-xl transition-all shadow-md active:scale-98"
+              className="w-full bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 disabled:bg-neutral-400 text-white dark:text-black py-3.5 text-xs font-black tracking-[0.2em] uppercase rounded-full transition-all shadow-md active:scale-98 cursor-pointer"
             >
               {isVerifying ? "AUTHENTICATING..." : "UNLOCK CONTROL CENTER &rarr;"}
             </button>
           </form>
 
-          <div className="pt-4 border-t border-neutral-200 flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-neutral-500">
-            <Link href="/" className="hover:text-black transition-colors">
+          <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800 flex justify-between items-center text-[10px] uppercase font-bold tracking-wider text-neutral-500 dark:text-neutral-400">
+            <Link href="/" className="hover:text-black dark:hover:text-white transition-colors">
               &larr; Back to Storefront
             </Link>
             <Link href="/account" className="hover:text-[#E8262A] transition-colors">
@@ -296,9 +297,9 @@ export default function AdminLayout({
     );
   }
 
-  // Authenticated Admin Dashboard Layout with 90% #E8E6DF and 10% #E8262A theme
+  // Authenticated Admin Dashboard Layout in WiDK Streetwear Style
   return (
-    <div className="min-h-screen bg-[#E8E6DF] text-[#121212] flex flex-col md:flex-row font-inter">
+    <div className="min-h-screen bg-[#DFE3E6] dark:bg-[#0c0d0e] text-neutral-900 dark:text-neutral-100 flex flex-col md:flex-row font-inter">
       {/* Mobile Slide-Over Drawer */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex font-inter">
@@ -308,9 +309,9 @@ export default function AdminLayout({
             onClick={() => setMobileMenuOpen(false)}
           />
           {/* Drawer Content */}
-          <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col justify-between p-5 z-10 animate-in slide-in-from-left duration-200">
+          <div className="relative w-72 max-w-[85vw] bg-white dark:bg-[#151618] border-r border-neutral-200 dark:border-neutral-800 h-full shadow-2xl flex flex-col justify-between p-5 z-10 animate-in slide-in-from-left duration-200">
             <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-neutral-200 pb-4">
+              <div className="flex items-center justify-between border-b border-neutral-200 dark:border-neutral-800 pb-4">
                 <div>
                   <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase block mb-1">
                     Control Center
@@ -329,7 +330,7 @@ export default function AdminLayout({
                     height={16}
                     className="h-4 w-auto object-contain hidden dark:block"
                   />
-                  <span className="text-[8px] font-black tracking-[0.25em] text-neutral-500 uppercase block mt-0.5">
+                  <span className="text-[8px] font-black tracking-[0.25em] text-neutral-400 uppercase block mt-0.5">
                     OPERATIONS DESK
                   </span>
                 </div>
@@ -338,7 +339,7 @@ export default function AdminLayout({
                   <button
                     type="button"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 flex items-center justify-center font-bold text-lg cursor-pointer"
+                    className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 flex items-center justify-center font-bold text-lg cursor-pointer"
                   >
                     &times;
                   </button>
@@ -353,13 +354,13 @@ export default function AdminLayout({
                       key={item.key}
                       type="button"
                       onClick={() => handleTabClick(item.key)}
-                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
+                      className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
                         isActive
-                          ? "bg-[#E8262A] text-white shadow-sm font-black"
-                          : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                          ? "bg-black text-white dark:bg-white dark:text-black shadow-md font-black"
+                          : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800/60"
                       }`}
                     >
-                      <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                      <span className={isActive ? "text-white dark:text-black" : "text-neutral-500 dark:text-neutral-400"}>
                         {item.icon}
                       </span>
                       <span>{item.label}</span>
@@ -371,7 +372,7 @@ export default function AdminLayout({
                   href="/shop"
                   target="_blank"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-[#E8262A] hover:bg-[#E8262A]/10 transition-colors"
+                  className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-[#E8262A] hover:bg-[#E8262A]/10 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -381,22 +382,22 @@ export default function AdminLayout({
               </nav>
             </div>
 
-            <div className="pt-5 border-t border-neutral-200 space-y-3">
+            <div className="pt-5 border-t border-neutral-200 dark:border-neutral-800 space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
+                  <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center font-black text-xs text-white dark:text-black">
                     {adminUser?.name?.[0]?.toUpperCase() || "A"}
                   </div>
                   <div className="max-w-[130px]">
-                    <p className="text-xs font-bold text-black uppercase truncate">{adminUser?.name || "Admin"}</p>
-                    <p className="text-[10px] text-neutral-500 truncate">{adminUser?.email || "Operations"}</p>
+                    <p className="text-xs font-bold text-neutral-900 dark:text-white uppercase truncate">{adminUser?.name || "Admin"}</p>
+                    <p className="text-[10px] text-neutral-500 dark:text-neutral-400 truncate">{adminUser?.email || "Operations"}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={handleAdminSignOut}
                   title="Sign Out"
-                  className="text-neutral-500 hover:text-[#E8262A] transition-colors p-1"
+                  className="text-neutral-500 hover:text-[#E8262A] transition-colors p-1 cursor-pointer"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -407,7 +408,7 @@ export default function AdminLayout({
               <Link
                 href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="block text-center w-full py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-[10px] font-bold tracking-widest uppercase transition-colors rounded-lg text-black"
+                className="block text-center w-full py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-[10px] font-bold tracking-widest uppercase transition-colors rounded-xl text-neutral-800 dark:text-neutral-200"
               >
                 Exit to Storefront
               </Link>
@@ -417,14 +418,14 @@ export default function AdminLayout({
       )}
 
       {/* Mobile Top Bar */}
-      <header className="md:hidden bg-white border-b border-neutral-300 p-3 sticky top-0 z-30 shadow-xs">
+      <header className="md:hidden bg-white/90 dark:bg-[#151618]/90 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800 p-3 sticky top-0 z-30 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Open Admin Menu"
-              className="w-8 h-8 rounded-xl bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 flex items-center justify-center text-neutral-800 transition-colors cursor-pointer"
+              className="w-8 h-8 rounded-xl bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-800 dark:text-neutral-200 transition-colors cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M4 6h16M4 12h16M4 18h16" />
@@ -432,12 +433,12 @@ export default function AdminLayout({
             </button>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#E8262A] animate-pulse" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A] animate-pulse" />
                 <span className="text-[8px] font-bold tracking-[0.25em] text-[#E8262A] uppercase block">
                   Control Center
                 </span>
               </div>
-              <h1 className="text-sm font-bold tracking-widest uppercase text-[#2C2A29] font-anton leading-none">
+              <h1 className="text-sm font-bold tracking-widest uppercase text-neutral-900 dark:text-white font-anton leading-none">
                 DRIIVN OPERATIONS
               </h1>
             </div>
@@ -446,14 +447,14 @@ export default function AdminLayout({
             <ThemeToggle size="sm" />
             <Link
               href="/"
-              className="text-[9px] font-bold uppercase tracking-wider text-neutral-700 hover:text-black border border-neutral-300 rounded px-2 py-1 bg-neutral-100"
+              className="text-[9px] font-bold uppercase tracking-wider text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border border-neutral-200 dark:border-neutral-700 rounded-lg px-2 py-1 bg-neutral-100 dark:bg-neutral-800"
             >
-              Storefront &rarr;
+              Store &rarr;
             </Link>
             <button
               onClick={handleAdminSignOut}
               title="Sign Out"
-              className="w-7 h-7 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-[10px] text-white cursor-pointer"
+              className="w-7 h-7 rounded-full bg-black dark:bg-white flex items-center justify-center font-black text-[10px] text-white dark:text-black cursor-pointer"
             >
               {adminUser?.name?.[0]?.toUpperCase() || "A"}
             </button>
@@ -469,13 +470,13 @@ export default function AdminLayout({
                 key={item.key}
                 type="button"
                 onClick={() => handleTabClick(item.key)}
-                className={`px-2.5 py-1.5 rounded-xl whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1 ${
+                className={`px-3 py-1.5 rounded-full whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
                   isActive
-                    ? "bg-[#E8262A] text-white font-black shadow-xs border border-[#E8262A]"
-                    : "bg-neutral-100 border border-neutral-300 text-neutral-800 hover:bg-neutral-200"
+                    ? "bg-black text-white dark:bg-white dark:text-black font-black shadow-xs"
+                    : "bg-white/80 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100"
                 }`}
               >
-                <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                <span className={isActive ? "text-white dark:text-black" : "text-neutral-500 dark:text-neutral-400"}>
                   {item.icon}
                 </span>
                 <span>{item.shortLabel}</span>
@@ -485,19 +486,20 @@ export default function AdminLayout({
           <Link
             href="/shop"
             target="_blank"
-            className="px-2.5 py-1.5 bg-[#E8262A]/10 border border-[#E8262A]/30 text-[#E8262A] font-black rounded-xl whitespace-nowrap ml-auto"
+            className="px-3 py-1.5 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-[#E8262A] font-black rounded-full whitespace-nowrap ml-auto"
           >
             Live Store ↗
           </Link>
         </div>
       </header>
 
-      {/* Desktop Admin Sidebar */}
-      <aside className="hidden md:flex w-64 bg-white border-r border-neutral-300 flex-col justify-between p-6 flex-shrink-0 shadow-sm">
+      {/* Desktop Admin Sidebar (Refined Rounded Card Style) */}
+      <aside className="hidden md:flex w-64 bg-white dark:bg-[#151618] border-r border-neutral-200/80 dark:border-neutral-800/80 flex-col justify-between p-6 flex-shrink-0 shadow-sm">
         <div className="space-y-8">
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <span className="text-[9px] font-black tracking-[0.3em] text-[#E8262A] uppercase">
+            <div className="flex items-center justify-between mb-3">
+              <span className="inline-flex items-center gap-1.5 text-[9px] font-black tracking-[0.25em] text-[#E8262A] uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A] animate-pulse" />
                 Control Center
               </span>
               <ThemeToggle size="sm" />
@@ -517,7 +519,7 @@ export default function AdminLayout({
                 height={18}
                 className="h-5 w-auto object-contain hidden dark:block"
               />
-              <span className="text-[8px] font-black tracking-[0.25em] text-neutral-500 uppercase">
+              <span className="text-[8px] font-black tracking-[0.25em] text-neutral-400 uppercase mt-0.5">
                 OPERATIONS DESK
               </span>
             </div>
@@ -531,13 +533,13 @@ export default function AdminLayout({
                   key={item.key}
                   type="button"
                   onClick={() => handleTabClick(item.key)}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl transition-all text-left cursor-pointer ${
                     isActive
-                      ? "bg-[#E8262A] text-white shadow-sm font-black"
-                      : "text-neutral-700 hover:text-black hover:bg-neutral-100"
+                      ? "bg-black text-white dark:bg-white dark:text-black shadow-md font-black"
+                      : "text-neutral-600 dark:text-neutral-400 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800/60"
                   }`}
                 >
-                  <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                  <span className={isActive ? "text-white dark:text-black" : "text-neutral-400 dark:text-neutral-500"}>
                     {item.icon}
                   </span>
                   <span>{item.label}</span>
@@ -548,7 +550,7 @@ export default function AdminLayout({
             <Link
               href="/shop"
               target="_blank"
-              className="flex items-center gap-3 px-3 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-[#E8262A] hover:bg-[#E8262A]/10 transition-colors"
+              className="flex items-center gap-3 px-3.5 py-2.5 text-xs font-bold tracking-wider uppercase rounded-xl text-[#E8262A] hover:bg-[#E8262A]/10 transition-colors mt-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -558,21 +560,21 @@ export default function AdminLayout({
           </nav>
         </div>
 
-        <div className="pt-6 border-t border-neutral-200 space-y-3">
+        <div className="pt-6 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-xs text-white">
+              <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center font-black text-xs text-white dark:text-black shadow-xs">
                 {adminUser?.name?.[0]?.toUpperCase() || "A"}
               </div>
               <div className="max-w-[120px]">
-                <p className="text-xs font-bold text-black uppercase truncate">{adminUser?.name || "Admin"}</p>
-                <p className="text-[10px] text-neutral-500 truncate">{adminUser?.email || "Operations"}</p>
+                <p className="text-xs font-bold text-neutral-900 dark:text-white uppercase truncate">{adminUser?.name || "Admin"}</p>
+                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 truncate">{adminUser?.email || "Operations"}</p>
               </div>
             </div>
             <button
               onClick={handleAdminSignOut}
               title="Lock Admin Portal"
-              className="text-neutral-500 hover:text-[#E8262A] transition-colors p-1"
+              className="text-neutral-400 hover:text-[#E8262A] transition-colors p-1 cursor-pointer"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -582,15 +584,15 @@ export default function AdminLayout({
 
           <Link
             href="/"
-            className="block text-center w-full py-2 bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-[10px] font-bold tracking-widest uppercase transition-colors rounded-lg text-black"
+            className="block text-center w-full py-2.5 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-[10px] font-bold tracking-widest uppercase transition-colors rounded-xl text-neutral-800 dark:text-neutral-200"
           >
             Exit to Storefront
           </Link>
         </div>
       </aside>
 
-      {/* Main Admin Content Container in #E8E6DF */}
-      <main className="flex-1 overflow-y-auto p-3 sm:p-6 md:p-8">
+      {/* Main Admin Content Container */}
+      <main className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
         {children}
       </main>
     </div>

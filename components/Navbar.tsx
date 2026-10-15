@@ -258,6 +258,24 @@ export default function Navbar() {
     [cartItems]
   );
 
+  const [wishlistCount, setWishlistCount] = useState(0);
+  useEffect(() => {
+    const updateWishlist = () => {
+      try {
+        const stored = localStorage.getItem("my_wishlist") || "[]";
+        const list = JSON.parse(stored);
+        setWishlistCount(Array.isArray(list) ? list.length : 0);
+      } catch {}
+    };
+    updateWishlist();
+    window.addEventListener("storage", updateWishlist);
+    window.addEventListener("wishlist-updated", updateWishlist);
+    return () => {
+      window.removeEventListener("storage", updateWishlist);
+      window.removeEventListener("wishlist-updated", updateWishlist);
+    };
+  }, []);
+
   const subtotal = useMemo(
     () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
     [cartItems]
@@ -543,7 +561,7 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Right Column: WiDK Actions */}
+          {/* Right Column: Actions (Mobile: ONLY ThemeToggle. Desktop: Full Action Bar) */}
           <div className="flex items-center justify-end gap-2 sm:gap-3.5">
             <nav className="hidden lg:flex items-center gap-4 text-xs font-medium text-neutral-700 dark:text-neutral-300 mr-2">
               <Link href="/collections" className="hover:text-black dark:hover:text-white transition-colors">
@@ -554,36 +572,41 @@ export default function Navbar() {
               </Link>
             </nav>
 
-            {/* Dark & Light Theme Switcher */}
+            {/* Dark & Light Theme Switcher (Available on both mobile and desktop) */}
             <ThemeToggle size="sm" />
 
-            {/* Search (Mobile & Tablet) */}
+            {/* Desktop-Only Search */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="xl:hidden w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
-              aria-label="Search"
+              className="hidden lg:flex w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
+              aria-label="Search catalogue"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
 
-            {/* Wishlist Button (Heart) */}
+            {/* Desktop-Only Wishlist Button (Heart) */}
             <button
               type="button"
               onClick={() => setIsWishlistOpen(true)}
-              className="relative w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-red-500 dark:hover:text-red-400 transition-all shadow-2xs cursor-pointer"
+              className="hidden lg:flex relative w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-red-500 dark:hover:text-red-400 transition-all shadow-2xs cursor-pointer"
               aria-label="Saved Wishlist"
             >
               <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-[#E8262A] text-white rounded-full text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center shadow-xs">
+                  {wishlistCount}
+                </span>
+              )}
             </button>
 
-            {/* Account Profile Button */}
+            {/* Desktop-Only Account Profile Button */}
             <Link
               href="/account"
-              className="w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
+              className="hidden lg:flex w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
               title={currentUser ? `Signed in as ${currentUser.name}` : "Member Account"}
               aria-label="Member Account"
             >
@@ -592,10 +615,10 @@ export default function Navbar() {
               </svg>
             </Link>
 
-            {/* Shopping Bag Button (Cart) */}
+            {/* Desktop-Only Shopping Bag Button (Cart) */}
             <button
               onClick={() => setIsCartOpen(true)}
-              className="flex items-center gap-1.5 bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              className="hidden lg:flex items-center gap-1.5 bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1603,15 +1626,15 @@ export default function Navbar() {
           </div>
         </button>
 
-        {/* 2nd (Center): Frosted Glass Capsule Dock - LIGHT TRANSLUCENT (NO BLACK) */}
-        <div className="bg-white/80 backdrop-blur-2xl border border-white/70 rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.12)] pointer-events-auto">
-          {/* Option: Explore / All Products (Screenshot 4 - Active White Pill) */}
+        {/* 2nd (Center): Frosted Glass Capsule Dock */}
+        <div className="bg-white/85 dark:bg-[#151618]/90 backdrop-blur-2xl border border-white/70 dark:border-neutral-700/80 rounded-full px-2 py-1.5 flex items-center gap-1 sm:gap-1.5 shadow-[0_12px_36px_rgba(0,0,0,0.15)] pointer-events-auto">
+          {/* Option: Explore / All Products */}
           <Link
             href="/shop"
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
               pathname === "/shop"
-                ? "bg-white text-black shadow-md border border-neutral-200/80"
-                : "text-neutral-500 hover:text-black"
+                ? "bg-white dark:bg-neutral-800 text-black dark:text-white shadow-md border border-neutral-200/80 dark:border-neutral-700"
+                : "text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
             }`}
             aria-label="Explore All Products"
             title="Explore All Products"
@@ -1622,13 +1645,66 @@ export default function Navbar() {
             </svg>
           </Link>
 
+          {/* Option: Search Drops */}
+          <button
+            type="button"
+            onClick={() => setIsSearchOpen(true)}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-all cursor-pointer"
+            aria-label="Search Drops"
+            title="Search Drops"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+
+          {/* Option: LIKE / Saved Items (Added to mobile dock) */}
+          <button
+            type="button"
+            onClick={() => setIsWishlistOpen(true)}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-red-500 dark:text-neutral-400 dark:hover:text-red-400 transition-all relative cursor-pointer"
+            aria-label="Saved Wishlist"
+            title="Saved Wishlist"
+          >
+            <div className="relative">
+              <svg className="w-5 h-5 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-[#E8262A] text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
+                  {wishlistCount}
+                </span>
+              )}
+            </div>
+          </button>
+
+          {/* Option: Bag (Live counter) */}
+          <button
+            type="button"
+            onClick={() => setIsCartOpen(true)}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white transition-all relative cursor-pointer"
+            aria-label="Shopping Bag"
+            title="Shopping Bag"
+          >
+            <div className="relative">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+              {cartCount > 0 && (
+                <span className="absolute -top-1.5 -right-2 bg-black dark:bg-white text-white dark:text-black rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
+                  {cartCount}
+                </span>
+              )}
+            </div>
+          </button>
+
           {/* Option: Account Portal */}
           <Link
             href="/account"
             className={`w-10 h-10 rounded-full flex items-center justify-center transition-all relative ${
               pathname === "/account"
-                ? "bg-white text-black shadow-md border border-neutral-200/80"
-                : "text-neutral-500 hover:text-black"
+                ? "bg-white dark:bg-neutral-800 text-black dark:text-white shadow-md border border-neutral-200/80 dark:border-neutral-700"
+                : "text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
             }`}
             aria-label="Account Portal"
             title="Account Portal"
@@ -1642,39 +1718,6 @@ export default function Navbar() {
               )}
             </div>
           </Link>
-
-          {/* Option: Bag (Removed from upper side, lives here with live counter) */}
-          <button
-            type="button"
-            onClick={() => setIsCartOpen(true)}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black transition-all relative"
-            aria-label="Shopping Bag"
-            title="Shopping Bag"
-          >
-            <div className="relative">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-              </svg>
-              {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 bg-[#E8262A] text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
-                  {cartCount}
-                </span>
-              )}
-            </div>
-          </button>
-
-          {/* Option: Search */}
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-neutral-500 hover:text-black transition-all"
-            aria-label="Search Drops"
-            title="Search Drops"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
         </div>
 
         {/* 3rd (Far Right): Dark Circular Chat Button with 3-Line Speech Bubble (Screenshot 4) */}

@@ -661,13 +661,14 @@ function AdminContent() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto pb-16">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-6 bg-white/70 backdrop-blur-xl border border-white/80 rounded-3xl shadow-xs font-inter">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-7 bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 rounded-[28px] sm:rounded-[32px] shadow-[0_8px_30px_rgba(0,0,0,0.04)] font-inter">
         <div>
-          <span className="text-[10px] font-bold tracking-[0.25em] text-[#E8262A] uppercase font-inter">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[0.25em] text-[#E8262A] uppercase font-inter mb-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#E8262A] animate-pulse" />
             Control Center • Real-time Operations
           </span>
-          <h1 className="text-xl sm:text-3xl font-bold uppercase tracking-wide text-[#2C2A29] mt-0.5 font-anton">
-            DRIIVN Administration
+          <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-neutral-900 dark:text-white leading-none">
+            DRIIVN Operations Desk
           </h1>
         </div>
 
@@ -675,7 +676,7 @@ function AdminContent() {
           <button
             type="button"
             onClick={() => refreshData()}
-            className="border border-white/80 bg-white/70 hover:bg-white text-[#2C2A29] px-3.5 sm:px-4 py-2 sm:py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-xl shadow-2xs backdrop-blur-sm text-center cursor-pointer"
+            className="border border-neutral-200 dark:border-neutral-700 bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all rounded-full shadow-2xs text-center cursor-pointer"
           >
             ↻ Refresh
           </button>
@@ -685,7 +686,7 @@ function AdminContent() {
               handleSelectTab("products");
               setIsAddModalOpen(true);
             }}
-            className="bg-[#E8262A] text-white hover:bg-[#d01e22] px-4 sm:px-5 py-2 sm:py-2.5 text-xs font-bold tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 rounded-xl shadow-xs active:scale-95 border border-red-500/30 text-center cursor-pointer"
+            className="bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-all flex items-center justify-center gap-1.5 rounded-full shadow-md active:scale-95 text-center cursor-pointer"
           >
             <span>+ Add Product</span>
           </button>
@@ -693,22 +694,22 @@ function AdminContent() {
       </div>
 
       {/* Top High-level Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 font-inter">
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Revenue</p>
-          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight truncate">RS. {totalRevenue.toLocaleString()}</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 font-inter">
+        <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 p-4 sm:p-5 rounded-[22px] shadow-xs hover:shadow-md transition-all">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Total Revenue</p>
+          <p className="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white mt-1 font-inter tracking-tight truncate">RS. {totalRevenue.toLocaleString()}</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Total Orders</p>
-          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{ordersList.length}</p>
+        <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 p-4 sm:p-5 rounded-[22px] shadow-xs hover:shadow-md transition-all">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Total Orders</p>
+          <p className="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white mt-1 font-inter tracking-tight">{ordersList.length}</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Live Catalog</p>
-          <p className="text-lg sm:text-2xl font-bold text-[#2C2A29] mt-1 font-inter tracking-tight">{productsList.length} Items</p>
+        <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 p-4 sm:p-5 rounded-[22px] shadow-xs hover:shadow-md transition-all">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Live Catalog</p>
+          <p className="text-xl sm:text-2xl font-black text-neutral-900 dark:text-white mt-1 font-inter tracking-tight">{productsList.length} Items</p>
         </div>
-        <div className="bg-white/75 backdrop-blur-xl border border-white/80 p-3.5 sm:p-5 rounded-2xl shadow-xs hover:shadow-md transition-all">
-          <p className="text-[9px] font-bold uppercase tracking-widest text-neutral-500">Registered Users</p>
-          <p className="text-lg sm:text-2xl font-bold text-[#E8262A] mt-1 font-inter tracking-tight">{usersList.length} Members</p>
+        <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 p-4 sm:p-5 rounded-[22px] shadow-xs hover:shadow-md transition-all">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Registered Users</p>
+          <p className="text-xl sm:text-2xl font-black text-[#E8262A] mt-1 font-inter tracking-tight">{usersList.length} Members</p>
         </div>
       </div>
 
@@ -732,27 +733,27 @@ function AdminContent() {
               key={item.key}
               type="button"
               onClick={() => handleSelectTab(item.key)}
-              className={`p-2.5 sm:p-3 rounded-2xl transition-all flex flex-col items-center justify-between text-center cursor-pointer border ${
+              className={`p-3 rounded-[20px] transition-all flex flex-col items-center justify-between text-center cursor-pointer border ${
                 item.key === "users" ? "col-span-2 sm:col-span-1" : ""
               } ${
                 isActive
-                  ? "bg-[#E8262A] text-white border-[#E8262A] shadow-md font-black ring-2 ring-[#E8262A]/20 scale-[1.01]"
-                  : "bg-white/85 hover:bg-white text-neutral-800 hover:text-black border-white/80 shadow-2xs backdrop-blur-sm hover:border-neutral-300"
+                  ? "bg-black text-white dark:bg-white dark:text-black border-black dark:border-white shadow-md font-black"
+                  : "bg-white dark:bg-[#151618] hover:bg-neutral-50 dark:hover:bg-neutral-800/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white border-neutral-200/80 dark:border-neutral-800 shadow-2xs"
               }`}
             >
               <div className="flex items-center gap-1.5 justify-center w-full min-w-0">
-                <span className={isActive ? "text-white" : "text-[#E8262A]"}>
+                <span className={isActive ? "text-white dark:text-black" : "text-neutral-400 dark:text-neutral-500"}>
                   {item.icon}
                 </span>
-                <span className="text-[11px] xl:text-xs font-black uppercase tracking-tight leading-tight truncate">
+                <span className="text-[11px] font-black uppercase tracking-tight leading-tight truncate">
                   {item.num} {item.label}
                 </span>
               </div>
               <span
-                className={`mt-1.5 px-2 py-0.5 text-[9px] rounded-full font-bold uppercase transition-colors ${
+                className={`mt-2 px-2 py-0.5 text-[9px] rounded-full font-bold uppercase transition-colors ${
                   isActive
-                    ? "bg-white text-[#E8262A] font-black"
-                    : "bg-neutral-100 text-neutral-700 border border-neutral-200"
+                    ? "bg-white/20 dark:bg-black/20 text-white dark:text-black font-black"
+                    : "bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700"
                 }`}
               >
                 {badgeText}
@@ -768,20 +769,20 @@ function AdminContent() {
       {activeTab === "orders" && (
         <section className="space-y-4">
           {/* Controls Bar: Search & Status Filters with Count Badges */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 border border-neutral-300 rounded-2xl shadow-xs">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[#151618] p-4 border border-neutral-200/80 dark:border-neutral-800 rounded-[24px] shadow-xs">
             <div className="w-full md:w-96 relative">
               <input
                 type="text"
                 placeholder="Search by Order ID, Customer Name, Phone, City..."
                 value={orderSearchQuery}
                 onChange={(e) => setOrderSearchQuery(e.target.value)}
-                className="w-full bg-[#F5F4EE] border border-neutral-300 px-3.5 py-2 text-xs font-bold tracking-wider text-black placeholder:text-neutral-400 focus:outline-none focus:border-[#E8262A] pr-8 rounded-xl"
+                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 px-4 py-2.5 text-xs font-bold tracking-wider text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-black dark:focus:border-white pr-8 rounded-full"
               />
               {orderSearchQuery && (
                 <button
                   type="button"
                   onClick={() => setOrderSearchQuery("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black text-xs font-bold"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black dark:hover:text-white text-xs font-bold"
                 >
                   &times;
                 </button>
@@ -797,18 +798,18 @@ function AdminContent() {
                     setOrderStatusFilter(st);
                     setOrderPage(1);
                   }}
-                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors flex items-center gap-1.5 rounded-xl ${
+                  className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 rounded-full ${
                     orderStatusFilter === st
-                      ? "bg-[#E8262A] text-white font-black shadow-xs"
-                      : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
+                      ? "bg-black text-white dark:bg-white dark:text-black font-black shadow-xs"
+                      : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700"
                   }`}
                 >
                   <span>{st}</span>
                   <span
-                    className={`text-[9px] px-1.5 py-0.2 rounded-full ${
+                    className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold ${
                       orderStatusFilter === st
-                        ? "bg-white text-black"
-                        : "bg-neutral-200 text-neutral-700"
+                        ? "bg-white/20 dark:bg-black/20 text-white dark:text-black"
+                        : "bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-300"
                     }`}
                   >
                     {orderStatusCounts[st] || 0}
@@ -819,8 +820,8 @@ function AdminContent() {
           </div>
 
           {/* Sub-controls: Pagination summary, Page size switcher, Collapse/Expand all */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white px-4 py-2.5 border border-neutral-300 rounded-xl shadow-xs text-xs">
-            <div className="flex items-center gap-2 text-neutral-600 font-bold uppercase text-[11px]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-[#151618] px-4 py-3 border border-neutral-200/80 dark:border-neutral-800 rounded-[20px] shadow-xs text-xs">
+            <div className="flex items-center gap-2 text-neutral-600 dark:text-neutral-400 font-bold uppercase text-[11px]">
               <span>
                 Showing {filteredOrders.length === 0 ? 0 : startIndex + 1}–{endIndex} of {filteredOrders.length} Orders
               </span>
@@ -832,7 +833,7 @@ function AdminContent() {
             <div className="flex items-center gap-3 flex-wrap">
               {/* Page Size Selector */}
               <div className="flex items-center gap-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 mr-1">Show:</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mr-1">Show:</span>
                 {[5, 10, 20, -1].map((sz) => (
                   <button
                     key={sz}
@@ -841,10 +842,10 @@ function AdminContent() {
                       setOrdersPerPage(sz);
                       setOrderPage(1);
                     }}
-                    className={`px-2 py-0.5 text-[10px] font-black uppercase tracking-wider transition-colors rounded ${
+                    className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors rounded-full ${
                       ordersPerPage === sz
-                        ? "bg-[#E8262A] text-white font-black"
-                        : "bg-neutral-100 border border-neutral-300 text-neutral-600 hover:bg-neutral-200 hover:text-black"
+                        ? "bg-black text-white dark:bg-white dark:text-black font-black"
+                        : "bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-700 hover:text-black dark:hover:text-white"
                     }`}
                   >
                     {sz === -1 ? "All" : sz}
@@ -852,21 +853,21 @@ function AdminContent() {
                 ))}
               </div>
 
-              <div className="h-4 w-[1px] bg-neutral-200 hidden sm:block" />
+              <div className="h-4 w-[1px] bg-neutral-200 dark:bg-neutral-700 hidden sm:block" />
 
               {/* Collapse / Expand All */}
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={collapseAllOrders}
-                  className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 border border-neutral-300 hover:bg-neutral-200 text-neutral-700 transition-colors rounded"
+                  className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors rounded-full cursor-pointer"
                 >
                   − Collapse All
                 </button>
                 <button
                   type="button"
                   onClick={expandAllOrders}
-                  className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 border border-neutral-300 hover:bg-neutral-200 text-neutral-700 transition-colors rounded"
+                  className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-300 transition-colors rounded-full cursor-pointer"
                 >
                   + Expand All
                 </button>
@@ -875,12 +876,12 @@ function AdminContent() {
           </div>
 
           {isLoading ? (
-            <div className="py-16 text-center text-neutral-500 text-xs font-bold uppercase tracking-widest bg-white rounded-2xl border border-neutral-300">
+            <div className="py-16 text-center text-neutral-500 dark:text-neutral-400 text-xs font-bold uppercase tracking-widest bg-white dark:bg-[#151618] rounded-[24px] border border-neutral-200/80 dark:border-neutral-800">
               Loading live customer orders...
             </div>
           ) : filteredOrders.length === 0 ? (
-            <div className="py-16 text-center border border-dashed border-neutral-300 bg-white rounded-2xl p-6 space-y-2">
-              <p className="text-xs font-bold uppercase tracking-widest text-neutral-600">
+            <div className="py-16 text-center border border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#151618] rounded-[24px] p-6 space-y-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">
                 No orders match your filter criteria.
               </p>
               {orderSearchQuery && (
@@ -915,73 +916,73 @@ function AdminContent() {
                 return (
                   <div
                     key={order.id}
-                    className="bg-white border border-neutral-300 rounded-2xl p-4 sm:p-5 space-y-4 shadow-xs hover:border-neutral-400 transition-colors"
+                    className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 rounded-[26px] p-4 sm:p-5 space-y-4 shadow-xs hover:border-neutral-300 dark:hover:border-neutral-700 transition-colors"
                   >
                     {/* Header Row */}
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-neutral-200 pb-3">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 border-b border-neutral-100 dark:border-neutral-800 pb-3">
                       <div className="flex items-center gap-2.5 sm:gap-3 flex-wrap">
                         <button
                           type="button"
                           onClick={() => handleCopy(order.id, order.id)}
-                          className="text-base font-black font-mono tracking-wider text-[#E8262A] hover:text-[#d01e22] flex items-center gap-1"
+                          className="text-base font-black font-mono tracking-wider text-[#E8262A] hover:text-[#d01e22] flex items-center gap-1 cursor-pointer"
                           title="Click to copy Order ID"
                         >
                           <span>#{order.id}</span>
-                          <span className="text-[10px] text-neutral-500 font-sans">
+                          <span className="text-[10px] text-neutral-400 font-sans">
                             {copiedId === order.id ? "✓ Copied" : "📋"}
                           </span>
                         </button>
-                        <span className="text-xs text-neutral-500 font-bold uppercase">
+                        <span className="text-xs text-neutral-500 dark:text-neutral-400 font-bold uppercase">
                           {order.date}
                         </span>
                         {/* Payment Method Badge */}
                         <span
-                          className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-0.5 rounded-md ${
+                          className={`text-[10px] font-black tracking-wider uppercase px-2.5 py-0.5 rounded-full ${
                             isCOD
-                              ? "bg-amber-100 text-amber-900 border border-amber-300"
+                              ? "bg-amber-100 dark:bg-amber-950/40 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800"
                               : isUPI
-                              ? "bg-emerald-100 text-emerald-900 border border-emerald-300"
-                              : "bg-neutral-100 text-neutral-800 border border-neutral-300"
+                              ? "bg-emerald-100 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+                              : "bg-neutral-100 dark:bg-neutral-800 text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-700"
                           }`}
                         >
                           {isCOD ? "💵 COD" : isUPI ? "📱 UPI QR Paid" : "Prepaid"}
                         </span>
-                        <span className="text-xs text-black font-bold uppercase truncate max-w-[150px] sm:max-w-none">
+                        <span className="text-xs text-neutral-900 dark:text-white font-bold uppercase truncate max-w-[150px] sm:max-w-none">
                           👤 {order.customerName}
                         </span>
-                        <span className="text-[10px] text-neutral-500 uppercase font-mono">
+                        <span className="text-[10px] text-neutral-400 uppercase font-mono">
                           ({order.items.length} item{order.items.length > 1 ? "s" : ""})
                         </span>
                       </div>
 
                       <div className="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-end flex-wrap">
-                        <span className="text-sm font-black text-black whitespace-nowrap">
+                        <span className="text-sm font-black text-neutral-900 dark:text-white whitespace-nowrap">
                           RS. {order.total.toLocaleString()}
                         </span>
 
                         {/* Status Updater */}
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[9px] uppercase font-bold text-neutral-500">Status:</span>
+                          <span className="text-[9px] uppercase font-bold text-neutral-500 dark:text-neutral-400">Status:</span>
                           <select
                             value={order.status}
                             onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                            className={`text-xs font-bold uppercase px-2.5 py-1 outline-none cursor-pointer border rounded-lg ${
+                            className={`text-xs font-bold uppercase px-2.5 py-1 outline-none cursor-pointer border rounded-full ${
                               order.status === "Pending"
-                                ? "bg-amber-50 border-amber-300 text-amber-800"
+                                ? "bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-700 text-amber-800 dark:text-amber-300"
                                 : order.status === "Processing"
-                                ? "bg-blue-50 border-blue-300 text-blue-800"
+                                ? "bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-300"
                                 : order.status === "Shipped"
-                                ? "bg-purple-50 border-purple-300 text-purple-800"
+                                ? "bg-purple-50 dark:bg-purple-950/40 border-purple-300 dark:border-purple-700 text-purple-800 dark:text-purple-300"
                                 : order.status === "Delivered"
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                                : "bg-red-50 border-red-300 text-red-800"
+                                ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-700 text-emerald-800 dark:text-emerald-300"
+                                : "bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-700 text-red-800 dark:text-red-300"
                             }`}
                           >
-                            <option value="Pending" className="bg-white text-black">Pending</option>
-                            <option value="Processing" className="bg-white text-black">Processing</option>
-                            <option value="Shipped" className="bg-white text-black">Shipped</option>
-                            <option value="Delivered" className="bg-white text-black">Delivered</option>
-                            <option value="Cancelled" className="bg-white text-black">Cancelled</option>
+                            <option value="Pending" className="bg-white dark:bg-neutral-900 text-black dark:text-white">Pending</option>
+                            <option value="Processing" className="bg-white dark:bg-neutral-900 text-black dark:text-white">Processing</option>
+                            <option value="Shipped" className="bg-white dark:bg-neutral-900 text-black dark:text-white">Shipped</option>
+                            <option value="Delivered" className="bg-white dark:bg-neutral-900 text-black dark:text-white">Delivered</option>
+                            <option value="Cancelled" className="bg-white dark:bg-neutral-900 text-black dark:text-white">Cancelled</option>
                           </select>
                         </div>
 
@@ -989,7 +990,7 @@ function AdminContent() {
                         <button
                           type="button"
                           onClick={() => toggleOrderCollapse(order.id)}
-                          className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 transition-colors rounded-lg"
+                          className="px-3 py-1 text-[10px] font-black uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 transition-colors rounded-full cursor-pointer"
                         >
                           {isCollapsed ? "+ Details" : "− Collapse"}
                         </button>
@@ -1000,17 +1001,17 @@ function AdminContent() {
                     {!isCollapsed && (
                       <div className="space-y-4 pt-1">
                         {/* Customer & Address Details Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-[#F9F8F5] p-4 border border-neutral-200 rounded-xl text-xs">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 bg-neutral-50 dark:bg-neutral-900/60 p-4 border border-neutral-200/80 dark:border-neutral-800 rounded-2xl text-xs">
                           {/* Customer Info */}
                           <div className="space-y-1">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 block mb-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 block mb-1">
                               Customer Information
                             </span>
-                            <p className="font-bold text-black text-sm uppercase">{order.customerName}</p>
-                            <p className="text-neutral-700 font-mono">
+                            <p className="font-bold text-neutral-900 dark:text-white text-sm uppercase">{order.customerName}</p>
+                            <p className="text-neutral-700 dark:text-neutral-300 font-mono">
                               {order.phone ? `+91 ${order.phone}` : "No phone provided"}
                             </p>
-                            <p className="text-neutral-500 text-[11px] truncate">{order.email || "No email"}</p>
+                            <p className="text-neutral-500 dark:text-neutral-400 text-[11px] truncate">{order.email || "No email"}</p>
                             
                             {phoneClean && (
                               <div className="pt-2 flex items-center gap-2 flex-wrap">
@@ -1020,20 +1021,20 @@ function AdminContent() {
                                   )}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-[10px] font-bold uppercase text-emerald-800 bg-emerald-50 border border-emerald-300 hover:bg-emerald-100 px-2.5 py-1 transition-colors flex items-center gap-1 rounded-lg"
+                                  className="text-[10px] font-bold uppercase text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 hover:bg-emerald-100 px-3 py-1 transition-colors flex items-center gap-1 rounded-full"
                                 >
                                   <span>💬 WhatsApp{waMatch ? " (Direct)" : ""}</span>
                                 </a>
                                 <a
                                   href={`tel:+91${phoneClean}`}
-                                  className="text-[10px] font-bold uppercase text-neutral-700 bg-neutral-100 border border-neutral-300 hover:bg-neutral-200 px-2.5 py-1 transition-colors flex items-center gap-1 rounded-lg"
+                                  className="text-[10px] font-bold uppercase text-neutral-700 dark:text-neutral-300 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-200 px-3 py-1 transition-colors flex items-center gap-1 rounded-full"
                                 >
                                   <span>📞 Call</span>
                                 </a>
                               </div>
                             )}
                             {waMatch && (
-                              <p className="text-emerald-700 font-mono text-[11px] pt-1">
+                              <p className="text-emerald-700 dark:text-emerald-400 font-mono text-[11px] pt-1">
                                 WhatsApp: +91 {waNumber.slice(-10)}
                               </p>
                             )}
@@ -1041,10 +1042,10 @@ function AdminContent() {
 
                           {/* Delivery Address */}
                           <div className="space-y-1 md:col-span-2">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 block mb-1">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 block mb-1">
                               Full Shipping & Delivery Address
                             </span>
-                            <p className="text-neutral-800 uppercase font-medium leading-relaxed">
+                            <p className="text-neutral-800 dark:text-neutral-200 uppercase font-medium leading-relaxed">
                               {cleanDisplayAddress}
                             </p>
                             {order.address.includes("UTR:") && (
@@ -1054,7 +1055,7 @@ function AdminContent() {
                             )}
 
                             {/* Courier & AWB Tracking Form */}
-                            <div className="mt-3 pt-3 border-t border-neutral-200 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                            <div className="mt-3 pt-3 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row items-start sm:items-center gap-2">
                               <span className="text-[9px] font-black uppercase tracking-wider text-[#E8262A] whitespace-nowrap flex items-center gap-1">
                                 <span>📦</span> Courier / AWB:
                               </span>
@@ -1063,13 +1064,13 @@ function AdminContent() {
                                 placeholder="e.g. Delhivery - 1492049182"
                                 value={trackingInputs[order.id] !== undefined ? trackingInputs[order.id] : trackingInfo}
                                 onChange={(e) => setTrackingInputs({ ...trackingInputs, [order.id]: e.target.value })}
-                                className="bg-white border border-neutral-300 px-3 py-1 text-xs font-mono text-black placeholder:text-neutral-400 w-full sm:w-60 focus:outline-none focus:border-[#E8262A] uppercase rounded-lg"
+                                className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 px-3 py-1 text-xs font-mono text-neutral-900 dark:text-white placeholder:text-neutral-400 w-full sm:w-60 focus:outline-none focus:border-black dark:focus:border-white uppercase rounded-lg"
                               />
                               <button
                                 type="button"
                                 disabled={savingTrackingId === order.id}
                                 onClick={() => handleSaveTracking(order.id, trackingInfo)}
-                                className="bg-[#2C2A29] hover:bg-[#E8262A] disabled:bg-neutral-300 text-white px-3 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap rounded-lg"
+                                className="bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 disabled:bg-neutral-400 text-white dark:text-black px-3.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors whitespace-nowrap rounded-lg cursor-pointer"
                               >
                                 {savingTrackingId === order.id ? "SAVING..." : "SAVE AWB"}
                               </button>
@@ -1078,7 +1079,7 @@ function AdminContent() {
                                   href={`https://www.google.com/search?q=track+${encodeURIComponent(trackingInfo)}`}
                                   target="_blank"
                                   rel="noreferrer"
-                                  className="text-neutral-600 hover:text-black text-[10px] font-bold uppercase underline sm:ml-auto"
+                                  className="text-neutral-500 dark:text-neutral-400 hover:text-black dark:hover:text-white text-[10px] font-bold uppercase underline sm:ml-auto"
                                 >
                                   Track &rarr;
                                 </a>
@@ -1089,14 +1090,14 @@ function AdminContent() {
 
                         {/* Ordered Items Table */}
                         <div className="space-y-2">
-                          <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 block">
+                          <span className="text-[9px] font-black uppercase tracking-widest text-neutral-500 dark:text-neutral-400 block">
                             Ordered Items ({order.items.length})
                           </span>
-                          <div className="divide-y divide-neutral-200 border border-neutral-200 bg-white rounded-xl overflow-hidden">
+                          <div className="divide-y divide-neutral-200 dark:divide-neutral-800 border border-neutral-200/80 dark:border-neutral-800 bg-white dark:bg-[#151618] rounded-2xl overflow-hidden">
                             {order.items.map((item, idx) => (
                               <div key={idx} className="p-3 flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-3">
-                                  <div className="relative w-10 h-12 bg-neutral-100 border border-neutral-300 rounded overflow-hidden flex-shrink-0">
+                                  <div className="relative w-10 h-12 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden flex-shrink-0">
                                     <Image
                                       src={item.image || "/images/products/oversized-tshirt.jpg"}
                                       alt={item.name}
@@ -1105,15 +1106,15 @@ function AdminContent() {
                                     />
                                   </div>
                                   <div>
-                                    <p className="font-bold text-black uppercase">{item.name}</p>
-                                    <p className="text-[10px] text-neutral-600 uppercase">
-                                      Size: <span className="text-black font-bold">{item.size}</span> • Quantity:{" "}
-                                      <span className="text-black font-bold">{item.quantity}</span>{" "}
+                                    <p className="font-bold text-neutral-900 dark:text-white uppercase">{item.name}</p>
+                                    <p className="text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">
+                                      Size: <span className="text-neutral-900 dark:text-white font-bold">{item.size}</span> • Quantity:{" "}
+                                      <span className="text-neutral-900 dark:text-white font-bold">{item.quantity}</span>{" "}
                                       {item.color ? `• Color: ${item.color}` : ""}
                                     </p>
                                   </div>
                                 </div>
-                                <span className="font-bold text-black">
+                                <span className="font-bold text-neutral-900 dark:text-white">
                                   RS. {(item.price * item.quantity).toLocaleString()}
                                 </span>
                               </div>
@@ -1130,8 +1131,8 @@ function AdminContent() {
 
           {/* Bottom Pagination Bar */}
           {filteredOrders.length > 0 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 border border-neutral-300 rounded-xl shadow-xs mt-6">
-              <div className="text-xs text-neutral-600 font-bold uppercase">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-[#151618] p-4 border border-neutral-200/80 dark:border-neutral-800 rounded-[20px] shadow-xs mt-6">
+              <div className="text-xs text-neutral-600 dark:text-neutral-400 font-bold uppercase">
                 Showing {startIndex + 1}–{endIndex} of {filteredOrders.length} orders
                 {ordersPerPage !== -1 && (
                   <span className="text-neutral-400 ml-2">
@@ -1146,7 +1147,7 @@ function AdminContent() {
                     type="button"
                     disabled={currentOrderPage <= 1}
                     onClick={() => setOrderPage((p) => Math.max(1, p - 1))}
-                    className="px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-neutral-100 border border-neutral-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-200 text-neutral-800 transition-colors rounded-lg"
+                    className="px-3 py-1.5 text-xs font-black uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 transition-colors rounded-full cursor-pointer"
                   >
                     &larr; Prev
                   </button>
@@ -1187,14 +1188,14 @@ function AdminContent() {
       {activeTab === "products" && (
         <section className="space-y-6">
           {/* Controls Bar: Category Filters & Search */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-4 border border-neutral-300 rounded-2xl shadow-xs">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white dark:bg-[#151618] p-4 border border-neutral-200/80 dark:border-neutral-800 rounded-[24px] shadow-xs">
             <div className="w-full md:w-80">
               <input
                 type="text"
                 placeholder="Search products by title, sub-category..."
                 value={productSearchQuery}
                 onChange={(e) => setProductSearchQuery(e.target.value)}
-                className="w-full bg-[#F5F4EE] border border-neutral-300 px-3.5 py-2 text-xs font-bold tracking-wider text-black placeholder:text-neutral-400 focus:outline-none focus:border-[#E8262A] rounded-xl"
+                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 px-4 py-2.5 text-xs font-bold tracking-wider text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-black dark:focus:border-white rounded-full"
               />
             </div>
 
@@ -1202,10 +1203,10 @@ function AdminContent() {
               <button
                 type="button"
                 onClick={() => setProductCategoryFilter("All")}
-                className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors rounded-xl ${
+                className={`px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all rounded-full ${
                   productCategoryFilter === "All"
-                    ? "bg-[#E8262A] text-white font-black shadow-xs"
-                    : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
+                    ? "bg-black text-white dark:bg-white dark:text-black font-black shadow-xs"
+                    : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700"
                 }`}
               >
                 All Categories ({productsList.length})
@@ -1229,10 +1230,10 @@ function AdminContent() {
                     key={cat.id}
                     type="button"
                     onClick={() => setProductCategoryFilter(cat.id)}
-                    className={`px-3 py-1.5 text-[10px] font-black uppercase tracking-wider transition-colors rounded-xl ${
+                    className={`px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider transition-all rounded-full ${
                       productCategoryFilter.toLowerCase() === cat.id.toLowerCase()
-                        ? "bg-[#E8262A] text-white font-black shadow-xs"
-                        : "bg-[#F5F4EE] text-neutral-700 hover:text-black hover:bg-neutral-200 border border-neutral-300"
+                        ? "bg-black text-white dark:bg-white dark:text-black font-black shadow-xs"
+                        : "bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700"
                     }`}
                   >
                     {cat.name} ({count})
@@ -1242,7 +1243,7 @@ function AdminContent() {
               <button
                 type="button"
                 onClick={() => handleSelectTab("categories")}
-                className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider bg-neutral-100 hover:bg-neutral-200 border border-neutral-300 text-neutral-800 rounded-xl transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-1.5 text-[10px] font-black uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-full transition-colors flex items-center gap-1.5 cursor-pointer"
                 title="Configure Coming Soon Drop Pages"
               >
                 <span>🚧 Coming Soon Pages &rarr;</span>
@@ -1251,19 +1252,19 @@ function AdminContent() {
           </div>
 
           {/* Products Container: Responsive Mobile Cards + Desktop Table */}
-          <div className="bg-white border border-neutral-300 rounded-2xl shadow-xs overflow-hidden">
+          <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 rounded-[26px] shadow-xs overflow-hidden">
             {/* Mobile Cards View (Visible on Mobile / Small screens) */}
-            <div className="md:hidden divide-y divide-neutral-200">
+            <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-800">
               {filteredProducts.map((product) => {
                 const isInStock = product.inStock !== false;
                 const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
 
                 return (
-                  <div key={product.id} className="p-4 space-y-3 bg-white">
+                  <div key={product.id} className="p-4 space-y-3 bg-white dark:bg-[#151618]">
                     <div className="flex gap-3 items-start">
                       <div
                         onClick={() => setEditingProduct({ ...product })}
-                        className="relative w-16 h-20 bg-neutral-100 border border-neutral-300 rounded-xl overflow-hidden cursor-pointer flex-shrink-0 group"
+                        className="relative w-16 h-20 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden cursor-pointer flex-shrink-0 group"
                         title="Click to edit photo"
                       >
                         <Image
@@ -1277,14 +1278,14 @@ function AdminContent() {
                         </span>
                       </div>
                       <div className="flex-1 min-w-0 space-y-1">
-                        <p className="font-bold text-black text-xs uppercase leading-snug truncate">{product.name}</p>
-                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 uppercase">
+                        <p className="font-bold text-neutral-900 dark:text-white text-xs uppercase leading-snug truncate">{product.name}</p>
+                        <div className="flex items-center gap-1.5 text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">
                           <span className="text-[#E8262A] font-bold">{product.category}</span>
                           <span>•</span>
                           <span>{product.subCategory || "Streetwear"}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="font-black text-black text-xs">
+                          <span className="font-black text-neutral-900 dark:text-white text-xs">
                             RS. {product.price.toLocaleString()}
                           </span>
                           {product.originalPrice && (
@@ -1300,8 +1301,8 @@ function AdminContent() {
                               key={sz}
                               className={`text-[8px] font-bold px-1.5 py-0.2 uppercase rounded ${
                                 prodSizes.includes(sz)
-                                  ? "bg-neutral-800 text-white"
-                                  : "bg-neutral-100 text-neutral-400 line-through"
+                                  ? "bg-black text-white dark:bg-white dark:text-black"
+                                  : "bg-neutral-100 dark:bg-neutral-800 text-neutral-400 line-through"
                               }`}
                             >
                               {sz}
@@ -1311,14 +1312,14 @@ function AdminContent() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-neutral-100 flex-wrap">
+                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex-wrap">
                       <button
                         type="button"
                         onClick={() => handleToggleStock(product.id, isInStock)}
-                        className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-lg cursor-pointer ${
+                        className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-full cursor-pointer ${
                           isInStock
-                            ? "bg-emerald-50 border-emerald-300 text-emerald-800"
-                            : "bg-red-50 border-red-300 text-red-800"
+                            ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300"
+                            : "bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-800 text-red-800 dark:text-red-300"
                         }`}
                       >
                         {isInStock ? "● In Stock (Active)" : "○ Sold Out"}
@@ -1328,14 +1329,14 @@ function AdminContent() {
                         <button
                           type="button"
                           onClick={() => setEditingProduct({ ...product })}
-                          className="bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-[#E8262A] hover:text-white px-3 py-1 text-[10px] font-black tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                          className="bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3 py-1 text-[10px] font-black tracking-wider uppercase transition-colors rounded-full cursor-pointer"
                         >
                           Edit & Photos
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteProduct(product.id, product.name)}
-                          className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                          className="bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/60 border border-red-200 dark:border-red-800 px-2.5 py-1 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-full cursor-pointer"
                         >
                           Delete
                         </button>
@@ -1350,7 +1351,7 @@ function AdminContent() {
             <div className="hidden md:block overflow-x-auto w-full">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-neutral-200 bg-[#F5F4EE] text-neutral-600 font-bold uppercase text-[10px] tracking-wider">
+                  <tr className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-100/70 dark:bg-neutral-900/70 text-neutral-600 dark:text-neutral-400 font-bold uppercase text-[10px] tracking-wider">
                     <th className="py-3 px-4">Photo</th>
                     <th className="py-3 px-4">Product Name & Category</th>
                     <th className="py-3 px-4">Price</th>
@@ -1359,18 +1360,18 @@ function AdminContent() {
                     <th className="py-3 px-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-200">
+                <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
                   {filteredProducts.map((product) => {
                     const isInStock = product.inStock !== false;
                     const prodSizes = product.sizes && product.sizes.length > 0 ? product.sizes : ALL_SIZES;
 
                     return (
-                      <tr key={product.id} className="hover:bg-neutral-50/80 transition-colors">
+                      <tr key={product.id} className="hover:bg-neutral-50/80 dark:hover:bg-neutral-800/40 transition-colors">
                         {/* Photo Thumbnail */}
                         <td className="py-3 px-4">
                           <div
                             onClick={() => setEditingProduct({ ...product })}
-                            className="relative w-12 h-16 bg-neutral-100 border border-neutral-300 rounded-lg overflow-hidden cursor-pointer group"
+                            className="relative w-12 h-16 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden cursor-pointer group"
                             title="Click to change photo"
                           >
                             <Image
@@ -1387,8 +1388,8 @@ function AdminContent() {
 
                         {/* Product Name & Category */}
                         <td className="py-3 px-4">
-                          <p className="font-bold text-black text-xs">{product.name}</p>
-                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-500 uppercase">
+                          <p className="font-bold text-neutral-900 dark:text-white text-xs">{product.name}</p>
+                          <div className="flex items-center gap-2 mt-0.5 text-[10px] text-neutral-500 dark:text-neutral-400 uppercase">
                             <span className="text-[#E8262A] font-bold">{product.category}</span>
                             <span>•</span>
                             <span>{product.subCategory || "Streetwear"}</span>
@@ -1396,7 +1397,7 @@ function AdminContent() {
                         </td>
 
                         {/* Price */}
-                        <td className="py-3 px-4 font-bold text-black">
+                        <td className="py-3 px-4 font-bold text-neutral-900 dark:text-white">
                           RS. {product.price.toLocaleString()}
                           {product.originalPrice && (
                             <span className="text-neutral-400 line-through ml-1 text-[10px]">
@@ -1410,10 +1411,10 @@ function AdminContent() {
                           <button
                             type="button"
                             onClick={() => handleToggleStock(product.id, isInStock)}
-                            className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-lg cursor-pointer ${
+                            className={`text-[9px] font-black uppercase px-2.5 py-1 border transition-colors rounded-full cursor-pointer ${
                               isInStock
-                                ? "bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-red-50 hover:border-red-300 hover:text-red-800"
-                                : "bg-red-50 border-red-300 text-red-800 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-800"
+                                ? "bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 hover:bg-red-50 hover:border-red-300 hover:text-red-800"
+                                : "bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-800 text-red-800 dark:text-red-300 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-800"
                             }`}
                           >
                             {isInStock ? "In Stock (Active)" : "Sold Out"}
@@ -1428,8 +1429,8 @@ function AdminContent() {
                                 key={sz}
                                 className={`text-[8px] font-bold px-1.5 py-0.5 uppercase rounded ${
                                   prodSizes.includes(sz)
-                                    ? "bg-neutral-800 text-white"
-                                    : "bg-neutral-100 text-neutral-400 line-through"
+                                    ? "bg-black text-white dark:bg-white dark:text-black"
+                                    : "bg-neutral-100 dark:bg-neutral-800 text-neutral-400 line-through"
                                 }`}
                               >
                                 {sz}
@@ -1443,14 +1444,14 @@ function AdminContent() {
                           <button
                             type="button"
                             onClick={() => setEditingProduct({ ...product })}
-                            className="bg-neutral-100 text-neutral-900 border border-neutral-300 hover:bg-[#E8262A] hover:text-white px-3 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                            className="bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black px-3.5 py-1.5 text-[10px] font-black tracking-wider uppercase transition-colors rounded-full cursor-pointer"
                           >
                             Edit & Photos
                           </button>
                           <button
                             type="button"
                             onClick={() => handleDeleteProduct(product.id, product.name)}
-                            className="bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 px-2.5 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-lg cursor-pointer"
+                            className="bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/60 border border-red-200 dark:border-red-800 px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-colors rounded-full cursor-pointer"
                           >
                             Delete
                           </button>
@@ -1506,12 +1507,12 @@ function AdminContent() {
       {/* ========================================================================= */}
       {activeTab === "users" && (
         <section className="space-y-6">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 border border-neutral-300 rounded-2xl shadow-xs">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white dark:bg-[#151618] p-5 border border-neutral-200/80 dark:border-neutral-800 rounded-[24px] shadow-xs">
             <div>
-              <h3 className="text-sm font-black uppercase tracking-widest text-black">
+              <h3 className="text-sm font-black uppercase tracking-widest text-neutral-900 dark:text-white">
                 Registered Customer Accounts
               </h3>
-              <p className="text-xs text-neutral-500 uppercase mt-0.5">
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 uppercase mt-0.5">
                 Full list of users who signed up or registered on the store.
               </p>
             </div>
@@ -1522,153 +1523,153 @@ function AdminContent() {
                 placeholder="Search by Name, Email, or Mobile Number..."
                 value={userSearchQuery}
                 onChange={(e) => setUserSearchQuery(e.target.value)}
-                className="w-full bg-[#F5F4EE] border border-neutral-300 px-3.5 py-2 text-xs font-bold tracking-wider text-black placeholder:text-neutral-400 focus:outline-none focus:border-[#E8262A] rounded-xl"
+                className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 px-4 py-2.5 text-xs font-bold tracking-wider text-neutral-900 dark:text-white placeholder:text-neutral-400 focus:outline-none focus:border-black dark:focus:border-white rounded-full"
               />
             </div>
           </div>
 
           {filteredUsers.length === 0 ? (
-            <div className="py-16 text-center border border-dashed border-neutral-300 bg-white rounded-2xl p-6 space-y-2">
-              <p className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+            <div className="py-16 text-center border border-dashed border-neutral-300 dark:border-neutral-700 bg-white dark:bg-[#151618] rounded-[24px] p-6 space-y-2">
+              <p className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
                 No registered accounts match your search.
               </p>
             </div>
           ) : (
-            <div className="bg-white border border-neutral-300 rounded-2xl shadow-xs overflow-hidden">
+            <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 rounded-[26px] shadow-xs overflow-hidden">
               {/* Mobile Cards View (Visible on Mobile / Small screens) */}
-            <div className="md:hidden divide-y divide-neutral-200">
-              {filteredUsers.map((user) => {
-                const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
-                const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
+              <div className="md:hidden divide-y divide-neutral-100 dark:divide-neutral-800">
+                {filteredUsers.map((user) => {
+                  const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
+                  const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
 
-                const userOrderCount = ordersList.filter((o) => {
-                  if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
-                  const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
-                  if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
-                  if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
-                  return false;
-                }).length;
+                  const userOrderCount = ordersList.filter((o) => {
+                    if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
+                    const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
+                    if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
+                    if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
+                    return false;
+                  }).length;
 
-                return (
-                  <div key={user.id} className="p-4 space-y-3 bg-white">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-white text-xs">
-                          {user.name.charAt(0).toUpperCase()}
+                  return (
+                    <div key={user.id} className="p-4 space-y-3 bg-white dark:bg-[#151618]">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center font-black text-white dark:text-black text-xs">
+                            {user.name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <p className="font-bold text-neutral-900 dark:text-white text-xs uppercase leading-snug">{user.name}</p>
+                            <p className="text-[10px] text-neutral-400 font-mono">
+                              Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "Recent"}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-black text-xs uppercase leading-snug">{user.name}</p>
-                          <p className="text-[10px] text-neutral-400 font-mono">
-                            Joined {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" }) : "Recent"}
-                          </p>
-                        </div>
+                        <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white border border-neutral-200 dark:border-neutral-700">
+                          {userOrderCount} Orders
+                        </span>
                       </div>
-                      <span className="text-[10px] font-black px-2.5 py-0.5 rounded-full bg-neutral-100 text-black border border-neutral-200">
-                        {userOrderCount} Orders
-                      </span>
+
+                      <div className="text-xs space-y-1 bg-neutral-50 dark:bg-neutral-900/60 p-3 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 font-mono">
+                        <p className="text-neutral-700 dark:text-neutral-300 truncate">
+                          ✉️ {user.email ? <a href={`mailto:${user.email}`} className="underline">{user.email}</a> : <span className="text-neutral-400 italic">None</span>}
+                        </p>
+                        <p className="text-neutral-700 dark:text-neutral-300">
+                          📞 {user.phone ? <a href={`tel:+91${userPhoneClean}`} className="underline">+91 {user.phone}</a> : <span className="text-neutral-400 italic">None</span>}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleSelectTab("orders");
+                          setOrderSearchQuery(user.name);
+                        }}
+                        className="w-full text-center py-2 text-[10px] text-neutral-800 dark:text-neutral-200 hover:text-white hover:bg-black dark:hover:bg-white dark:hover:text-black font-black uppercase tracking-wider bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-full transition-colors cursor-pointer"
+                      >
+                        View Customer Orders &rarr;
+                      </button>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <div className="text-xs space-y-1 bg-[#F9F8F5] p-2.5 rounded-xl border border-neutral-200 font-mono">
-                      <p className="text-neutral-700 truncate">
-                        ✉️ {user.email ? <a href={`mailto:${user.email}`} className="underline">{user.email}</a> : <span className="text-neutral-400 italic">None</span>}
-                      </p>
-                      <p className="text-neutral-700">
-                        📞 {user.phone ? <a href={`tel:+91${userPhoneClean}`} className="underline">+91 {user.phone}</a> : <span className="text-neutral-400 italic">None</span>}
-                      </p>
-                    </div>
+              {/* Desktop Table View (Hidden on Mobile) */}
+              <div className="hidden md:block overflow-x-auto w-full">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-neutral-200 dark:border-neutral-800 bg-neutral-100/70 dark:bg-neutral-900/70 text-neutral-600 dark:text-neutral-400 font-bold uppercase text-[10px] tracking-wider">
+                      <th className="py-3.5 px-4">Member Name</th>
+                      <th className="py-3.5 px-4">Email Address</th>
+                      <th className="py-3.5 px-4">Mobile Number</th>
+                      <th className="py-3.5 px-4">Signup Date</th>
+                      <th className="py-3.5 px-4">Orders Placed</th>
+                      <th className="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100 dark:divide-neutral-800">
+                    {filteredUsers.map((user) => {
+                      const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
+                      const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
 
-                    <button
-                      type="button"
-                      onClick={() => {
-                        handleSelectTab("orders");
-                        setOrderSearchQuery(user.name);
-                      }}
-                      className="w-full text-center py-2 text-[10px] text-[#E8262A] hover:text-[#d01e22] font-black uppercase tracking-wider bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl transition-colors cursor-pointer"
-                    >
-                      View Customer Orders &rarr;
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                      const userOrderCount = ordersList.filter((o) => {
+                        if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
+                        const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
+                        if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
+                        if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
+                        return false;
+                      }).length;
 
-            {/* Desktop Table View (Hidden on Mobile) */}
-            <div className="hidden md:block overflow-x-auto w-full">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-neutral-200 bg-[#F5F4EE] text-neutral-600 font-bold uppercase text-[10px] tracking-wider">
-                    <th className="py-3.5 px-4">Member Name</th>
-                    <th className="py-3.5 px-4">Email Address</th>
-                    <th className="py-3.5 px-4">Mobile Number</th>
-                    <th className="py-3.5 px-4">Signup Date</th>
-                    <th className="py-3.5 px-4">Orders Placed</th>
-                    <th className="py-3.5 px-4 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-200">
-                  {filteredUsers.map((user) => {
-                    const userPhoneClean = user.phone ? user.phone.replace(/\D/g, "") : "";
-                    const userEmailClean = user.email ? user.email.toLowerCase().trim() : "";
-
-                    const userOrderCount = ordersList.filter((o) => {
-                      if (userEmailClean && o.email && o.email.toLowerCase().trim() === userEmailClean) return true;
-                      const oPhone = o.phone ? o.phone.replace(/\D/g, "") : "";
-                      if (userPhoneClean && oPhone && (oPhone.endsWith(userPhoneClean) || userPhoneClean.endsWith(oPhone))) return true;
-                      if (o.customerName && user.name && o.customerName.toLowerCase().trim() === user.name.toLowerCase().trim()) return true;
-                      return false;
-                    }).length;
-
-                    return (
-                      <tr key={user.id} className="hover:bg-neutral-50/80 transition-colors">
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[#E8262A] flex items-center justify-center font-black text-white text-xs">
-                              {user.name.charAt(0).toUpperCase()}
+                      return (
+                        <tr key={user.id} className="hover:bg-neutral-50/80 dark:hover:bg-neutral-800/40 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-black dark:bg-white flex items-center justify-center font-black text-white dark:text-black text-xs">
+                                {user.name.charAt(0).toUpperCase()}
+                              </div>
+                              <span className="font-bold text-neutral-900 dark:text-white uppercase">{user.name}</span>
                             </div>
-                            <span className="font-bold text-black uppercase">{user.name}</span>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-neutral-700">
-                          {user.email || <span className="text-neutral-400 italic">None</span>}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-neutral-700">
-                          {user.phone ? `+91 ${user.phone}` : <span className="text-neutral-400 italic">None</span>}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-neutral-700">
-                          <div className="flex flex-col">
-                            <span className="font-bold text-black text-xs">
-                              {user.createdAt
-                                ? new Date(user.createdAt).toLocaleDateString("en-IN", {
-                                    day: "2-digit",
-                                    month: "short",
-                                    year: "numeric",
-                                  })
-                                : "Recent"}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-3.5 px-4">
-                          <span className="font-black text-black">{userOrderCount} Orders</span>
-                        </td>
-                        <td className="py-3.5 px-4 text-right">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              handleSelectTab("orders");
-                              setOrderSearchQuery(user.name);
-                            }}
-                            className="text-[10px] text-[#E8262A] hover:text-[#d01e22] font-bold uppercase tracking-wider underline cursor-pointer"
-                          >
-                            View Customer Orders &rarr;
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-neutral-700 dark:text-neutral-300">
+                            {user.email || <span className="text-neutral-400 italic">None</span>}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-neutral-700 dark:text-neutral-300">
+                            {user.phone ? `+91 ${user.phone}` : <span className="text-neutral-400 italic">None</span>}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono text-neutral-700 dark:text-neutral-300">
+                            <div className="flex flex-col">
+                              <span className="font-bold text-neutral-900 dark:text-white text-xs">
+                                {user.createdAt
+                                  ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+                                      day: "2-digit",
+                                      month: "short",
+                                      year: "numeric",
+                                    })
+                                  : "Recent"}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="font-black text-neutral-900 dark:text-white">{userOrderCount} Orders</span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleSelectTab("orders");
+                                setOrderSearchQuery(user.name);
+                              }}
+                              className="text-[10px] text-neutral-800 dark:text-neutral-200 hover:text-[#E8262A] font-bold uppercase tracking-wider underline cursor-pointer"
+                            >
+                              View Customer Orders &rarr;
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
           )}
         </section>
       )}
@@ -1677,21 +1678,21 @@ function AdminContent() {
       {/* MODAL: EDIT PRODUCT & MULTI-PHOTO MANAGER */}
       {/* ========================================================================= */}
       {editingProduct && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md font-inter">
-          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-4 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md font-inter">
+          <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 w-full max-w-2xl p-5 sm:p-8 space-y-6 text-neutral-900 dark:text-white rounded-[32px] shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Product & Photo Editor
                 </span>
-                <h3 className="text-xl font-bold tracking-wide uppercase mt-0.5 font-anton text-[#2C2A29]">
+                <h3 className="text-xl font-black tracking-tight uppercase mt-0.5 text-neutral-900 dark:text-white">
                   Edit Details & Photography
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingProduct(null)}
-                className="text-neutral-400 hover:text-black text-2xl font-bold leading-none p-1"
+                className="text-neutral-400 hover:text-black dark:hover:text-white text-2xl font-bold leading-none p-1 cursor-pointer"
               >
                 &times;
               </button>
@@ -1699,7 +1700,7 @@ function AdminContent() {
 
             <form onSubmit={handleSaveProduct} className="space-y-6">
               {/* Multi-Photo Manager Area */}
-              <div className="border border-neutral-300 p-4 bg-[#F9F8F5] rounded-xl space-y-3">
+              <div className="border border-neutral-200/80 dark:border-neutral-800 p-4 bg-neutral-50 dark:bg-neutral-900/60 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-700">
                     Product Photography ({editingProduct.images?.length || 0} Photos)
@@ -1945,8 +1946,8 @@ function AdminContent() {
                         }}
                         className={`w-10 h-10 border text-xs font-bold uppercase rounded-xl transition-all ${
                           isSelected
-                            ? "border-[#E8262A] bg-[#E8262A] text-white font-black shadow-xs"
-                            : "border-neutral-300 bg-white text-neutral-600 hover:border-neutral-400"
+                            ? "border-black dark:border-white bg-black dark:bg-white text-white dark:text-black font-black shadow-xs"
+                            : "border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400"
                         }`}
                       >
                         {sz}
@@ -1958,38 +1959,38 @@ function AdminContent() {
 
               {/* Toggles Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                <label className="flex items-center gap-3 p-3 bg-[#F5F4EE] border border-neutral-300 rounded-xl cursor-pointer">
+                <label className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editingProduct.inStock !== false}
                     onChange={(e) => setEditingProduct({ ...editingProduct, inStock: e.target.checked })}
                     className="w-4 h-4 accent-[#E8262A]"
                   />
-                  <span className="text-xs font-bold uppercase text-black">In Stock (Active for purchase)</span>
+                  <span className="text-xs font-bold uppercase text-neutral-900 dark:text-white">In Stock (Active for purchase)</span>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 bg-[#F5F4EE] border border-neutral-300 rounded-xl cursor-pointer">
+                <label className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl cursor-pointer">
                   <input
                     type="checkbox"
                     checked={editingProduct.visibleOnSite !== false}
                     onChange={(e) => setEditingProduct({ ...editingProduct, visibleOnSite: e.target.checked })}
                     className="w-4 h-4 accent-[#E8262A]"
                   />
-                  <span className="text-xs font-bold uppercase text-black">Visible on Live Website</span>
+                  <span className="text-xs font-bold uppercase text-neutral-900 dark:text-white">Visible on Live Website</span>
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-neutral-200">
+              <div className="flex gap-3 pt-4 border-t border-neutral-100 dark:border-neutral-800">
                 <button
                   type="button"
                   onClick={() => setEditingProduct(null)}
-                  className="w-1/3 border border-neutral-300 hover:bg-neutral-100 text-neutral-700 py-3 text-xs font-bold uppercase rounded-xl transition-colors"
+                  className="w-1/3 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 py-3 text-xs font-bold uppercase rounded-full transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-[#E8262A] hover:bg-[#d01e22] text-white py-3 text-xs font-black uppercase rounded-xl transition-all shadow-md active:scale-98"
+                  className="w-2/3 bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black py-3 text-xs font-black uppercase rounded-full transition-all shadow-md active:scale-98 cursor-pointer"
                 >
                   {saveSuccess ? "Saved Successfully ✓" : "Save Changes"}
                 </button>
@@ -2003,21 +2004,21 @@ function AdminContent() {
       {/* MODAL: ADD NEW PRODUCT */}
       {/* ========================================================================= */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-md font-inter">
-          <div className="bg-white/95 backdrop-blur-2xl border border-white/70 w-full max-w-2xl p-4 sm:p-8 space-y-6 text-black rounded-3xl shadow-2xl max-h-[92vh] overflow-y-auto">
-            <div className="flex justify-between items-center border-b border-neutral-200 pb-4">
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-md font-inter">
+          <div className="bg-white dark:bg-[#151618] border border-neutral-200/80 dark:border-neutral-800 w-full max-w-2xl p-5 sm:p-8 space-y-6 text-neutral-900 dark:text-white rounded-[32px] shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div className="flex justify-between items-center border-b border-neutral-100 dark:border-neutral-800 pb-4">
               <div>
                 <span className="text-[9px] font-black tracking-widest text-[#E8262A] uppercase">
                   Catalog Operations
                 </span>
-                <h3 className="text-xl font-bold tracking-wide uppercase mt-0.5 font-anton text-[#2C2A29]">
+                <h3 className="text-xl font-black tracking-tight uppercase mt-0.5 text-neutral-900 dark:text-white">
                   Add New Drop Product
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={() => setIsAddModalOpen(false)}
-                className="text-neutral-400 hover:text-black text-2xl font-bold leading-none p-1"
+                className="text-neutral-400 hover:text-black dark:hover:text-white text-2xl font-bold leading-none p-1 cursor-pointer"
               >
                 &times;
               </button>
@@ -2025,12 +2026,12 @@ function AdminContent() {
 
             <form onSubmit={handleCreateProduct} className="space-y-6">
               {/* Multi-Photo Manager Area */}
-              <div className="border border-neutral-300 p-4 bg-[#F9F8F5] rounded-xl space-y-3">
+              <div className="border border-neutral-200/80 dark:border-neutral-800 p-4 bg-neutral-50 dark:bg-neutral-900/60 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-700">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-neutral-700 dark:text-neutral-300">
                     Product Photography ({newProductForm.images?.length || 0} Photos)
                   </label>
-                  <span className="text-[9px] text-neutral-500 font-bold uppercase">
+                  <span className="text-[9px] text-neutral-500 dark:text-neutral-400 font-bold uppercase">
                     Upload 2 to 4 photos
                   </span>
                 </div>
@@ -2273,8 +2274,8 @@ function AdminContent() {
                         }}
                         className={`w-10 h-10 border text-xs font-bold uppercase rounded-xl transition-all ${
                           isSelected
-                            ? "border-[#E8262A] bg-[#E8262A] text-white font-black shadow-xs"
-                            : "border-neutral-300 bg-white text-neutral-600 hover:border-neutral-400"
+                            ? "border-black dark:border-white bg-black dark:bg-white text-white dark:text-black font-black shadow-xs"
+                            : "border-neutral-200 dark:border-neutral-700 bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 hover:border-neutral-400"
                         }`}
                       >
                         {sz}
@@ -2285,7 +2286,7 @@ function AdminContent() {
               </div>
 
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 dark:text-neutral-400 mb-1">
                   Description
                 </label>
                 <textarea
@@ -2293,44 +2294,44 @@ function AdminContent() {
                   placeholder="Heavyweight custom-milled French Terry..."
                   value={newProductForm.description || ""}
                   onChange={(e) => setNewProductForm({ ...newProductForm, description: e.target.value })}
-                  className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2 text-xs text-black focus:outline-none focus:border-[#E8262A]"
+                  className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl px-3.5 py-2 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
                 />
               </div>
 
               {/* Visibility and Stock Toggles */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <label className="flex items-center gap-3 p-3 bg-[#F5F4EE] border border-neutral-300 rounded-xl cursor-pointer">
+                <label className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl cursor-pointer">
                   <input
                     type="checkbox"
                     checked={newProductForm.inStock !== false}
                     onChange={(e) => setNewProductForm({ ...newProductForm, inStock: e.target.checked })}
                     className="w-4 h-4 accent-[#E8262A]"
                   />
-                  <span className="text-xs font-bold uppercase text-black">In Stock (Active for purchase)</span>
+                  <span className="text-xs font-bold uppercase text-neutral-900 dark:text-white">In Stock (Active for purchase)</span>
                 </label>
 
-                <label className="flex items-center gap-3 p-3 bg-[#F5F4EE] border border-neutral-300 rounded-xl cursor-pointer">
+                <label className="flex items-center gap-3 p-3 bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-2xl cursor-pointer">
                   <input
                     type="checkbox"
                     checked={newProductForm.visibleOnSite !== false}
                     onChange={(e) => setNewProductForm({ ...newProductForm, visibleOnSite: e.target.checked })}
                     className="w-4 h-4 accent-[#E8262A]"
                   />
-                  <span className="text-xs font-bold uppercase text-black">Visible on Live Website</span>
+                  <span className="text-xs font-bold uppercase text-neutral-900 dark:text-white">Visible on Live Website</span>
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-4 border-t border-neutral-200">
+              <div className="flex gap-3 pt-4 border-t border-neutral-100 dark:border-neutral-800">
                 <button
                   type="button"
                   onClick={() => setIsAddModalOpen(false)}
-                  className="w-1/3 border border-neutral-300 hover:bg-neutral-100 text-neutral-700 py-3 text-xs font-bold uppercase rounded-xl transition-colors"
+                  className="w-1/3 border border-neutral-200 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-700 dark:text-neutral-300 py-3 text-xs font-bold uppercase rounded-full transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="w-2/3 bg-[#E8262A] hover:bg-[#d01e22] text-white py-3 text-xs font-black uppercase rounded-xl transition-all shadow-md active:scale-98"
+                  className="w-2/3 bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black py-3 text-xs font-black uppercase rounded-full transition-all shadow-md active:scale-98 cursor-pointer"
                 >
                   Publish New Product &rarr;
                 </button>
@@ -2342,13 +2343,13 @@ function AdminContent() {
 
       {/* Quick Add Subcategory Modal */}
       {quickAddSubOpen && (
-        <div className="fixed inset-0 z-60 bg-black/50 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-white/95 backdrop-blur-2xl rounded-3xl max-w-sm w-full p-6 border border-white/70 shadow-2xl animate-in zoom-in-95">
-            <h4 className="text-sm font-bold font-anton uppercase text-[#2C2A29] tracking-wide mb-1">
+        <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 font-inter">
+          <div className="bg-white dark:bg-[#151618] rounded-[28px] max-w-sm w-full p-6 border border-neutral-200/80 dark:border-neutral-800 shadow-2xl animate-in zoom-in-95">
+            <h4 className="text-sm font-black uppercase text-neutral-900 dark:text-white tracking-wide mb-1">
               Add New Sub-Category
             </h4>
-            <p className="text-xs text-neutral-500 mb-4">
-              Adding to <strong className="text-black">{quickSubTargetCat}</strong>. This will be immediately available in product forms and drawer menu.
+            <p className="text-xs text-neutral-500 dark:text-neutral-400 mb-4">
+              Adding to <strong className="text-neutral-900 dark:text-white">{quickSubTargetCat}</strong>. This will be immediately available in product forms and drawer menu.
             </p>
             <form
               onSubmit={(e) => {
@@ -2358,7 +2359,7 @@ function AdminContent() {
               className="space-y-4"
             >
               <div>
-                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-600 mb-1">
+                <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400 mb-1">
                   Sub-Category Name *
                 </label>
                 <input
@@ -2368,7 +2369,7 @@ function AdminContent() {
                   value={quickSubName}
                   onChange={(e) => setQuickSubName(e.target.value)}
                   autoFocus
-                  className="w-full bg-[#F5F4EE] border border-neutral-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-black focus:outline-none focus:border-[#E8262A]"
+                  className="w-full bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl px-3.5 py-2.5 text-xs font-bold text-neutral-900 dark:text-white focus:outline-none focus:border-black dark:focus:border-white"
                 />
               </div>
 
@@ -2379,14 +2380,14 @@ function AdminContent() {
                     setQuickAddSubOpen(false);
                     setQuickSubName("");
                   }}
-                  className="flex-1 py-2 text-xs font-bold uppercase rounded-xl border border-neutral-300 text-neutral-700 hover:bg-neutral-100"
+                  className="flex-1 py-2.5 text-xs font-bold uppercase rounded-full border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isAddingSubCategory || !quickSubName.trim()}
-                  className="flex-1 py-2 text-xs font-bold uppercase rounded-xl bg-[#E8262A] text-white hover:bg-red-700 disabled:opacity-50"
+                  className="flex-1 py-2.5 text-xs font-bold uppercase rounded-full bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black disabled:opacity-50 cursor-pointer"
                 >
                   {isAddingSubCategory ? "Saving..." : "Add & Select"}
                 </button>

@@ -129,16 +129,16 @@ export default function WiDKLandingView({ products }: WiDKLandingViewProps) {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             <Link
               href="/shop"
-              className="bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black px-6 sm:px-7 py-3 rounded-full text-xs font-black tracking-widest uppercase transition-all shadow-md hover:scale-105 active:scale-95 whitespace-nowrap"
+              className="bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-black px-6 sm:px-7 py-3 rounded-full text-xs font-black tracking-widest uppercase transition-all shadow-md hover:scale-105 active:scale-95 text-center"
             >
               Shop Latest Drops &rarr;
             </Link>
             <Link
               href="/collections"
-              className="bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 px-5 sm:px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase transition-all border border-neutral-200 dark:border-neutral-700 whitespace-nowrap"
+              className="bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 px-5 sm:px-6 py-3 rounded-full text-xs font-black tracking-widest uppercase transition-all border border-neutral-200 dark:border-neutral-700 text-center"
             >
               Collections
             </Link>
