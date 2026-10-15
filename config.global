@@ -6,7 +6,7 @@
 [PROJECT_METADATA]
 name = "my-fashion-store"
 brand = "DRIIVN"
-version = "0.1.0"
+version = "0.2.0"
 framework = "Next.js 16.3.5 (App Router)"
 ui_library = "React 19.2.8"
 styling = "Tailwind CSS v4 (@tailwindcss/postcss)"
@@ -32,7 +32,7 @@ db_seed = "npm run db:seed"           # Seeds baseline catalogue and products in
 [DIRECTORIES]
 app/                  # Next.js App Router routes, page views, and API endpoints
 app/api/              # REST API route handlers (products, reels, sections, orders, upload)
-components/           # Reusable UI components (Navbar, Footer, ProductCard, QuickAddModal, etc.)
+components/           # Reusable UI components (Navbar, Footer, ProductCard, WiDKLandingView, etc.)
 components/admin/     # Admin dashboard and management portal components
 data/                 # Mock and initial static data resources
 lib/                  # Shared utilities, store state management, Prisma client, location maps
@@ -43,6 +43,28 @@ scripts/              # Database migration and seeding scripts (seed.js)
 # ==============================================================================
 # CORE SYSTEM INSTRUCTIONS & GUIDELINES
 # ==============================================================================
+
+[INSTRUCTIONS.WIDK_UI_SPECIFICATION]
+1. Unified Aesthetic:
+   - Soft modern slate-grey background: `#DFE3E6` (Light) and `#0c0d0e` (Dark).
+   - Surfaces/Cards: `rounded-[32px]` or `rounded-[38px]` with `border border-neutral-200/70 dark:border-neutral-800/80` and `shadow-[0_12px_40px_rgba(0,0,0,0.05)]`.
+   - Action buttons: Pill-shaped `rounded-full` with high-contrast obsidian black / crisp white styling.
+2. Landing Page (`app/page.tsx` & `components/WiDKLandingView.tsx`):
+   - Natural momentum page scrolling (no scroll hijacking or frozen steps).
+   - Hero Bento Section: Top header, 6-col large flagship hoodie feature, 2-pair perspective cards, and the Obsidian Buy Card.
+   - "More All You Needs." Section: 8-card grid with interactive filter pill chips (`All`, `Hoodies`, `T-Shirts`, `Jackets`, `Pants`, `Accessories`).
+   - "The Collection Edit": 2-column bento cards for Core Drop & Tactical Series.
+   - Interactive Lookbook Builder: Live color swatches and size selector with direct "Add to Bag" action.
+   - Verified Reviews Card: Exact WiDK layout with reviewer avatar, 5-star rating, review text, and photo thumbnails.
+   - 2x2 Service Guarantee Grid: Discount, Package, Delivery Time, Estimation Arrive.
+   - VIP Newsletter Capsule: Instant subscription with toast notification.
+3. Global Navbar (`components/Navbar.tsx`):
+   - Rendered across all pages including `/`.
+   - Left: Hamburger menu `☰` + category pills (`Clothing ˅`, `New Arrivals`, `Sale`, search bar pill, `Men`, `Women`, `Accessories`).
+   - Center: `DRIIVN` logo.
+   - Right: `Collections`, `FAQs`, `Wishlist ♡`, `Account 👤`, `Theme Toggle`, and `Bag ({count})`.
+4. Global Footer (`components/Footer.tsx`):
+   - Rendered at the bottom of all pages (excluding `/admin`).
 
 [INSTRUCTIONS.NAVIGATION_AND_NAVBAR]
 1. Header Auto-Hide:
