@@ -53,7 +53,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-[#E8E6DF] dark:bg-[#0e0e10] text-[#121212] dark:text-[#f4f4f5] selection:bg-[#E8262A] selection:text-white transition-colors duration-200">
+      <body className="min-h-full flex flex-col bg-[#DFE3E6] dark:bg-[#0c0d0e] text-[#121212] dark:text-[#f4f4f5] selection:bg-[#E8262A] selection:text-white transition-colors duration-200">
         <ThemeProvider>
           <Navbar />
           <main className="flex-grow">{children}</main>

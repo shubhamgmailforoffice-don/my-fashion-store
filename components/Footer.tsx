@@ -13,8 +13,8 @@ export default function Footer() {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
-  // Do not render customer footer inside Admin Control Center or Homepage showcase
-  if (pathname?.startsWith("/admin") || pathname === "/") {
+  // Do not render customer footer inside Admin Control Center
+  if (pathname?.startsWith("/admin")) {
     return null;
   }
 
