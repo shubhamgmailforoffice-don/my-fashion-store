@@ -276,6 +276,20 @@ export default function Navbar() {
     };
   }, []);
 
+  const [isClothingDropdownOpen, setIsClothingDropdownOpen] = useState(false);
+
+  // Global keyboard shortcut: Cmd+K / Ctrl+K opens quick search modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const subtotal = useMemo(
     () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
     [cartItems]
@@ -459,84 +473,31 @@ export default function Navbar() {
     <>
       {/* Main Sticky Header with Auto-hide on Scroll */}
       <header
-        className={`sticky top-0 z-40 w-full border-b border-black/5 bg-[#DFE3E6]/85 dark:bg-[#0c0d0e]/85 backdrop-blur-xl shadow-xs transition-transform duration-300 ease-in-out ${
+        className={`sticky top-0 z-40 w-full border-b border-black/[0.06] dark:border-white/[0.08] bg-[#DFE3E6]/90 dark:bg-[#0c0d0e]/90 backdrop-blur-xl shadow-xs transition-transform duration-300 ease-in-out ${
           isNavVisible ? "translate-y-0" : "-translate-y-full"
         }`}
       >
-        <div className="mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+        {/* Tier 1: Top Navigation Bar */}
+        <div className="relative mx-auto h-16 max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           
-          {/* Left Column: Hamburger (Mobile & Desktop) + WiDK Category Pills */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Hamburger Button (WiDK style) */}
+          {/* Left: Menu / Hamburger Button */}
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(true)}
-              className="flex items-center justify-center w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 backdrop-blur-md transition-all active:scale-95 shadow-2xs cursor-pointer"
+              className="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 backdrop-blur-md transition-all active:scale-95 shadow-2xs cursor-pointer group"
               aria-label="Open navigation menu"
             >
-              <svg className="w-4 h-4 text-neutral-800 dark:text-neutral-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+              <div className="w-4.5 flex flex-col items-center justify-center gap-1">
+                <span className="w-4 h-0.5 bg-neutral-800 dark:bg-neutral-200 rounded-full transition-all group-hover:w-4.5"></span>
+                <span className="w-4 h-0.5 bg-neutral-800 dark:bg-neutral-200 rounded-full transition-all group-hover:w-3.5"></span>
+                <span className="w-4 h-0.5 bg-neutral-800 dark:bg-neutral-200 rounded-full transition-all group-hover:w-4.5"></span>
+              </div>
             </button>
-
-            {/* Desktop WiDK Category Pills */}
-            <nav className="hidden xl:flex items-center gap-2">
-              <Link
-                href="/shop"
-                className="px-3 py-1.5 rounded-full text-xs font-semibold bg-white/80 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white transition-all shadow-2xs flex items-center gap-1"
-              >
-                <span>Clothing</span>
-                <span className="text-[10px] text-neutral-400">&rsaquo;</span>
-              </Link>
-              <Link
-                href="/shop"
-                className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/50 hover:bg-white dark:bg-neutral-800/50 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300 transition-all"
-              >
-                New Arrivals
-              </Link>
-              <Link
-                href="/shop"
-                className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/50 hover:bg-white dark:bg-neutral-800/50 dark:hover:bg-neutral-800 border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700 text-neutral-700 dark:text-neutral-300 transition-all"
-              >
-                Sale
-              </Link>
-
-              {/* WiDK Search Pill Input Button */}
-              <button
-                type="button"
-                onClick={() => setIsSearchOpen(true)}
-                className="flex items-center gap-2 bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 px-3.5 py-1.5 rounded-full text-xs text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-all shadow-2xs cursor-pointer"
-                aria-label="Search catalogue"
-              >
-                <span>Search drops...</span>
-                <svg className="w-3.5 h-3.5 text-neutral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-
-              <Link
-                href="/shop?category=Tops"
-                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Men
-              </Link>
-              <Link
-                href="/shop?category=Bottoms"
-                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Women
-              </Link>
-              <Link
-                href="/shop?category=Accessories"
-                className="px-3 py-1.5 rounded-full text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-colors"
-              >
-                Accessories
-              </Link>
-            </nav>
           </div>
 
-          {/* Center Column: Iconic DRIIVN Logo */}
-          <div className="flex items-center justify-center text-center">
+          {/* Center: Mathematically dead-centered DRIIVN Logo */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center">
             <Link
               href="/"
               className="transition-transform hover:scale-105 flex items-center justify-center py-1"
@@ -546,7 +507,7 @@ export default function Navbar() {
                 src="/logo-black.png"
                 alt="DRIIVN"
                 width={160}
-                height={22}
+                height={24}
                 className="h-5 sm:h-6 md:h-7 w-auto object-contain dark:hidden"
                 priority
               />
@@ -554,71 +515,56 @@ export default function Navbar() {
                 src="/logo-white.png"
                 alt="DRIIVN"
                 width={160}
-                height={22}
+                height={24}
                 className="h-5 sm:h-6 md:h-7 w-auto object-contain hidden dark:block"
                 priority
               />
             </Link>
           </div>
 
-          {/* Right Column: Actions (Mobile: ONLY ThemeToggle. Desktop: Full Action Bar) */}
-          <div className="flex items-center justify-end gap-2 sm:gap-3.5">
-            <nav className="hidden lg:flex items-center gap-4 text-xs font-medium text-neutral-700 dark:text-neutral-300 mr-2">
-              <Link href="/collections" className="hover:text-black dark:hover:text-white transition-colors">
+          {/* Right: Actions (Mobile: ThemeToggle ONLY | Desktop: Links + Theme + Wishlist + Cart + Account) */}
+          <div className="flex items-center gap-2 sm:gap-3.5">
+            {/* Desktop-Only Links: Collections & FAQs */}
+            <nav className="hidden lg:flex items-center gap-5 text-xs font-semibold text-neutral-600 dark:text-neutral-400 mr-2 tracking-wide">
+              <Link
+                href="/collections"
+                className="hover:text-black dark:hover:text-white transition-colors"
+              >
                 Collections
               </Link>
-              <Link href="/returns" className="hover:text-black dark:hover:text-white transition-colors">
+              <Link
+                href="/returns"
+                className="hover:text-black dark:hover:text-white transition-colors"
+              >
                 FAQs
               </Link>
             </nav>
 
-            {/* Dark & Light Theme Switcher (Available on both mobile and desktop) */}
+            {/* Dark & Light Theme Switcher */}
             <ThemeToggle size="sm" />
 
-            {/* Desktop-Only Search */}
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="hidden lg:flex w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
-              aria-label="Search catalogue"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </button>
-
-            {/* Desktop-Only Wishlist Button (Heart) */}
+            {/* Desktop-Only Wishlist Button */}
             <button
               type="button"
               onClick={() => setIsWishlistOpen(true)}
-              className="hidden lg:flex relative w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-red-500 dark:hover:text-red-400 transition-all shadow-2xs cursor-pointer"
+              className="hidden lg:flex relative w-10 h-10 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-red-500 dark:hover:text-red-400 transition-all shadow-2xs cursor-pointer active:scale-95"
               aria-label="Saved Wishlist"
             >
-              <svg className="w-4 h-4 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
+              <svg className="w-4.5 h-4.5 fill-none stroke-current" strokeWidth="1.8" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
               {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-[#E8262A] text-white rounded-full text-[8px] font-black w-3.5 h-3.5 flex items-center justify-center shadow-xs">
+                <span className="absolute -top-1 -right-1 bg-[#E8262A] text-white rounded-full text-[9px] font-black w-4 h-4 flex items-center justify-center shadow-xs">
                   {wishlistCount}
                 </span>
               )}
             </button>
 
-            {/* Desktop-Only Account Profile Button */}
-            <Link
-              href="/account"
-              className="hidden lg:flex w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-800 border border-neutral-200/80 dark:border-neutral-700 items-center justify-center text-neutral-700 dark:text-neutral-200 transition-all shadow-2xs cursor-pointer"
-              title={currentUser ? `Signed in as ${currentUser.name}` : "Member Account"}
-              aria-label="Member Account"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </Link>
-
-            {/* Desktop-Only Shopping Bag Button (Cart) */}
+            {/* Desktop-Only Shopping Bag Button */}
             <button
+              type="button"
               onClick={() => setIsCartOpen(true)}
-              className="hidden lg:flex items-center gap-1.5 bg-black hover:bg-neutral-800 text-white dark:bg-white dark:hover:bg-neutral-200 dark:text-black px-3.5 py-1.5 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
+              className="hidden lg:flex relative items-center gap-2 bg-neutral-900 hover:bg-black text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-neutral-900 px-4 py-2 rounded-full text-xs font-bold transition-all shadow-md active:scale-95 cursor-pointer"
               aria-label="Open shopping bag"
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -626,6 +572,190 @@ export default function Navbar() {
               </svg>
               <span>{cartCount}</span>
             </button>
+
+            {/* Desktop-Only Account Profile Button */}
+            <Link
+              href="/account"
+              className="hidden lg:flex w-10 h-10 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 items-center justify-center text-neutral-700 dark:text-neutral-200 hover:text-black dark:hover:text-white transition-all shadow-2xs cursor-pointer active:scale-95"
+              title={currentUser ? `Signed in as ${currentUser.name}` : "Member Account"}
+              aria-label="Member Account"
+            >
+              <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+        {/* Tier 2: Category Navigation & Centered Search Bar (Desktop Only) */}
+        <div className="hidden lg:block border-t border-black/[0.04] dark:border-white/[0.04] py-2.5">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+            
+            {/* Left Category Pills */}
+            <div className="flex items-center gap-2 relative">
+              {/* Clothing with flyout dropdown */}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsClothingDropdownOpen(true)}
+                onMouseLeave={() => setIsClothingDropdownOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setIsClothingDropdownOpen((prev) => !prev)}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer border ${
+                    isClothingDropdownOpen
+                      ? "bg-black text-white dark:bg-white dark:text-black border-transparent"
+                      : "bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-200 border-neutral-200/80 dark:border-neutral-700/80"
+                  }`}
+                  aria-expanded={isClothingDropdownOpen}
+                >
+                  <span>Clothing</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform duration-200 ${
+                      isClothingDropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Clothing Flyout Dropdown Menu */}
+                {isClothingDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-2 w-56 rounded-2xl bg-white/95 dark:bg-neutral-900/95 backdrop-blur-xl border border-neutral-200/80 dark:border-neutral-800 shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                      Collections & Apparel
+                    </div>
+                    <Link
+                      href="/shop"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>All Products</span>
+                      <span className="text-[10px] text-neutral-400">View All</span>
+                    </Link>
+                    <Link
+                      href="/shop?category=Tops"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>Hoodies & Sweats</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-sm bg-neutral-100 dark:bg-neutral-800 text-neutral-500">Heavyweight</span>
+                    </Link>
+                    <Link
+                      href="/shop?category=Tees"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>Graphic Oversized Tees</span>
+                      <span className="text-[10px] text-neutral-400">240 GSM</span>
+                    </Link>
+                    <Link
+                      href="/shop?category=Bottoms"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>Cargo Pants & Denims</span>
+                    </Link>
+                    <Link
+                      href="/shop?category=Outerwear"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>Jackets & Outerwear</span>
+                    </Link>
+                    <div className="my-1 border-t border-neutral-100 dark:border-neutral-800" />
+                    <Link
+                      href="/shop?category=Accessories"
+                      onClick={() => setIsClothingDropdownOpen(false)}
+                      className="flex items-center justify-between px-3.5 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800/70 hover:text-black dark:hover:text-white transition-colors"
+                    >
+                      <span>Caps & Headwear</span>
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* New Arrivals Pill */}
+              <Link
+                href="/shop"
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all shadow-2xs"
+              >
+                New Arrivals
+              </Link>
+
+              {/* Sale Pill with live pulse badge */}
+              <Link
+                href="/shop"
+                className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-800 dark:text-neutral-200 hover:text-red-600 dark:hover:text-red-400 transition-all shadow-2xs flex items-center gap-1.5"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                <span>Sale</span>
+              </Link>
+            </div>
+
+            {/* Center Pill Search Input */}
+            <div className="flex-1 max-w-md mx-2">
+              <button
+                type="button"
+                onClick={() => setIsSearchOpen(true)}
+                className="w-full flex items-center justify-between bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-700/90 border border-neutral-200/80 dark:border-neutral-700/80 px-4 py-1.5 rounded-full text-xs text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 transition-all shadow-2xs cursor-pointer group"
+                aria-label="Search catalogue"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-neutral-400 dark:text-neutral-500 font-normal">
+                    Search drops, hoodies, cargos...
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono text-neutral-400 dark:text-neutral-500 bg-neutral-100 dark:bg-neutral-900 border border-neutral-200/70 dark:border-neutral-700/70">
+                    ⌘K
+                  </kbd>
+                  <svg
+                    className="w-3.5 h-3.5 text-neutral-500 group-hover:text-black dark:group-hover:text-white transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+              </button>
+            </div>
+
+            {/* Right Category & Feature Pills */}
+            <div className="flex items-center gap-2">
+              <Link
+                href="/shop?category=Tops"
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all shadow-2xs"
+              >
+                Men
+              </Link>
+              <Link
+                href="/shop?category=Bottoms"
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all shadow-2xs"
+              >
+                Women
+              </Link>
+              <Link
+                href="/shop?category=Accessories"
+                className="px-3.5 py-1.5 rounded-full text-xs font-medium bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-700 dark:text-neutral-300 hover:text-black dark:hover:text-white transition-all shadow-2xs"
+              >
+                Accessories
+              </Link>
+              <button
+                type="button"
+                onClick={() => setIsReelsOpen(true)}
+                className="px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white/70 hover:bg-white dark:bg-neutral-800/70 dark:hover:bg-neutral-700 border border-neutral-200/80 dark:border-neutral-700/80 text-neutral-800 dark:text-neutral-200 hover:text-black dark:hover:text-white transition-all shadow-2xs flex items-center gap-1.5 cursor-pointer"
+                aria-label="Open Lookbook Reels"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Lookbook</span>
+              </button>
+            </div>
+
           </div>
         </div>
       </header>
