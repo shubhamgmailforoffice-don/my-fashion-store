@@ -1,0 +1,35 @@
+========================================================================
+             DRIIVN LUXURY FASHION STORE - QUICK START GUIDE
+========================================================================
+
+HOW TO RUN ON THIS PC:
+----------------------
+1. Make sure Node.js is installed on your computer.
+   If not installed, download and install Node.js 20+ LTS from:
+   https://nodejs.org/
+
+2. Simply double-click:
+   "setup-and-run.bat"
+
+   The script will automatically:
+   - Check your Node.js installation
+   - Set up the .env file with the Neon Cloud PostgreSQL database
+   - Install all required dependencies (npm install)
+   - Generate the Prisma Client
+   - Open your browser to http://localhost:3000
+   - Start the website server
+
+------------------------------------------------------------------------
+ADMIN PANEL CREDENTIALS:
+------------------------------------------------------------------------
+- Admin URL: http://localhost:3000/admin
+- Username / Email: admin@fashionstore.com  (or: admin, or phone: 9999999999)
+- Password: admin123
+
+------------------------------------------------------------------------
+MANUAL COMMANDS (IF RUNNING VIA TERMINAL / POWERSHELL):
+------------------------------------------------------------------------
+1. npm install
+2. npx prisma generate
+3. npm run dev
+========================================================================
